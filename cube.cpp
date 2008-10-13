@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifdef __APPLE__
 #  include <OpenGL/OpenGL.h>
@@ -7,90 +8,25 @@
 #  include <GL/glut.h>
 #endif
 
-#include "types.hpp"
+#include "camera.hpp"
 
 
-static mn::Camera camera;
-static unsigned long mouseButtons = 0;
-static unsigned long tick = 0;
-static int wndWidth = 400, wndHeight = 400;
 static struct { GLuint cube; } displayLists;
 
 
 
-static void handleKeypress(unsigned char key, int x, int y) {
-	switch (key) {
-	case 27:  /* Escape */
+static void handleKeyboard(unsigned key, bool down, int x, int y) {
+	(void)x; (void)y;
+	if (down && key == 27) {
 		exit(0);
-
-	case 'a': camera.moveLeft( 0.1); break;
-	case 'd': camera.moveLeft(-0.1); break;
-	case 'w': camera.moveForward( 0.1); break;
-	case 's': camera.moveForward(-0.1); break;
-	case 't': camera.moveTop( 0.1); break;
-	case 'g': camera.moveTop(-0.1); break;
-
-	case 'q': camera.rotateLeft( 0.05); break;
-	case 'e': camera.rotateLeft(-0.05); break;
-	case 'r': camera.rotateTop( 0.05); break;
-	case 'f': camera.rotateTop(-0.05); break;
-
-	default:
-		printf("%c [%d]\n", key, key);
-		return;
-	}
-	glutPostRedisplay();
-}
-
-
-static void handleMouse(int button, int state, int x, int y) {
-	if (button == 3 || button == 4) {
-		if (state == GLUT_DOWN) {
-			camera.moveForward(button == 3 ? 0.5 : -0.5);
-			glutPostRedisplay();
-		}
-	} else if (state == GLUT_DOWN) {
-		mouseButtons |= 1 << button;
-	} else {
-		mouseButtons &= ~(1 << button);
 	}
 }
-
-
-static void handleTick(int to) {
-	++tick;
-	if (mouseButtons) {
-		if (mouseButtons & (1 << GLUT_LEFT_BUTTON  )) camera.moveLeft( 0.1);
-		if (mouseButtons & (1 << GLUT_RIGHT_BUTTON )) camera.moveLeft(-0.1);
-		if (mouseButtons & (1 << GLUT_MIDDLE_BUTTON)) camera.moveForward(0.1);
-	}
-	glutPostRedisplay();
-	glutTimerFunc(to, handleTick, to);
-}
-
-void handleMotion(int x, int y) {
-	static bool first = true;
-	if (first) {
-		first = false;
-		return;
-	}
-	int dX = x - (wndWidth  >> 1);
-	int dY = y - (wndHeight >> 1);
-	if (dX || dY) {
-		glutWarpPointer(wndWidth >> 1, wndHeight >> 1);
-		camera.rotateTop(dY * 0.01);
-		camera.rotateLeft(-dX * 0.01);
-		glutPostRedisplay();
-	}
-}
-
 
 static void handleResize(int w, int h) {
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(45.0, (double)w / (double)h, 1.0, 200.0);
-	glutWarpPointer((wndWidth = w) >> 1, (wndHeight = h) >> 1);
 }
 
 
@@ -135,12 +71,7 @@ static void drawScene() {
 	glLoadIdentity();
 
 	//glPushMatrix();
-	{
-		const mn::Vector &eye = camera.getEye();
-		const mn::Vector center = camera.getCenter();
-		gluLookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z,
-		          0, 1, 0);
-	}
+	mn::Camera::defaultLookAt();
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
@@ -163,7 +94,7 @@ static void drawScene() {
 	glEnd();
 
 	glPushMatrix();
-	glRotatef(tick * 1.0, 1.0f, 1.0f, 0.0f);
+	glRotatef(mn::Camera::getTicks(), 1.0f, 1.0f, 0.0f);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT); glCallList(displayLists.cube);
 	glCullFace(GL_BACK);  glCallList(displayLists.cube);
@@ -172,7 +103,9 @@ static void drawScene() {
 
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
-	glTranslatef(camera.getCenterX(), camera.getCenterY(), camera.getCenterZ());
+	glTranslatef(mn::Camera::getDefaultCamera()->getCenterX(),
+	             mn::Camera::getDefaultCamera()->getCenterY(),
+	             mn::Camera::getDefaultCamera()->getCenterZ());
 
 	glBegin(GL_LINES);
 	glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(0.2, 0, 0);
@@ -189,10 +122,10 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
-	wndWidth = glutGet(GLUT_SCREEN_WIDTH);
-	wndHeight = glutGet(GLUT_SCREEN_HEIGHT);
-	glutInitWindowSize(wndWidth, wndHeight);
-	glutCreateWindow("mina86");
+	int w = glutGet(GLUT_SCREEN_WIDTH);
+	int h = glutGet(GLUT_SCREEN_HEIGHT);
+	glutInitWindowSize(w, h);
+	glutCreateWindow("Spinning Cube");
 	glutSetCursor(GLUT_CURSOR_NONE);
 
 	glEnable(GL_DEPTH_TEST);
@@ -205,15 +138,15 @@ int main(int argc, char** argv) {
 	drawCube();
 	glEndList();
 
-	glutDisplayFunc(drawScene);
-	glutKeyboardFunc(handleKeypress);
-	glutMouseFunc(handleMouse);
-	glutMotionFunc(handleMotion);
-	glutPassiveMotionFunc(handleMotion);
-	glutReshapeFunc(handleResize);
-	glutTimerFunc(25, handleTick, 25);
+	mn::Camera camera;
+	mn::Camera::setDefaultCamera(&camera);
+	mn::Camera::setSize(w, h);
 
-	glutWarpPointer(wndWidth >> 1, wndHeight >> 1);
+	mn::Camera::registerHandlers();
+	mn::Camera::setResizeFunc(handleResize);
+	mn::Camera::setKeyboardFunc(handleKeyboard);
+	glutDisplayFunc(drawScene);
+
 	glutMainLoop();
 	return 0;
 }

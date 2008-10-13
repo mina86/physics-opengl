@@ -8,8 +8,14 @@ endif
 
 all: cube
 
-cube: cube.cpp types.hpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o cube cube.cpp $(LIBS)
+cube.o: cube.cpp camera.hpp
+camera.o: camera.cpp camera.hpp
+
+cube: cube.o camera.o
+	$(CXX) $(LDFLAGS) -o cube cube.o camera.o $(LIBS)
+
+%.o: %.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 clean:
 	rm -f -- cube
