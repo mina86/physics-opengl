@@ -174,16 +174,6 @@ private:
 };
 
 
-
-struct CameraControl {
-
-private:
-	static unsigned long ticks;
-	static Camera *camera;
-};
-
-
-
 }
 
 #endif
