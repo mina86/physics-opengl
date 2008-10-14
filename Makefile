@@ -9,15 +9,17 @@ endif
 all: cube
 
 cube.o: cube.cpp camera.hpp
+solar.o: solar.cpp camera.hpp planet.hpp
 camera.o: camera.cpp camera.hpp
-planet.o: planet.cpp planet.hpp
+planet.o: planet.cpp planet.hpp camera.hpp sintable.hpp
 text3d.o: text3d.cpp text3d.hpp
+sintable.o: sintable.cpp sintable.hpp
 
 cube: cube.o camera.o
-	$(CXX) $(LDFLAGS) -o cube cube.o camera.o $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-solar: solar.o camera.o planet.o text3d.o
-	$(CXX) $(LDFLAGS) -o solar solar.o camera.o planet.o text3d.o $(LIBS)
+solar: solar.o camera.o planet.o text3d.o sintable.o
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 %.o: %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<

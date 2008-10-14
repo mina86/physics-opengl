@@ -10,6 +10,7 @@
 
 #include "camera.hpp"
 #include "planet.hpp"
+#include "sintable.hpp"
 
 static mn::Sphere *sun;
 
@@ -56,6 +57,8 @@ static void drawScene() {
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+
+	mn::initSinTable();
 
 	int w = glutGet(GLUT_SCREEN_WIDTH);
 	int h = glutGet(GLUT_SCREEN_HEIGHT);

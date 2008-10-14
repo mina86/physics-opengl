@@ -12,6 +12,7 @@
 #include "planet.hpp"
 #include "camera.hpp"
 #include "text3d.hpp"
+#include "sintable.hpp"
 
 
 namespace mn {
@@ -25,15 +26,10 @@ Sphere::~Sphere() {
 
 
 static void drawCircle(float radius) {
-	unsigned count = radius <= 500 ? (unsigned)(radius / 2) : 500;
-	if (count < 100) count = 100;
 	glBegin(GL_LINE_LOOP);
-	glVertex3f(0, 0, radius);
-	float arg = 0, arg_inc = 2 * M_PI / count;
-	do {
-		arg += arg_inc;
-		glVertex3f(radius * std::sin(arg), 0, radius * std::cos(arg));
-	} while (--count);
+	for (int arg = 0; arg < 360; ++arg) {
+		glVertex3f(radius * mn::sin(arg), 0, radius * mn::cos(arg));
+	}
 	glEnd();
 }
 
@@ -50,7 +46,10 @@ void Sphere::draw(unsigned long ticks) {
 			if (circleList) glNewList(circleList, GL_COMPILE);
 			glColor3f(color.r * 0.2, color.g * 0.2, color.b * 0.2);
 			drawCircle(distance);
-			if (circleList) glEndList();
+			if (circleList) {
+				glEndList();
+				glCallList(circleList);
+			}
 		} else {
 			glCallList(circleList);
 		}
@@ -75,8 +74,7 @@ void Sphere::draw(unsigned long ticks) {
 			t3dInitialised = 1;
 		}
 		catch (const t3d::load_exception &e) {
-			fprintf(stderr, "Error initialising 3D text: %s\n",
-			        e.what());
+			fprintf(stderr, "Error initialising 3D text: %s\n", e.what());
 			t3dInitialised = -1;
 		}
 	}
@@ -86,9 +84,20 @@ void Sphere::draw(unsigned long ticks) {
 			float rot = cam->getRotY();
 			glRotatef(rot * (-180.0 / M_PI) - 90, 0, 1, 0);
 		}
-		glTranslatef(0, size + 0.2, 0);
-		glScalef(0.1, 0.1, 0.1);
-		t3d::draw3D(name, 0, 0, 0.5);
+		if (!textList) {
+			textList = glGenLists(1);
+			printf("%u\n", textList);
+			if (textList) glNewList(textList, GL_COMPILE);
+			glTranslatef(0, size + 0.3, 0);
+			glScalef(0.1, 0.1, 0.1);
+			t3d::draw3D(name, 0, 0, 0.5);
+			if (textList) {
+				glEndList();
+				glCallList(textList);
+			}
+		} else {
+			glCallList(textList);
+		}
 	}
 
 	glPopMatrix();

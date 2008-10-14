@@ -15,7 +15,7 @@ struct Sphere {
 	       const std::string &theName)
 		: distance(theDistance), size(theSize), omega(theOmega),
 		  color(theColor), name(theName),
-		  first(0), next(0), circleList(0) {}
+		  first(0), next(0), circleList(0), textList(0) {}
 
 	~Sphere();
 
@@ -35,7 +35,7 @@ private:
 	const std::string name;
 	Sphere *first, *next;
 
-	GLuint circleList;
+	GLuint circleList, textList;
 };
 
 }
