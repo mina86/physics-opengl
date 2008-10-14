@@ -49,17 +49,24 @@ void Camera::handleKeyboardDown(unsigned char key, int x, int y) {
 		bool postRedisplay = true;
 
 		switch (key) {
-		case 'a': camera->moveLeft( 0.1 * keyMovementFactor); break;
-		case 'd': camera->moveLeft(-0.1 * keyMovementFactor); break;
+		case 'a': camera->moveLeft   ( 0.1 * keyMovementFactor); break;
+		case 'd': camera->moveLeft   (-0.1 * keyMovementFactor); break;
 		case 'w': camera->moveForward( 0.1 * keyMovementFactor); break;
 		case 's': camera->moveForward(-0.1 * keyMovementFactor); break;
-		case 't': camera->moveTop( 0.1 * keyMovementFactor); break;
-		case 'g': camera->moveTop(-0.1 * keyMovementFactor); break;
+		case 't': camera->moveTop    ( 0.1 * keyMovementFactor); break;
+		case 'g': camera->moveTop    (-0.1 * keyMovementFactor); break;
 
-		case 'q': camera->rotateLeft( 0.05 * keyRotationLeftFactor); break;
-		case 'e': camera->rotateLeft(-0.05 * keyRotationLeftFactor); break;
-		case 'r': camera->rotateTop( 0.05 * keyRotationTopFactor); break;
-		case 'f': camera->rotateTop(-0.05 * keyRotationTopFactor); break;
+		case 'A': camera->moveLeft   ( 0.5 * keyMovementFactor); break;
+		case 'D': camera->moveLeft   (-0.5 * keyMovementFactor); break;
+		case 'W': camera->moveForward( 0.5 * keyMovementFactor); break;
+		case 'S': camera->moveForward(-0.5 * keyMovementFactor); break;
+		case 'T': camera->moveTop    ( 0.5 * keyMovementFactor); break;
+		case 'G': camera->moveTop    (-0.5 * keyMovementFactor); break;
+
+		case 'Q': case 'q': camera->rotateLeft( 0.05 * keyRotationLeftFactor); break;
+		case 'E': case 'e': camera->rotateLeft(-0.05 * keyRotationLeftFactor); break;
+		case 'R': case 'r': camera->rotateTop( 0.05 * keyRotationTopFactor); break;
+		case 'F': case 'f': camera->rotateTop(-0.05 * keyRotationTopFactor); break;
 
 		default: postRedisplay = false;
 		}
@@ -160,7 +167,7 @@ void Camera::registerHandlers() {
 	glutMotionFunc(handleMotion);
 	glutPassiveMotionFunc(handleMotion);
 	glutReshapeFunc(handleResize);
-	glutTimerFunc(25, handleTick, 25);
+	glutTimerFunc(40, handleTick, 40);
 }
 
 
