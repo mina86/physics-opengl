@@ -133,7 +133,6 @@ struct Camera {
 		if (camera) camera->lookAt();
 	}
 	static unsigned long getTicks() { return ticks; }
-	static void setTickRedisplays(bool val) { tickRedisplays = val; }
 	static void registerHandlers();
 
 	typedef void(*KeyboardFunc)(unsigned key, bool down, int x, int y);
@@ -144,6 +143,13 @@ struct Camera {
 	static void setResizeFunc(ResizeFunc theResizeFunc) {
 		resizeFunc = theResizeFunc;
 	}
+
+	static float keyMovementFactor, keyRotationTopFactor;
+	static float keyRotationLeftFactor, mouseMovementFactor;
+	static float mouseRotationTopFactor, mouseRotationLeftFactor;
+
+	static bool tickRedisplays;
+	static bool countTicks;
 
 private:
 	void update() const;
@@ -169,7 +175,6 @@ private:
 	static KeyboardFunc keyboardFunc;
 	static ResizeFunc resizeFunc;
 	static unsigned long mouseButtons;
-	static bool tickRedisplays;
 	static unsigned long ticks;
 };
 
