@@ -74,7 +74,6 @@ void Sphere::draw(unsigned long ticks) {
 	}
 	if (!textList) {
 		textList = glGenLists(1);
-		printf("%u\n", textList);
 		if (textList) glNewList(textList, GL_COMPILE);
 		glTranslatef(0, size + 0.3, 0);
 		glScalef(0.1, 0.1, 0.1);
