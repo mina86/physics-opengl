@@ -76,10 +76,11 @@ struct Camera {
 	float getEyeY() const { return eye.y; }
 	float getEyeZ() const { return eye.z; }
 
-	void moveLeft(float x) { eye += x * left; }
-	void moveTop(float y) { eye += y * top; }
-	void moveForward(float z) { eye += z * forward; }
+	void moveLeft(float x) { if (!valid) update(); eye += x * left; }
+	void moveTop(float y) { if (!valid) update(); eye += y * top; }
+	void moveForward(float z) { if (!valid) update(); eye += z * forward; }
 	void move(const Vector &v) {
+		if (!valid) update();
 		((eye += v.x * left) += v.y * top) += v.z * forward;
 	}
 
@@ -110,7 +111,8 @@ struct Camera {
 	float getTopY() { return getTop().y; }
 	float getTopZ() { return getTop().z; }
 
-	void lookAt() {
+
+	void doLookAt() {
 		if (!valid) update();
 		gluLookAt(eye.x, eye.y, eye.z,
 		          3.0 * forward.x + eye.x,
@@ -118,6 +120,7 @@ struct Camera {
 		          3.0 * forward.z + eye.z,
 		          0, 1, 0);
 	}
+
 
 	/* Camera control part */
 	static void setSize(int w, int h) {
@@ -129,7 +132,7 @@ struct Camera {
 	}
 	static Camera *getDefaultCamera() { return camera; }
 	static void defaultLookAt() {
-		if (camera) camera->lookAt();
+		if (camera) camera->doLookAt();
 	}
 	static unsigned long getTicks() { return ticks; }
 	static void registerHandlers();
