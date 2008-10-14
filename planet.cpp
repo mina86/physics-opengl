@@ -67,37 +67,24 @@ void Sphere::draw(unsigned long ticks) {
 		}
 	}
 
-	static int t3dInitialised = 0;
-	if (!t3dInitialised) {
-		try {
-			t3d::init();
-			t3dInitialised = 1;
-		}
-		catch (const t3d::load_exception &e) {
-			fprintf(stderr, "Error initialising 3D text: %s\n", e.what());
-			t3dInitialised = -1;
-		}
+	Camera *cam = Camera::getDefaultCamera();
+	if (cam) {
+		float rot = cam->getRotY();
+		glRotatef(rot * (-180.0 / M_PI) - 90, 0, 1, 0);
 	}
-	if (t3dInitialised == 1) {
-		Camera *cam = Camera::getDefaultCamera();
-		if (cam) {
-			float rot = cam->getRotY();
-			glRotatef(rot * (-180.0 / M_PI) - 90, 0, 1, 0);
-		}
-		if (!textList) {
-			textList = glGenLists(1);
-			printf("%u\n", textList);
-			if (textList) glNewList(textList, GL_COMPILE);
-			glTranslatef(0, size + 0.3, 0);
-			glScalef(0.1, 0.1, 0.1);
-			t3d::draw3D(name, 0, 0, 0.5);
-			if (textList) {
-				glEndList();
-				glCallList(textList);
-			}
-		} else {
+	if (!textList) {
+		textList = glGenLists(1);
+		printf("%u\n", textList);
+		if (textList) glNewList(textList, GL_COMPILE);
+		glTranslatef(0, size + 0.3, 0);
+		glScalef(0.1, 0.1, 0.1);
+		t3d::draw3D(name, 0, 0, 0.5);
+		if (textList) {
+			glEndList();
 			glCallList(textList);
 		}
+	} else {
+		glCallList(textList);
 	}
 
 	glPopMatrix();
