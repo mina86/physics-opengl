@@ -21,7 +21,6 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 	if (!down) return;
 	switch (key) {
 	case 27: /* Escape */
-		glutLeaveGameMode();
 		exit(0);
 	case ' ':
 		mn::Camera::tickRedisplays = mn::Camera::countTicks = !mn::Camera::countTicks;
@@ -104,9 +103,12 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
-	glutGameModeString(":32");
-	glutEnterGameMode();
-	glutIgnoreKeyRepeat(1);
+	int w = glutGet(GLUT_SCREEN_WIDTH);
+	int h = glutGet(GLUT_SCREEN_HEIGHT);
+	glutInitWindowSize(w, h);
+	glutInitWindowPosition(0, 0);
+	glutCreateWindow("Spinning Cube");
+	glutSetCursor(GLUT_CURSOR_NONE);
 
 	try {
 		t3d::init();
@@ -149,8 +151,7 @@ int main(int argc, char** argv) {
 
 	mn::Camera camera;
 	mn::Camera::setDefaultCamera(&camera);
-	mn::Camera::setSize(glutGet(GLUT_SCREEN_WIDTH),
-	                    glutGet(GLUT_SCREEN_HEIGHT));
+	mn::Camera::setSize(w, h);
 
 	mn::Camera::keyMovementFactor   *=  3;
 	mn::Camera::keyRunFactor        *=  3;

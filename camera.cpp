@@ -235,6 +235,7 @@ void Camera::handleResize(int w, int h) {
 
 
 void Camera::registerHandlers() {
+	glutIgnoreKeyRepeat(1);
 	glutKeyboardFunc(handleKeyboardDown);
 	glutKeyboardUpFunc(handleKeyboardUp);
 	glutSpecialFunc(handleSpecialKeyboardDown);
