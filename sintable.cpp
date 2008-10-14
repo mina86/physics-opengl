@@ -4,10 +4,14 @@
 
 namespace mn {
 
+#if SINTABLE_OPT_SPACE
+float sinTable[91];
+#else
 float sinTable[360];
+#endif
 
 void initSinTable(void) {
-	for (int i = 0; i < 360; ++i) {
+	for (unsigned i = 0; i < sizeof sinTable / sizeof *sinTable; ++i) {
 		sinTable[i] = std::sin((float)i * (M_PI / 180));
 	}
 }
