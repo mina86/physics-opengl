@@ -146,9 +146,10 @@ struct Camera {
 		resizeFunc = theResizeFunc;
 	}
 
-	static float keyMovementFactor, keyRotationTopFactor;
+	static float keyMovementFactor, keyRunFactor, keyRotationTopFactor;
 	static float keyRotationLeftFactor, mouseMovementFactor;
-	static float mouseRotationTopFactor, mouseRotationLeftFactor;
+	static float mouseRunFactor, mouseRotationTopFactor;
+	static float mouseRotationLeftFactor;
 
 	static bool tickRedisplays;
 	static bool countTicks;
@@ -176,7 +177,6 @@ private:
 	static int wndWidth, wndHeight;
 	static KeyboardFunc keyboardFunc;
 	static ResizeFunc resizeFunc;
-	static unsigned long mouseButtons;
 	static unsigned long ticks;
 };
 

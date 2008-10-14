@@ -21,6 +21,7 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 	if (!down) return;
 	switch (key) {
 	case 27: /* Escape */
+		glutLeaveGameMode();
 		exit(0);
 	case ' ':
 		mn::Camera::tickRedisplays = mn::Camera::countTicks = !mn::Camera::countTicks;
@@ -98,16 +99,14 @@ static void drawScene() {
 
 
 int main(int argc, char** argv) {
+	mn::initSinTable();
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
-	mn::initSinTable();
-
-	int w = glutGet(GLUT_SCREEN_WIDTH);
-	int h = glutGet(GLUT_SCREEN_HEIGHT);
-	glutInitWindowSize(w, h);
-	glutCreateWindow("Solar System");
-	glutSetCursor(GLUT_CURSOR_NONE);
+	glutGameModeString(":32");
+	glutEnterGameMode();
+	glutIgnoreKeyRepeat(1);
 
 	try {
 		t3d::init();
@@ -119,6 +118,8 @@ int main(int argc, char** argv) {
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_CULL_FACE);
+	glShadeModel(GL_SMOOTH);
 
 	const float distanceFactor = 149597870691e-10;  /* AU */
 	const float sizeFactor = 6371000e-8; /* Earth's mean radius */
@@ -148,9 +149,13 @@ int main(int argc, char** argv) {
 
 	mn::Camera camera;
 	mn::Camera::setDefaultCamera(&camera);
-	mn::Camera::setSize(w, h);
+	mn::Camera::setSize(glutGet(GLUT_SCREEN_WIDTH),
+	                    glutGet(GLUT_SCREEN_HEIGHT));
 
-	mn::Camera::keyMovementFactor = 3.0;
+	mn::Camera::keyMovementFactor   *=  3;
+	mn::Camera::keyRunFactor        *=  3;
+	mn::Camera::mouseMovementFactor *=  3;
+	mn::Camera::mouseRunFactor      *=  3;
 
 	mn::Camera::registerHandlers();
 	mn::Camera::setResizeFunc(handleResize);
