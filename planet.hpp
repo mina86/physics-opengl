@@ -1,6 +1,8 @@
 #ifndef H_PLANET_HPP
 #define H_PLANET_HPP
 
+#include <string>
+
 namespace mn {
 
 struct Color {
@@ -9,9 +11,11 @@ struct Color {
 };
 
 struct Sphere {
-	Sphere(float theDistance, float theSize, float theOmega, Color theColor)
+	Sphere(float theDistance, float theSize, float theOmega, Color theColor,
+	       const std::string &theName)
 		: distance(theDistance), size(theSize), omega(theOmega),
-		  color(theColor), first(0), next(0) { }
+		  color(theColor), name(theName),
+		  first(0), next(0), circleList(0) {}
 
 	~Sphere();
 
@@ -25,14 +29,13 @@ struct Sphere {
 
 	void draw(unsigned long ticks);
 
-	static float omegaFactor;
-	static float distanceFactor;
-	static float sizeFactor;
-
 private:
 	const float distance, size, omega;
 	const Color color;
+	const std::string name;
 	Sphere *first, *next;
+
+	GLuint circleList;
 };
 
 }

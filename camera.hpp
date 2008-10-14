@@ -119,7 +119,6 @@ struct Camera {
 		          0, 1, 0);
 	}
 
-
 	/* Camera control part */
 	static void setSize(int w, int h) {
 		wndWidth = w, wndHeight = h;
