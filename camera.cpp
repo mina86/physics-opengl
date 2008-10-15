@@ -37,16 +37,15 @@ bool Camera::tickRedisplays = true, Camera::countTicks = true;
 unsigned long Camera::ticks = 0;
 
 float Camera::keyMovementFactor       =  .1;
-float Camera::keyRunFactor            =  .5;
 float Camera::keyRotationTopFactor    = M_PI / 180;
 float Camera::keyRotationLeftFactor   = M_PI / 180;
 float Camera::mouseMovementFactor     =  .1;
-float Camera::mouseRunFactor          =  .5;
 float Camera::mouseRotationTopFactor  = M_PI / 1800;
 float Camera::mouseRotationLeftFactor = M_PI / 1800;
+float Camera::runFactor               = 5.0;
 
 
-static unsigned long actionsMask = 0;
+static unsigned actionsMask = 0;
 enum {
 	MOVE_FORWARD   = 1 <<  0,
 	MOVE_BACKWARD  = 1 <<  1,
@@ -60,42 +59,31 @@ enum {
 	MOUSE_LEFT     = 1 <<  8,
 	MOUSE_RIGHT    = 1 <<  9,
 
-	RUN_FORWARD    = 1 << 10,
-	RUN_BACKWARD   = 1 << 11,
-	RUN_LEFT       = 1 << 12,
-	RUN_RIGHT      = 1 << 13,
-	RUN_TOP        = 1 << 14,
-	RUN_BOTTOM     = 1 << 15,
+	ROT_LEFT       = 1 << 10,
+	ROT_RIGHT      = 1 << 11,
+	ROT_TOP        = 1 << 12,
+	ROT_BOTTOM     = 1 << 13,
 
-	ROT_LEFT       = 1 << 16,
-	ROT_RIGHT      = 1 << 17,
-	ROT_TOP        = 1 << 18,
-	ROT_BOTTOM     = 1 << 19
+	RUN_FLAG       = 1 << 14
 };
 
 
 
 void Camera::handleKeyboardDown(unsigned char key, int x, int y) {
-	(void)x; (void)y;
 	switch (key) {
-	case 'w': actionsMask |= MOVE_FORWARD ; break;
-	case 's': actionsMask |= MOVE_BACKWARD; break;
-	case 'a': actionsMask |= MOVE_LEFT    ; break;
-	case 'd': actionsMask |= MOVE_RIGHT   ; break;
-	case 't': actionsMask |= MOVE_TOP     ; break;
-	case 'g': actionsMask |= MOVE_BOTTOM  ; break;
+	case 'r': case 'R': actionsMask |= MOVE_FORWARD ; break;
+	case 'f': case 'F': actionsMask |= MOVE_BACKWARD; break;
+	case 'd': case 'D': actionsMask |= MOVE_LEFT    ; break;
+	case 'g': case 'G': actionsMask |= MOVE_RIGHT   ; break;
+	case 'w': case 'W': actionsMask |= MOVE_TOP     ; break;
+	case 's': case 'S': actionsMask |= MOVE_BOTTOM  ; break;
 
-	case 'W': actionsMask |= RUN_FORWARD ; break;
-	case 'S': actionsMask |= RUN_BACKWARD; break;
-	case 'A': actionsMask |= RUN_LEFT    ; break;
-	case 'D': actionsMask |= RUN_RIGHT   ; break;
-	case 'T': actionsMask |= RUN_TOP     ; break;
-	case 'G': actionsMask |= RUN_BOTTOM  ; break;
+	case 'e': case 'E': actionsMask |= ROT_LEFT     ; break;
+	case 't': case 'T': actionsMask |= ROT_RIGHT    ; break;
+	case 'y': case 'Y': actionsMask |= ROT_TOP      ; break;
+	case 'h': case 'H': actionsMask |= ROT_BOTTOM   ; break;
 
-	case 'Q': case 'q': actionsMask |= ROT_LEFT  ; break;
-	case 'E': case 'e': actionsMask |= ROT_RIGHT ; break;
-	case 'R': case 'r': actionsMask |= ROT_TOP   ; break;
-	case 'F': case 'f': actionsMask |= ROT_BOTTOM; break;
+	case 'z': case 'Z': actionsMask |= RUN_FLAG     ; break;
 	}
 	if (keyboardFunc) {
 		keyboardFunc(key, true, x, y);
@@ -104,24 +92,19 @@ void Camera::handleKeyboardDown(unsigned char key, int x, int y) {
 
 void Camera::handleKeyboardUp(unsigned char key, int x, int y) {
 	switch (key) {
-	case 'w': actionsMask &= ~MOVE_FORWARD ; break;
-	case 's': actionsMask &= ~MOVE_BACKWARD; break;
-	case 'a': actionsMask &= ~MOVE_LEFT    ; break;
-	case 'd': actionsMask &= ~MOVE_RIGHT   ; break;
-	case 't': actionsMask &= ~MOVE_TOP     ; break;
-	case 'g': actionsMask &= ~MOVE_BOTTOM  ; break;
+	case 'r': case 'R': actionsMask &= ~MOVE_FORWARD ; break;
+	case 'f': case 'F': actionsMask &= ~MOVE_BACKWARD; break;
+	case 'd': case 'D': actionsMask &= ~MOVE_LEFT    ; break;
+	case 'g': case 'G': actionsMask &= ~MOVE_RIGHT   ; break;
+	case 'w': case 'W': actionsMask &= ~MOVE_TOP     ; break;
+	case 's': case 'S': actionsMask &= ~MOVE_BOTTOM  ; break;
 
-	case 'W': actionsMask &= ~RUN_FORWARD ; break;
-	case 'S': actionsMask &= ~RUN_BACKWARD; break;
-	case 'A': actionsMask &= ~RUN_LEFT    ; break;
-	case 'D': actionsMask &= ~RUN_RIGHT   ; break;
-	case 'T': actionsMask &= ~RUN_TOP     ; break;
-	case 'G': actionsMask &= ~RUN_BOTTOM  ; break;
+	case 'e': case 'E': actionsMask &= ~ROT_LEFT     ; break;
+	case 't': case 'T': actionsMask &= ~ROT_RIGHT    ; break;
+	case 'y': case 'Y': actionsMask &= ~ROT_TOP      ; break;
+	case 'h': case 'H': actionsMask &= ~ROT_BOTTOM   ; break;
 
-	case 'Q': case 'q': actionsMask &= ~ROT_LEFT  ; break;
-	case 'E': case 'e': actionsMask &= ~ROT_RIGHT ; break;
-	case 'R': case 'r': actionsMask &= ~ROT_TOP   ; break;
-	case 'F': case 'f': actionsMask &= ~ROT_BOTTOM; break;
+	case 'z': case 'Z': actionsMask &= ~RUN_FLAG     ; break;
 	}
 	if (keyboardFunc) {
 		keyboardFunc(key, false, x, y);
@@ -171,26 +154,20 @@ void Camera::handleTick(int to) {
 	if (tickRedisplays) {
 		glutPostRedisplay();
 	}
-	if (camera && actionsMask) {
+	if (camera && (actionsMask & ~RUN_FLAG)) {
+		const float run = actionsMask & RUN_FLAG ? runFactor : 1.0;
 #define IF(mask) if (actionsMask & (mask))
-		IF(MOVE_FORWARD)  camera->moveForward( keyMovementFactor);
-		IF(MOVE_BACKWARD) camera->moveForward(-keyMovementFactor);
-		IF(MOVE_LEFT)     camera->moveLeft   ( keyMovementFactor);
-		IF(MOVE_RIGHT)    camera->moveLeft   (-keyMovementFactor);
-		IF(MOVE_TOP)      camera->moveTop    ( keyMovementFactor);
-		IF(MOVE_BOTTOM)   camera->moveTop    (-keyMovementFactor);
+		IF(MOVE_FORWARD)  camera->moveForward( keyMovementFactor * run);
+		IF(MOVE_BACKWARD) camera->moveForward(-keyMovementFactor * run);
+		IF(MOVE_LEFT)     camera->moveLeft   ( keyMovementFactor * run);
+		IF(MOVE_RIGHT)    camera->moveLeft   (-keyMovementFactor * run);
+		IF(MOVE_TOP)      camera->moveTop    ( keyMovementFactor * run);
+		IF(MOVE_BOTTOM)   camera->moveTop    (-keyMovementFactor * run);
 
-		IF(MOUSE_FORWARD) camera->moveForward( mouseMovementFactor);
+		IF(MOUSE_FORWARD) camera->moveForward( mouseMovementFactor * run);
 		/* MOUSE_BACKWARD unused */
-		IF(MOUSE_LEFT)     camera->moveLeft  ( mouseMovementFactor);
-		IF(MOUSE_RIGHT)    camera->moveLeft  (-mouseMovementFactor);
-
-		IF(RUN_FORWARD)   camera->moveForward( keyRunFactor);
-		IF(RUN_BACKWARD)  camera->moveForward(-keyRunFactor);
-		IF(RUN_LEFT)      camera->moveLeft   ( keyRunFactor);
-		IF(RUN_RIGHT)     camera->moveLeft   (-keyRunFactor);
-		IF(RUN_TOP)       camera->moveTop    ( keyRunFactor);
-		IF(RUN_BOTTOM)    camera->moveTop    (-keyRunFactor);
+		IF(MOUSE_LEFT)     camera->moveLeft  ( mouseMovementFactor * run);
+		IF(MOUSE_RIGHT)    camera->moveLeft  (-mouseMovementFactor * run);
 
 		IF(ROT_LEFT)      camera->rotateLeft ( keyRotationLeftFactor);
 		IF(ROT_RIGHT)     camera->rotateLeft (-keyRotationLeftFactor);

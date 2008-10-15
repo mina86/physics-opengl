@@ -112,7 +112,7 @@ struct Camera {
 	float getTopZ() { return getTop().z; }
 
 
-	void doLookAt() {
+	void doLookAt() const {
 		if (!valid) update();
 		gluLookAt(eye.x, eye.y, eye.z,
 		          3.0 * forward.x + eye.x,
@@ -146,10 +146,10 @@ struct Camera {
 		resizeFunc = theResizeFunc;
 	}
 
-	static float keyMovementFactor, keyRunFactor, keyRotationTopFactor;
+	static float keyMovementFactor, keyRotationTopFactor;
 	static float keyRotationLeftFactor, mouseMovementFactor;
-	static float mouseRunFactor, mouseRotationTopFactor;
-	static float mouseRotationLeftFactor;
+	static float mouseRotationTopFactor, mouseRotationLeftFactor;
+	static float runFactor;
 
 	static bool tickRedisplays;
 	static bool countTicks;
