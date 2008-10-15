@@ -12,6 +12,7 @@
 #include "sphere.hpp"
 #include "sintable.hpp"
 #include "text3d.hpp"
+#include "quadric.hpp"
 
 
 static mn::solar::Sphere *sun;
@@ -23,6 +24,11 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 	switch (key) {
 	case 27: /* Escape */
 		exit(0);
+
+	case 'v': case 'V':
+		mn::gl::Quadric::quadric()->setNextDrawStyle();
+		break;
+
 	case ' ':
 		mn::gl::Camera::tickRedisplays = mn::gl::Camera::countTicks = !mn::gl::Camera::countTicks;
 		break;

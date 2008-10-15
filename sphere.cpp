@@ -13,6 +13,7 @@
 #include "camera.hpp"
 #include "text3d.hpp"
 #include "sintable.hpp"
+#include "quadric.hpp"
 
 
 namespace mn {
@@ -80,8 +81,10 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 	glMaterialfv(GL_FRONT, GL_EMISSION, center ? materialColor : materialNoEmission);
 	glMaterialf(GL_FRONT, GL_SHININESS, 12);
 	unsigned slices = 30 / distanceFactor2;
+	if (size > 1) slices *= 2;
 	if (slices < 6) slices = 6;
-	glutSolidSphere(size, slices, slices);
+	/*glutSolidSphere(size, slices, slices);*/
+	gluSphere(gl::Quadric::quadric()->get(), size, slices, slices);
 
 	glRotatef(-phi, 0, 1, 0);
 	if (first) {
