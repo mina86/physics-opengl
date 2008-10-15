@@ -40,12 +40,13 @@ bool Camera::tickRedisplays = true, Camera::countTicks = true;
 unsigned long Camera::ticks = 0;
 
 float Camera::keyMovementFactor       =  .1;
-float Camera::keyRotationTopFactor    = M_PI / 180;
-float Camera::keyRotationLeftFactor   = M_PI / 180;
+float Camera::keyRotationTopFactor    = M_PI / 180.0;
+float Camera::keyRotationLeftFactor   = M_PI / 180.0;
 float Camera::mouseMovementFactor     =  .1;
-float Camera::mouseRotationTopFactor  = M_PI / 1800;
-float Camera::mouseRotationLeftFactor = M_PI / 1800;
-float Camera::runFactor               = 5.0;
+float Camera::mouseRotationTopFactor  = M_PI / 1800.0;
+float Camera::mouseRotationLeftFactor = M_PI / 1800.0;
+float Camera::runFactor               = 10.0;
+float Camera::creepFactor             = 0.1;
 
 
 static unsigned actionsMask = 0;
@@ -67,7 +68,8 @@ enum {
 	ROT_TOP        = 1 << 12,
 	ROT_BOTTOM     = 1 << 13,
 
-	RUN_FLAG       = 1 << 14
+	RUN_FLAG       = 1 << 14,
+	CREEP_FLAG     = 1 << 15
 };
 
 
@@ -87,6 +89,9 @@ void Camera::handleKeyboardDown(unsigned char key, int x, int y) {
 	case 'h': case 'H': actionsMask |= ROT_BOTTOM   ; break;
 
 	case 'z': case 'Z': actionsMask |= RUN_FLAG     ; break;
+	case 'a': case 'A': actionsMask |= CREEP_FLAG   ; break;
+
+	case 'q': case 'Q': if (camera) camera->reset() ; break;
 	}
 	if (keyboardFunc) {
 		keyboardFunc(key, true, x, y);
@@ -108,6 +113,7 @@ void Camera::handleKeyboardUp(unsigned char key, int x, int y) {
 	case 'h': case 'H': actionsMask &= ~ROT_BOTTOM   ; break;
 
 	case 'z': case 'Z': actionsMask &= ~RUN_FLAG     ; break;
+	case 'q': case 'Q': actionsMask &= ~CREEP_FLAG   ; break;
 	}
 	if (keyboardFunc) {
 		keyboardFunc(key, false, x, y);
@@ -157,8 +163,9 @@ void Camera::handleTick(int to) {
 	if (tickRedisplays) {
 		glutPostRedisplay();
 	}
-	if (camera && (actionsMask & ~RUN_FLAG)) {
-		const float run = actionsMask & RUN_FLAG ? runFactor : 1.0;
+	if (camera && (actionsMask & ~(RUN_FLAG | CREEP_FLAG))) {
+		const float run = actionsMask & RUN_FLAG ? runFactor :
+			(actionsMask & CREEP_FLAG ? creepFactor : 1.0);
 #define IF(mask) if (actionsMask & (mask))
 		IF(MOVE_FORWARD)  camera->moveForward( keyMovementFactor * run);
 		IF(MOVE_BACKWARD) camera->moveForward(-keyMovementFactor * run);

@@ -72,6 +72,14 @@ inline Vector operator/(Vector a, float r) { return a /= r; }
 struct Camera {
 	Camera() : eye(0, 0, 5), rotX(M_PI/2), rotY(-M_PI/2), valid(false) { }
 
+	void reset() {
+		eye.x = eye.y = 0;
+		eye.z = 5;
+		rotX = M_PI/2;
+		rotY = -M_PI/2;
+		valid = false;
+	}
+
 	const Vector &getEye() const { return eye; }
 	void setEye(const Vector &v) { eye = v; }
 	float getEyeX() const { return eye.x; }
@@ -151,7 +159,7 @@ struct Camera {
 	static float keyMovementFactor, keyRotationTopFactor;
 	static float keyRotationLeftFactor, mouseMovementFactor;
 	static float mouseRotationTopFactor, mouseRotationLeftFactor;
-	static float runFactor;
+	static float runFactor, creepFactor;
 
 	static bool tickRedisplays;
 	static bool countTicks;
