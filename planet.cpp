@@ -20,6 +20,10 @@ namespace mn {
 namespace solar {
 
 
+const GLfloat Sphere::materialSpecular[4] = { 0.75, 0.75, 0.75, 1 };
+const GLfloat Sphere::materialNoEmission[4] = { 0, 0, 0, 1 };
+
+
 Sphere::~Sphere() {
 	for (Sphere *sp = first, *n; sp; sp = n) {
 		n = sp->next;
@@ -37,7 +41,7 @@ static void drawCircle(float radius) {
 }
 
 
-void Sphere::draw(unsigned long ticks) {
+void Sphere::draw(unsigned long ticks, bool center) {
 	glPushMatrix();
 
 	glRotatef(ticks * omega, 0, 1, 0);
@@ -47,7 +51,7 @@ void Sphere::draw(unsigned long ticks) {
 		if (!circleList) {
 			circleList = glGenLists(1);
 			if (circleList) glNewList(circleList, GL_COMPILE);
-			glColor3f(color.r * 0.2, color.g * 0.2, color.b * 0.2);
+			glColor3f(materialColor[0] * 0.2, materialColor[1] * 0.2, materialColor[2] * 0.2);
 			drawCircle(distance);
 			if (circleList) {
 				glEndList();
@@ -60,7 +64,11 @@ void Sphere::draw(unsigned long ticks) {
 	glEnable(GL_LIGHTING);
 
 	glTranslatef(0, 0, distance);
-	glColor3f(color.r, color.g, color.b);
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, materialSpecular);
+	glMaterialfv(GL_FRONT, GL_EMISSION, center ? materialEmission : materialNoEmission);
+	glMaterialf(GL_FRONT, GL_SHININESS, 12);
 	glutSolidSphere(size, 30, 30);
 
 	glRotatef(ticks * -omega, 0, 1, 0);

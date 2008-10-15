@@ -33,7 +33,7 @@ static void handleResize(int w, int h) {
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0, (double)w / (double)h, 0.1, 10000.0);
+	gluPerspective(45.0, (double)w / (double)h, 0.01, 10000.0);
 }
 
 
@@ -79,7 +79,9 @@ static void drawScene() {
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
 		glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
 
-		sun->draw(mn::gl::Camera::getTicks());
+		glDisable(GL_COLOR_MATERIAL);
+		sun->draw(mn::gl::Camera::getTicks(), true);
+		glEnable(GL_COLOR_MATERIAL);
 
 		glDisable(GL_LIGHT1);
 		glDisable(GL_LIGHT0);
