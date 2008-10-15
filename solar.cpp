@@ -9,7 +9,7 @@
 #endif
 
 #include "camera.hpp"
-#include "planet.hpp"
+#include "sphere.hpp"
 #include "sintable.hpp"
 #include "text3d.hpp"
 
@@ -80,7 +80,7 @@ static void drawScene() {
 		glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
 
 		glDisable(GL_COLOR_MATERIAL);
-		sun->draw(mn::gl::Camera::getTicks(), true);
+		sun->draw(mn::gl::Camera::getTicks(), mn::gl::Vector(0, 0, 0));
 		glEnable(GL_COLOR_MATERIAL);
 
 		glDisable(GL_LIGHT1);

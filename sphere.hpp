@@ -4,6 +4,7 @@
 #include <string>
 
 #include "color.hpp"
+#include "vector.hpp"
 
 
 namespace mn {
@@ -15,10 +16,10 @@ struct Sphere {
 	       const gl::Color &color, const std::string &theName)
 		: distance(theDistance), size(theSize), omega(theOmega),
 		  name(theName), first(0), next(0), circleList(0), textList(0) {
-		materialEmission[0] = (materialColor[0] = color.r) * 0.75;
-		materialEmission[1] = (materialColor[1] = color.g) * 0.75;
-		materialEmission[2] = (materialColor[2] = color.b) * 0.75;
-		materialEmission[3] = materialColor[3] = 1;
+		materialColor[0] = color.r;
+		materialColor[1] = color.g;
+		materialColor[2] = color.b;
+		materialColor[3] = 1;
 	}
 
 	~Sphere();
@@ -31,14 +32,16 @@ struct Sphere {
 		return sphere;
 	}
 
-	void draw(unsigned long ticks, bool center = false);
+	void draw(unsigned long ticks, const gl::Vector &pos);
+
+	static float cutoffDistance2;
 
 private:
 	const float distance, size, omega;
 	const std::string name;
 	Sphere *first, *next;
 
-	GLfloat materialColor[4], materialEmission[4];
+	GLfloat materialColor[4];
 	static const GLfloat materialSpecular[4], materialNoEmission[4];
 
 	unsigned int circleList, textList;

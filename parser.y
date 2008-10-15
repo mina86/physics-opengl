@@ -54,7 +54,7 @@ struct Sphere;
 %{
 #include <stdio.h>
 
-#include "planet.hpp"
+#include "sphere.hpp"
 #include "lexer.hpp"
 
 int yylex(yy::Parser::semantic_type *yylval,
