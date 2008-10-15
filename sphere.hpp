@@ -15,7 +15,7 @@ struct Sphere {
 	Sphere(float theDistance, float theSize, float theOmega,
 	       const gl::Color &color, const std::string &theName)
 		: distance(theDistance), size(theSize), omega(theOmega),
-		  name(theName), first(0), next(0), circleList(0), textList(0) {
+		  name(theName), first(0), next(0), textList(0) {
 		materialColor[0] = color.r;
 		materialColor[1] = color.g;
 		materialColor[2] = color.b;
@@ -45,7 +45,7 @@ private:
 	GLfloat materialColor[4];
 	static const GLfloat materialSpecular[4], materialNoEmission[4];
 
-	unsigned int circleList, textList;
+	unsigned int textList;
 };
 
 

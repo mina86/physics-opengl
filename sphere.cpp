@@ -38,11 +38,28 @@ Sphere::~Sphere() {
 
 
 static void drawCircle(float radius) {
-	glBegin(GL_LINE_LOOP);
-	for (int arg = 0; arg < 360; ++arg) {
-		glVertex3f(radius * mn::sin(arg), 0, radius * mn::cos(arg));
+	static GLuint displayList = 0;
+
+	glPushMatrix();
+	glScalef(radius, radius, radius);
+	if (displayList) {
+		glCallList(displayList);
+	} else {
+		displayList = glGenLists(1);
+		if (displayList) {
+			glNewList(displayList, GL_COMPILE);
+		}
+		glBegin(GL_LINE_LOOP);
+		for (int arg = 0; arg < 360; ++arg) {
+			glVertex3f(mn::sin(arg), 0, mn::cos(arg));
+		}
+		glEnd();
+		if (displayList) {
+			glEndList();
+			glCallList(displayList);
+		}
 	}
-	glEnd();
+	glPopMatrix();
 }
 
 
@@ -60,19 +77,9 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 
 	if (drawOrbits && distance > 0.1) {
 		glDisable(GL_LIGHTING);
-		if (!circleList) {
-			circleList = glGenLists(1);
-			if (circleList) glNewList(circleList, GL_COMPILE);
-			glColor3f(materialColor[0] * 0.2, materialColor[1] * 0.2,
-			          materialColor[2] * 0.2);
-			drawCircle(distance);
-			if (circleList) {
-				glEndList();
-				glCallList(circleList);
-			}
-		} else {
-			glCallList(circleList);
-		}
+		glColor3f(materialColor[0] * 0.2, materialColor[1] * 0.2,
+		          materialColor[2] * 0.2);
+		drawCircle(distance);
 		glEnable(GL_LIGHTING);
 	}
 
