@@ -25,6 +25,10 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 	case 27: /* Escape */
 		exit(0);
 
+	case 'c': case 'C':
+		mn::solar::Sphere::lowQuality = !mn::solar::Sphere::lowQuality;
+		break;
+
 	case 'v': case 'V':
 		mn::gl::Quadric::quadric()->setNextDrawStyle();
 		break;
@@ -123,7 +127,7 @@ static void drawScene() {
 		glTranslatef(-0.8, 0.8, 0);
 		glScalef(0.03, 0.03, 0.03);
 		char buffer[1024];
-		sprintf(buffer, "position = (%3.3f, %3.3f, %3.3f)\nrotation = (%3.3f, %3.3f, %3.3f)\nfps = %3.1f", eye.x, eye.y, eye.z, camera.getRotX() * (180/M_PI), camera.getRotY() * (180/M_PI), 0.0, fps);
+		sprintf(buffer, "position = (%6.2f, %6.2f, %6.2f)\ndistance = %6.2f\nrotation = (%2.2f, %2.2f, %2.2f)\nfps = %3.1f", eye.x, eye.y, eye.z, eye.length(), camera.getRotX() * (180/M_PI), camera.getRotY() * (180/M_PI), 0.0, fps);
 		glColor3f(1, 1, 1);
 		t3d::draw2D(std::string(buffer), -1, -1);
 	}

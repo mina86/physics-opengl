@@ -22,6 +22,7 @@ namespace solar {
 
 
 float Sphere::cutoffDistance2 = 2500.0;
+bool Sphere::lowQuality = false;
 bool Sphere::drawOrbits = true;
 bool Sphere::drawNames = true;
 
@@ -91,6 +92,7 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 	glMaterialf(GL_FRONT, GL_SHININESS, 12);
 	unsigned slices = 30 / distanceFactor2;
 	if (size > 1) slices *= 2;
+	if (lowQuality) slices /= 3;
 	if (slices < 6) slices = 6;
 	gluSphere(gl::Quadric::quadric()->get(), size, slices, slices);
 
