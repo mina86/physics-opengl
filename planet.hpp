@@ -3,18 +3,10 @@
 
 #include <string>
 
+#include "color.hpp"
+
+
 namespace mn {
-
-
-namespace gl {
-
-struct Color {
-	float r, g, b;
-	Color(float _r = 1, float _g = 1, float _b = 1) : r(_r), g(_g), b(_b) { }
-};
-
-}
-
 
 namespace solar {
 
@@ -43,11 +35,11 @@ private:
 	const std::string name;
 	Sphere *first, *next;
 
-	GLuint circleList, textList;
+	unsigned int circleList, textList;
 };
 
-}
 
+}
 
 }
 

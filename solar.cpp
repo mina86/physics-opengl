@@ -153,13 +153,13 @@ int main(int argc, char** argv) {
 	const float omegaFactor = 0.1;
 
 	sun = new mn::solar::Sphere(0, /*109*/ 20 * sizeFactor, 0,
-	                            mn::gl::Color(1, 1, 0), "Sun");
+	                            mn::gl::color(1, 1, 0), "Sun");
 	mn::solar::Sphere *top = sun;
 #define P(distance, radius, period, r, g, b, name) \
 	top->pushSatelite(*new mn::solar::Sphere(distance * distanceFactor,	\
 	                                         radius * sizeFactor, \
 	                                         omegaFactor/period, \
-	                                         mn::gl::Color(r, g, b), name));
+	                                         mn::gl::color(r, g, b), name));
 	P(0.38, 0.38, 0.241, 1.0, 1.0, 1.0, "Mercury");
 	P(0.73, 0.95, 0.615, 1.0, 1.0, 1.0, "Venus");
 	top = &P(1.00, 1.00, 1.000, 0.0, 1.0, 1.0, "Earth");
