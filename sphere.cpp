@@ -22,6 +22,8 @@ namespace solar {
 
 
 float Sphere::cutoffDistance2 = 2500.0;
+bool Sphere::drawOrbits = true;
+bool Sphere::drawNames = true;
 
 const GLfloat Sphere::materialSpecular[4] = { 0.75, 0.75, 0.75, 1 };
 const GLfloat Sphere::materialNoEmission[4] = { 0, 0, 0, 1 };
@@ -50,14 +52,14 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 	const gl::Vector pos = centerPos + gl::Vector(distance * mn::sin(phi + 0.5), 0, distance * mn::cos(phi + 0.5));
 	gl::Camera *const cam = gl::Camera::getDefaultCamera();
 	const float distance2 = cam ? cam->getEye().distance2(pos) : 0;
-	const float distanceFactor2 = distanceFactor2 > cutoffDistance2 ? distanceFactor2 / cutoffDistance2 : 1;
+	const float distanceFactor2 = distance2 > cutoffDistance2 ? distance2 / cutoffDistance2 : 1;
 
 	glPushMatrix();
 
 	glRotatef(phi, 0, 1, 0);
 
-	glDisable(GL_LIGHTING);
-	if (distance > 0.1) {
+	if (drawOrbits && distance > 0.1) {
+		glDisable(GL_LIGHTING);
 		if (!circleList) {
 			circleList = glGenLists(1);
 			if (circleList) glNewList(circleList, GL_COMPILE);
@@ -71,8 +73,8 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 		} else {
 			glCallList(circleList);
 		}
+		glEnable(GL_LIGHTING);
 	}
-	glEnable(GL_LIGHTING);
 
 	glTranslatef(0, 0, distance);
 
@@ -83,7 +85,6 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 	unsigned slices = 30 / distanceFactor2;
 	if (size > 1) slices *= 2;
 	if (slices < 6) slices = 6;
-	/*glutSolidSphere(size, slices, slices);*/
 	gluSphere(gl::Quadric::quadric()->get(), size, slices, slices);
 
 	glRotatef(-phi, 0, 1, 0);
@@ -93,7 +94,7 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 		}
 	}
 
-	if (distanceFactor2 < 1.1) {
+	if (drawNames && distanceFactor2 < 1.1) {
 		if (cam) {
 			float rot = cam->getRotY();
 			glRotatef(rot * (-180.0 / M_PI) - 90, 0, 1, 0);

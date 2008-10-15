@@ -29,10 +29,23 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 		mn::gl::Quadric::quadric()->setNextDrawStyle();
 		break;
 
+	case 'b': case 'B':
+		mn::solar::Sphere::drawOrbits = !mn::solar::Sphere::drawOrbits;
+		break;
+
+	case 'n': case 'N':
+		mn::solar::Sphere::drawNames = !mn::solar::Sphere::drawNames;
+		break;
+
 	case ' ':
 		mn::gl::Camera::tickRedisplays = mn::gl::Camera::countTicks = !mn::gl::Camera::countTicks;
 		break;
+
+	default:
+		return;
 	}
+
+	glutPostRedisplay();
 }
 
 static void handleResize(int w, int h) {

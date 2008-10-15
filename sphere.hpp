@@ -35,6 +35,7 @@ struct Sphere {
 	void draw(unsigned long ticks, const gl::Vector &pos);
 
 	static float cutoffDistance2;
+	static bool lowQuality, drawOrbits, drawNames;
 
 private:
 	const float distance, size, omega;

@@ -113,7 +113,7 @@ void Camera::handleKeyboardUp(unsigned char key, int x, int y) {
 	case 'h': case 'H': actionsMask &= ~ROT_BOTTOM   ; break;
 
 	case 'z': case 'Z': actionsMask &= ~RUN_FLAG     ; break;
-	case 'q': case 'Q': actionsMask &= ~CREEP_FLAG   ; break;
+	case 'a': case 'A': actionsMask &= ~CREEP_FLAG   ; break;
 	}
 	if (keyboardFunc) {
 		keyboardFunc(key, false, x, y);
