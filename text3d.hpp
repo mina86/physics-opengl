@@ -31,7 +31,7 @@ namespace t3d {
  * Initializes 3D text.  Must be called before other functions in this
  * header.
  */
-void init();
+void init(const char *filename = "charset");
 
 /**
  * Frees memory allocated for 3D text.  No other functions in this

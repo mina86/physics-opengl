@@ -494,10 +494,10 @@ namespace {
 	}
 }
 
-void init() {
+void init(const char *filename) {
 	if (font == NULL) {
 		std::ifstream input;
-		input.open("charset", std::istream::binary);
+		input.open(filename, std::istream::binary);
 		font = new Font(input);
 		input.close();
 	}

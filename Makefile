@@ -6,10 +6,10 @@ else
 	LIBS = -lglut
 endif
 
-all: cube
+all: cube solar
 
 cube.o: cube.cpp camera.hpp
-solar.o: solar.cpp camera.hpp planet.hpp
+solar.o: solar.cpp camera.hpp planet.hpp text3d.hpp
 camera.o: camera.cpp camera.hpp
 planet.o: planet.cpp planet.hpp camera.hpp sintable.hpp
 text3d.o: text3d.cpp text3d.hpp

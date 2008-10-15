@@ -5,14 +5,22 @@
 
 namespace mn {
 
+
+namespace gl {
+
 struct Color {
 	float r, g, b;
 	Color(float _r = 1, float _g = 1, float _b = 1) : r(_r), g(_g), b(_b) { }
 };
 
+}
+
+
+namespace solar {
+
 struct Sphere {
-	Sphere(float theDistance, float theSize, float theOmega, Color theColor,
-	       const std::string &theName)
+	Sphere(float theDistance, float theSize, float theOmega,
+	       gl::Color theColor, const std::string &theName)
 		: distance(theDistance), size(theSize), omega(theOmega),
 		  color(theColor), name(theName),
 		  first(0), next(0), circleList(0), textList(0) {}
@@ -31,12 +39,15 @@ struct Sphere {
 
 private:
 	const float distance, size, omega;
-	const Color color;
+	const gl::Color color;
 	const std::string name;
 	Sphere *first, *next;
 
 	GLuint circleList, textList;
 };
+
+}
+
 
 }
 

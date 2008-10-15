@@ -6,6 +6,9 @@
 
 namespace mn {
 
+namespace gl {
+
+
 void Camera::update() const {
 	const float cx = std::cos(rotX), sx = std::sin(rotX);
 	const float cy = std::cos(rotY), sy = std::sin(rotY);
@@ -224,5 +227,7 @@ void Camera::registerHandlers() {
 	glutTimerFunc(40, handleTick, 40);
 }
 
+
+}
 
 }

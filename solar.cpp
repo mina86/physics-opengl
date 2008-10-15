@@ -13,7 +13,8 @@
 #include "sintable.hpp"
 #include "text3d.hpp"
 
-static mn::Sphere *sun;
+
+static mn::solar::Sphere *sun;
 
 
 static void handleKeyboard(unsigned key, bool down, int x, int y) {
@@ -23,7 +24,7 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 	case 27: /* Escape */
 		exit(0);
 	case ' ':
-		mn::Camera::tickRedisplays = mn::Camera::countTicks = !mn::Camera::countTicks;
+		mn::gl::Camera::tickRedisplays = mn::gl::Camera::countTicks = !mn::gl::Camera::countTicks;
 		break;
 	}
 }
@@ -61,8 +62,8 @@ static void drawScene() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	const mn::Camera &camera = *mn::Camera::getDefaultCamera();
-	const mn::Vector &eye = camera.getEye();
+	const mn::gl::Camera &camera = *mn::gl::Camera::getDefaultCamera();
+	const mn::gl::Vector &eye = camera.getEye();
 
 	{
 		pushMatrix pm;
@@ -78,7 +79,7 @@ static void drawScene() {
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
 		glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
 
-		sun->draw(mn::Camera::getTicks());
+		sun->draw(mn::gl::Camera::getTicks());
 
 		glDisable(GL_LIGHT1);
 		glDisable(GL_LIGHT0);
@@ -108,9 +109,9 @@ static void drawScene() {
 
 	glTranslatef(-1, -0.8, 0);
 	camera.doLookAt();
-	glTranslatef(mn::Camera::getDefaultCamera()->getCenterX(),
-	             mn::Camera::getDefaultCamera()->getCenterY(),
-	             mn::Camera::getDefaultCamera()->getCenterZ());
+	glTranslatef(mn::gl::Camera::getDefaultCamera()->getCenterX(),
+	             mn::gl::Camera::getDefaultCamera()->getCenterY(),
+	             mn::gl::Camera::getDefaultCamera()->getCenterZ());
 	glBegin(GL_LINES);
 	glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(0.2, 0, 0);
 	glColor3f(0, 1, 0); glVertex3f(0, 0, 0); glVertex3f(0, 0.2, 0);
@@ -135,7 +136,7 @@ int main(int argc, char** argv) {
 	glutSetCursor(GLUT_CURSOR_NONE);
 
 	try {
-		t3d::init();
+		t3d::init("data/charset");
 	}
 	catch (const t3d::load_exception &e) {
 		fprintf(stderr, "Error initialising 3D text: %s\n", e.what());
@@ -151,14 +152,14 @@ int main(int argc, char** argv) {
 	const float sizeFactor = 6371000e-8; /* Earth's mean radius */
 	const float omegaFactor = 0.1;
 
-	sun = new mn::Sphere(0, /*109*/ 20 * sizeFactor, 0, mn::Color(1, 1, 0),
-	                     "Sun");
-	mn::Sphere *top = sun;
+	sun = new mn::solar::Sphere(0, /*109*/ 20 * sizeFactor, 0,
+	                            mn::gl::Color(1, 1, 0), "Sun");
+	mn::solar::Sphere *top = sun;
 #define P(distance, radius, period, r, g, b, name) \
-	top->pushSatelite(*new mn::Sphere(distance * distanceFactor,	\
-	                                  radius * sizeFactor, \
-	                                  omegaFactor/period, \
-	                                  mn::Color(r, g, b), name));
+	top->pushSatelite(*new mn::solar::Sphere(distance * distanceFactor,	\
+	                                         radius * sizeFactor, \
+	                                         omegaFactor/period, \
+	                                         mn::gl::Color(r, g, b), name));
 	P(0.38, 0.38, 0.241, 1.0, 1.0, 1.0, "Mercury");
 	P(0.73, 0.95, 0.615, 1.0, 1.0, 1.0, "Venus");
 	top = &P(1.00, 1.00, 1.000, 0.0, 1.0, 1.0, "Earth");
@@ -177,16 +178,16 @@ int main(int argc, char** argv) {
 	P(88.0, 0.14, 12050, 1.0, 1.0, 1.0, "90377 Sedna");
 #undef P
 
-	mn::Camera camera;
-	mn::Camera::setDefaultCamera(&camera);
-	mn::Camera::setSize(w, h);
+	mn::gl::Camera camera;
+	mn::gl::Camera::setDefaultCamera(&camera);
+	mn::gl::Camera::setSize(w, h);
 
-	mn::Camera::keyMovementFactor   *=  3;
-	mn::Camera::mouseMovementFactor *=  3;
+	mn::gl::Camera::keyMovementFactor   *=  3;
+	mn::gl::Camera::mouseMovementFactor *=  3;
 
-	mn::Camera::registerHandlers();
-	mn::Camera::setResizeFunc(handleResize);
-	mn::Camera::setKeyboardFunc(handleKeyboard);
+	mn::gl::Camera::registerHandlers();
+	mn::gl::Camera::setResizeFunc(handleResize);
+	mn::gl::Camera::setKeyboardFunc(handleKeyboard);
 	glutDisplayFunc(drawScene);
 
 

@@ -12,6 +12,8 @@
 
 namespace mn {
 
+namespace gl {
+
 
 struct Vector {
 	float x, y, z;
@@ -180,6 +182,8 @@ private:
 	static unsigned long ticks;
 };
 
+
+}
 
 }
 

@@ -17,6 +17,9 @@
 
 namespace mn {
 
+namespace solar {
+
+
 Sphere::~Sphere() {
 	for (Sphere *sp = first, *n; sp; sp = n) {
 		n = sp->next;
@@ -67,7 +70,7 @@ void Sphere::draw(unsigned long ticks) {
 		}
 	}
 
-	Camera *cam = Camera::getDefaultCamera();
+	gl::Camera *cam = gl::Camera::getDefaultCamera();
 	if (cam) {
 		float rot = cam->getRotY();
 		glRotatef(rot * (-180.0 / M_PI) - 90, 0, 1, 0);
@@ -89,5 +92,7 @@ void Sphere::draw(unsigned long ticks) {
 	glPopMatrix();
 }
 
+
+}
 
 }

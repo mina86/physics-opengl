@@ -71,7 +71,7 @@ static void drawScene() {
 	glLoadIdentity();
 
 	//glPushMatrix();
-	mn::Camera::defaultLookAt();
+	mn::gl::Camera::defaultLookAt();
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
@@ -94,7 +94,7 @@ static void drawScene() {
 	glEnd();
 
 	glPushMatrix();
-	glRotatef(mn::Camera::getTicks(), 1.0f, 1.0f, 0.0f);
+	glRotatef(mn::gl::Camera::getTicks(), 1.0f, 1.0f, 0.0f);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT); glCallList(displayLists.cube);
 	glCullFace(GL_BACK);  glCallList(displayLists.cube);
@@ -103,9 +103,9 @@ static void drawScene() {
 
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
-	glTranslatef(mn::Camera::getDefaultCamera()->getCenterX(),
-	             mn::Camera::getDefaultCamera()->getCenterY(),
-	             mn::Camera::getDefaultCamera()->getCenterZ());
+	glTranslatef(mn::gl::Camera::getDefaultCamera()->getCenterX(),
+	             mn::gl::Camera::getDefaultCamera()->getCenterY(),
+	             mn::gl::Camera::getDefaultCamera()->getCenterZ());
 
 	glBegin(GL_LINES);
 	glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(0.2, 0, 0);
@@ -138,13 +138,13 @@ int main(int argc, char** argv) {
 	drawCube();
 	glEndList();
 
-	mn::Camera camera;
-	mn::Camera::setDefaultCamera(&camera);
-	mn::Camera::setSize(w, h);
+	mn::gl::Camera camera;
+	mn::gl::Camera::setDefaultCamera(&camera);
+	mn::gl::Camera::setSize(w, h);
 
-	mn::Camera::registerHandlers();
-	mn::Camera::setResizeFunc(handleResize);
-	mn::Camera::setKeyboardFunc(handleKeyboard);
+	mn::gl::Camera::registerHandlers();
+	mn::gl::Camera::setResizeFunc(handleResize);
+	mn::gl::Camera::setKeyboardFunc(handleKeyboard);
 	glutDisplayFunc(drawScene);
 
 	glutMainLoop();
