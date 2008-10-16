@@ -13,6 +13,7 @@
 #include "sintable.hpp"
 #include "text3d.hpp"
 #include "quadric.hpp"
+#include "data-loader.hpp"
 
 
 static mn::solar::Sphere *sun;
@@ -93,20 +94,20 @@ static void drawScene() {
 
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
-		glEnable(GL_LIGHT1);
+		glDisable(GL_COLOR_MATERIAL);
 
 		camera.doLookAt();
 
+		/*
 		static const GLfloat lightColor0[] = {1.0f, 1.0f, 1.0f, 1.0f};
 		static const GLfloat lightPos0[] = {0, 0, 0, 1.0f};
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
 		glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
+		*/
 
-		glDisable(GL_COLOR_MATERIAL);
 		sun->draw(mn::gl::Camera::getTicks(), mn::gl::Vector(0, 0, 0));
-		glEnable(GL_COLOR_MATERIAL);
 
-		glDisable(GL_LIGHT1);
+		glEnable(GL_COLOR_MATERIAL);
 		glDisable(GL_LIGHT0);
 		glDisable(GL_LIGHTING);
 	}
@@ -148,10 +149,15 @@ static void drawScene() {
 
 
 int main(int argc, char** argv) {
-	mn::initSinTable();
-
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+
+	mn::initSinTable();
+
+	sun = mn::solar::loadData(argc == 1 ? "data/helio.txt" : argv[1]);
+	if (!sun) {
+		return 1;
+	}
 
 	int w = glutGet(GLUT_SCREEN_WIDTH);
 	int h = glutGet(GLUT_SCREEN_HEIGHT);
@@ -173,6 +179,7 @@ int main(int argc, char** argv) {
 	glEnable(GL_CULL_FACE);
 	glShadeModel(GL_SMOOTH);
 
+#if 0
 	const float distanceFactor = 149597870691e-10;  /* AU */
 	const float sizeFactor = 6371000e-8; /* Earth's mean radius */
 	const float omegaFactor = 0.1;
@@ -202,6 +209,7 @@ int main(int argc, char** argv) {
 	P(67.7, 0.19, 557.0, 1.0, 1.0, 1.0, "136199 Eris");
 	P(88.0, 0.14, 12050, 1.0, 1.0, 1.0, "90377 Sedna");
 #undef P
+#endif
 
 	mn::gl::Camera camera;
 	mn::gl::Camera::setDefaultCamera(&camera);

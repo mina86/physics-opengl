@@ -6,10 +6,6 @@
 #include <string>
 #include <stdexcept>
 
-#include "parser.hpp"
-#include "position.hh"
-#include "location.hh"
-
 
 namespace mn {
 
@@ -17,8 +13,41 @@ namespace solar {
 
 
 struct Lexer {
-	struct error : public std::runtime_error {
-		error(const std::string &msg) : runtime_error(msg) { }
+	struct Position {
+		unsigned line, column;
+
+		Position(unsigned theLine = 1, unsigned theColumn = 1)
+			: line(theLine), column(theColumn) { }
+	};
+
+	struct Location {
+		Position begin, end;
+
+		Location(const Position &theBegin, const Position &theEnd)
+			: begin(theBegin), end(theEnd) { }
+		Location(const Position &position = Position())
+			: begin(position), end(position) { }
+	};
+
+
+
+	/**
+	 * Named tokens.  Other tokens correspond directly to character
+	 * codes.
+	 */
+	enum NamedTokens {
+		T_ERROR = -2, T_EOF = -1, /* errors and such */
+		T_FACTORS = 256, T_LIGHT, /* keywords */
+		T_REAL, T_STRING /* tokens with parameters */
+	};
+
+	/** Returns a user readable name of a token. */
+	static const char *tokenName(int token);
+
+
+	union Value {
+		float real;
+		char *string;
 	};
 
 
@@ -32,14 +61,9 @@ struct Lexer {
 	 * \param theStream input stream to read from or \c NULL.
 	 * \throw error if file could not be opened.
 	 */
-	explicit Lexer(const char *theFilename, FILE *theStream = 0)
-		: filename(theFilename),
-		  stream(theStream ? theStream : openFile(theFilename)),
-		  closeStream(stream) {
-		current.filename = &filename;
-		current.line = current.column = 1;
-		previous = current;
-	}
+	explicit Lexer(const char *theFilename)
+		: filename(theFilename), stream(openFile(theFilename)),
+		  closeStream(true) { }
 
 	/**
 	 * Creates lexer reading from a file.  If \a theStream is \c NULL
@@ -51,28 +75,25 @@ struct Lexer {
 	 * \param theStream input stream to read from or \c NULL.
 	 * \throw error if file could not be opened.
 	 */
-	explicit Lexer(const std::string &theFilename, FILE *theStream = 0)
-		: filename(theFilename),
-		  stream(theStream ? theStream : openFile(theFilename.c_str())),
-		  closeStream(stream) {
-		current.filename = &filename;
-		current.line = current.column = 1;
-		previous = current;
-	}
+	explicit Lexer(const std::string &theFilename)
+		: filename(theFilename), stream(openFile(theFilename.c_str())),
+		  closeStream(true) { }
 
 	/** Creates lexer reading from standard input.  */
 	Lexer() : filename(stdin_filename), stream(stdin), closeStream(false) {
-		current.filename = &filename;
 		current.line = current.column = 1;
 		previous = current;
 	}
 
 	/** Closes stream if needed. */
 	~Lexer() {
-		if (closeStream) {
+		if (closeStream && stream) {
 			fclose(stream);
 		}
 	}
+
+
+	bool operator!() const { return !stream; }
 
 
 	/**
@@ -82,11 +103,13 @@ struct Lexer {
 	 *        token.
 	 * \return read token.
 	 */
-	int nextToken(yy::Parser::semantic_type &value,
-	              yy::location &location);
+	int nextToken(Value &value, Location &location);
+
+	/** Returns file name. */
+	const std::string &getFileName() const { return filename; }
 
 	/** Returns current position in stream. */
-	const yy::position &getPosition() const { return current; }
+	const Position &getPosition() const { return current; }
 
 
 private:
@@ -116,9 +139,9 @@ private:
 	/** Whether stream should be closed by destructor. */
 	bool closeStream;
 	/** Current position in stream. */
-	yy::position current;
+	Position current;
 	/** A position in stream before last character was read. */
-	yy::position previous;
+	Position previous;
 
 
 	/** Returns next character from file and updates location. */

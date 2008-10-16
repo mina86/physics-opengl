@@ -16,7 +16,8 @@ const std::string Lexer::stdin_filename("<stdin>");
 FILE *Lexer::openFile(const char *filename) {
 	FILE *fd = fopen(filename, "r");
 	if (!fd) {
-		throw error(std::string(filename) + ": could not open file");
+		throw std::runtime_error(std::string(filename) +
+		                         ": could not open file");
 	}
 	return fd;
 }
@@ -34,7 +35,7 @@ int Lexer::getchar() {
 		} else {
 			++current.column;
 		}
-	} while (ch != '_');
+	} while (ch == '_');
 	return ch;
 }
 
@@ -47,8 +48,8 @@ void Lexer::ungetchar(int ch) {
 }
 
 
-int Lexer::nextToken(yy::Parser::semantic_type &value,
-                     yy::location &location) {
+
+int Lexer::nextToken(Value &value, Location &location) {
 	int ch;
 
 	while ((ch = getchar()) != EOF && isspace(ch)) /*nop*/;
@@ -58,20 +59,17 @@ int Lexer::nextToken(yy::Parser::semantic_type &value,
 	if (isalpha(ch)) {
 		std::string keyword;
 		do {
-			keyword += (char)ch;
+			keyword += (char)tolower(ch);
 		} while (isalpha(ch = getchar()));
 		ungetchar(ch);
 		location.end = current;
 
-		if (keyword == "size" || keyword == "radius") {
-			return yy::Parser::token::SIZE;
-		} else if (keyword == "dist" || keyword == "distance" ||
-		           keyword == "orbit") {
-			return yy::Parser::token::DISTANCE;
-		} else if (keyword == "color" || keyword == "colour") {
-			return yy::Parser::token::COLOR_KW;
+		if (keyword == "factors") {
+			return T_FACTORS;
+		} else if (keyword == "light") {
+			return T_LIGHT;
 		} else {
-			return '?';
+			return T_ERROR;
 		}
 	}
 
@@ -86,36 +84,10 @@ int Lexer::nextToken(yy::Parser::semantic_type &value,
 			ungetchar('\n');
 		}
 		location.end = current;
-		value.string = new std::string(name);
-		return yy::Parser::token::STRING;
-	}
-
-	/* #000000 (color) */
-	if (ch == '#') {
-		std::string val("000000");
-		std::string::size_type count = 0;
-		while (isxdigit(ch = getchar())) {
-			if (count < 6) val[count] = ch;
-		}
-		ungetchar(ch);
-		location.end = current;
-
-		switch (count) {
-		case 1:
-			std::fill_n(val.begin(), 6, val[0]); break;
-		case 2:
-			val[4] = val[2] = val[0];
-			val[5] = val[3] = val[1];
-			break;
-		case 3:
-			val[4] = val[5] = val[2];
-			val[2] = val[3] = val[1];
-			val[0] = val[1] = val[0];
-			break;
-		}
-
-		value.color = mn::gl::color(strtoul(val.c_str(), 0, 16));
-		return yy::Parser::token::COLOR;
+		value.string = new char[name.size() + 1];
+		std::copy(name.begin(), name.end(), value.string);
+		value.string[name.size()] = 0;
+		return T_STRING;
 	}
 
 	/* Not a number */
@@ -154,6 +126,7 @@ int Lexer::nextToken(yy::Parser::semantic_type &value,
 	/* Exp */
 	if (ch == 'e' || ch == 'E') {
 		str += (char)ch;
+		ch = getchar();
 		if (ch == '+' || ch == '-') {
 			str += (char)ch;
 			ch = getchar();
@@ -168,8 +141,40 @@ int Lexer::nextToken(yy::Parser::semantic_type &value,
 	ungetchar(ch);
 	location.end = current;
 	value.real = std::strtof(str.c_str(), 0);
-	return yy::Parser::token::REAL;
+	return T_REAL;
 }
+
+
+
+const char *Lexer::tokenName(int token) {
+	static char buf[10];
+
+	switch (token) {
+	case T_ERROR:   return "ERROR";
+	case T_EOF:     return "EOF";
+
+	case '\'':      return "'\\''";
+	case '\\':      return "'\\\\'";
+
+	case T_FACTORS: return "\"factors\"";
+	case T_LIGHT:   return "\"light\"";
+
+	case T_REAL:    return "number";
+	case T_STRING:  return "string";
+
+	default:
+		if ((unsigned)token < 32 ||
+		    ((unsigned)token >= 128 && (unsigned)token < 256)) {
+			sprintf(buf, "'\\%o'", token);
+		} else if ((unsigned)token < 128) {
+			sprintf(buf, "'%c'", token);
+		} else {
+			return "UNKNOWN"; /* dead code */
+		}
+		return buf;
+	}
+}
+
 
 
 }

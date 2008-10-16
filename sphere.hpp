@@ -13,9 +13,10 @@ namespace solar {
 
 struct Sphere {
 	Sphere(float theDistance, float theSize, float theOmega,
-	       const gl::Color &color, const std::string &theName)
+	       const gl::Color &color, const std::string &theName,
+	       int theLight = -1)
 		: distance(theDistance), size(theSize), omega(theOmega),
-		  name(theName), first(0), next(0), textList(0) {
+		  name(theName), light(theLight), first(0), next(0), textList(0) {
 		materialColor[0] = color.r;
 		materialColor[1] = color.g;
 		materialColor[2] = color.b;
@@ -40,12 +41,12 @@ struct Sphere {
 private:
 	const float distance, size, omega;
 	const std::string name;
+	int light;
 	Sphere *first, *next;
 
-	GLfloat materialColor[4];
-	static const GLfloat materialSpecular[4], materialNoEmission[4];
-
+	float materialColor[4];
 	unsigned int textList;
+
 };
 
 

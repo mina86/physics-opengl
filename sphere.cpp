@@ -26,8 +26,10 @@ bool Sphere::lowQuality = false;
 bool Sphere::drawOrbits = true;
 bool Sphere::drawNames = true;
 
-const GLfloat Sphere::materialSpecular[4] = { 0.75, 0.75, 0.75, 1 };
-const GLfloat Sphere::materialNoEmission[4] = { 0, 0, 0, 1 };
+static const GLfloat materialSpecular  [] = { 0.75, 0.75, 0.75, 1 };
+static const GLfloat materialNoEmission[] = { 0, 0, 0, 1 };
+static const GLfloat lightColor        [] = { 1, 1, 1, 1 };
+static const GLfloat lightPos          [] = { 0, 0, 0, 1 };
 
 
 Sphere::~Sphere() {
@@ -65,12 +67,11 @@ static void drawCircle(float radius) {
 
 
 void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
-	const bool center = distance < 0.0000001;
 	const float phi = ticks * omega;
 	const gl::Vector pos = centerPos + gl::Vector(distance * mn::sin(phi + 0.5), 0, distance * mn::cos(phi + 0.5));
 	gl::Camera *const cam = gl::Camera::getDefaultCamera();
 	const float distance2 = cam ? cam->getEye().distance2(pos) : 0;
-	const float distanceFactor2 = distance2 > cutoffDistance2 ? distance2 / cutoffDistance2 : 1;
+	const float distanceFactor2 = distance2 > cutoffDistance2 ? std::sqrt(distance2 / cutoffDistance2) : 1;
 
 	glPushMatrix();
 
@@ -86,9 +87,14 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 
 	glTranslatef(0, 0, distance);
 
+	if (light >= 0) {
+		glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, lightColor);
+		glLightfv(GL_LIGHT0 + light, GL_POSITION, lightPos);
+	}
+
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, materialSpecular);
-	glMaterialfv(GL_FRONT, GL_EMISSION, center ? materialColor : materialNoEmission);
+	glMaterialfv(GL_FRONT, GL_EMISSION, light < 0 ? materialNoEmission : materialColor);
 	glMaterialf(GL_FRONT, GL_SHININESS, 12);
 	unsigned slices = 30 / distanceFactor2;
 	if (size > 1) slices *= 2;

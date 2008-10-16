@@ -1,6 +1,9 @@
 #ifndef H_VECTOR_HPP
 #define H_VECTOR_HPP
 
+#include <cmath>
+
+
 namespace mn {
 
 namespace gl {
