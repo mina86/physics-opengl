@@ -30,17 +30,30 @@ struct Camera {
 	}
 
 	const Vector &getEye() const { return eye; }
-	void setEye(const Vector &v) { eye = v; }
+	void setEye(const Vector &v) { eye = v; checkDistance(); }
 	float getEyeX() const { return eye.x; }
 	float getEyeY() const { return eye.y; }
 	float getEyeZ() const { return eye.z; }
 
-	void moveLeft(float x) { if (!valid) update(); eye += x * left; }
-	void moveTop(float y) { if (!valid) update(); eye += y * top; }
-	void moveForward(float z) { if (!valid) update(); eye += z * forward; }
+	void moveLeft(float x) {
+		if (!valid) update();
+		eye += x * left;
+		checkDistance();
+	}
+	void moveTop(float y) {
+		if (!valid) update();
+		eye += y * top;
+		checkDistance();
+	}
+	void moveForward(float z) {
+		if (!valid) update();
+		eye += z * forward;
+		checkDistance();
+	}
 	void move(const Vector &v) {
 		if (!valid) update();
 		((eye += v.x * left) += v.y * top) += v.z * forward;
+		checkDistance();
 	}
 
 	float getRotX() const { return rotX; }
@@ -111,11 +124,19 @@ struct Camera {
 	static float mouseRotationTopFactor, mouseRotationLeftFactor;
 	static float runFactor, creepFactor;
 
+	static float maxDistance;
+
 	static bool tickRedisplays;
 	static bool countTicks;
 
 private:
 	void update() const;
+	void checkDistance() {
+		const float length = eye.length();
+		if (length > maxDistance) {
+			eye *= maxDistance / length;
+		}
+	}
 
 	Vector eye;
 	float rotX, rotY;

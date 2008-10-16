@@ -236,14 +236,14 @@ int main(int argc, char** argv) {
 
 
 	glEnable(GL_LIGHT0);
-	static const GLfloat lightColor[] = {0.01f, 0.2f, 0.2f, 1.0f};
+	static const GLfloat lightColor[] = {0.01f, 0.4f, 0.2f, 1.0f};
 	static const GLfloat lightPos[] = { 0, 0, 0, 1 };
 	static const GLfloat lightDirection[] = { 0, 0, -1, 0 };
 
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection);
-	glLightf (GL_LIGHT0, GL_SPOT_CUTOFF, 5.f);
+	glLightf (GL_LIGHT0, GL_SPOT_CUTOFF, 2.f);
 
 
 	glutTimerFunc(1000, zeroFPS, 1000);

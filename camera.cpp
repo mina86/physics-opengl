@@ -47,6 +47,7 @@ float Camera::mouseRotationTopFactor  = M_PI / 1800.0;
 float Camera::mouseRotationLeftFactor = M_PI / 1800.0;
 float Camera::runFactor               = 10.0;
 float Camera::creepFactor             = 0.1;
+float Camera::maxDistance             = 1500.0;
 
 
 static unsigned actionsMask = 0;

@@ -65,9 +65,6 @@ Sphere *loadData(const std::string &filename) {
 		switch (state) {
 		case S_START:
 			switch (token) {
-			case Lexer::T_EOF:
-				return stack.empty() ? sphere : stack.back();
-
 			case Lexer::T_FACTORS:
 				sphere = 0;
 				state = S_FACTORS_READ_0;
@@ -78,12 +75,6 @@ Sphere *loadData(const std::string &filename) {
 				sphere_desc.name.assign(value.string);
 				delete[] value.string;
 				state = S_SPHERE_READ_DIST;
-				break;
-
-			case '{':
-				if (!sphere) goto error;
-				stack.push_back(sphere);
-				sphere = 0;
 				break;
 
 			case '}':
@@ -98,6 +89,29 @@ Sphere *loadData(const std::string &filename) {
 			case Lexer::T_LIGHT:
 				if (!sphere || sphere->getLight() >= 0) goto error;
 				sphere->setLight(++lights);
+				break;
+
+			default:
+				goto s_wait_open;
+			}
+			break;
+
+		s_wait_open:
+		case S_WAIT_OPEN:
+			switch (token) {
+			case Lexer::T_EOF:
+				return stack.empty() ? sphere : stack.back();
+
+			case Lexer::T_LIGHT:
+				if (!sphere || sphere->getLight() >= 0) goto error;
+				sphere->setLight(++lights);
+				break;
+
+			case '{':
+				if (!sphere) goto error;
+				stack.push_back(sphere);
+				sphere = 0;
+				state = S_START;
 				break;
 
 			default:
@@ -143,22 +157,6 @@ Sphere *loadData(const std::string &filename) {
 			} else {
 				stack.back()->pushSatelite(*sphere);
 				state = S_START;
-			}
-			break;
-
-		case S_WAIT_OPEN:
-			switch (token) {
-			case Lexer::T_EOF: return sphere;
-			case Lexer::T_LIGHT:
-				if (!sphere || sphere->getLight() >= 0) goto error;
-				sphere->setLight(++lights);
-				break;
-			case '{':
-				stack.push_back(sphere);
-				state = S_START;
-				break;
-			default:
-				goto error;
 			}
 			break;
 		}
