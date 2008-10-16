@@ -93,15 +93,30 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 		glLightfv(GL_LIGHT0 + light, GL_POSITION, lightPos);
 	}
 
+	if (*texture) {
+		glEnable(GL_TEXTURE_2D);
+		gluQuadricTexture(gl::Quadric::quadric()->get(), 1);
+		glBindTexture(GL_TEXTURE_2D, *texture);
+		glPushMatrix();
+		glRotatef(90, 1, 0, 0);
+	}
+
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, light >= 0 ? materialNoEmission : materialSpecular);
 	glMaterialfv(GL_FRONT, GL_EMISSION, light <  0 ? materialNoEmission : materialColor);
 	glMaterialf(GL_FRONT, GL_SHININESS, light >= 0 ? 0 : 12);
+
 	unsigned slices = 60 / distanceFactor2;
 	if (size > 1) slices *= 2;
 	if (lowQuality) slices /= 3;
 	if (slices < 6) slices = 6;
 	gluSphere(gl::Quadric::quadric()->get(), size, slices, slices);
+
+	if (*texture) {
+		glPopMatrix();
+		gluQuadricTexture(gl::Quadric::quadric()->get(), 0);
+		glDisable(GL_TEXTURE_2D);
+	}
 
 	glRotatef(-phi, 0, 1, 0);
 	if (first) {

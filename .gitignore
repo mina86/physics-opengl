@@ -3,5 +3,4 @@
 #*#
 cube
 solar
-parser.[ch]pp
-*.hh
+globe

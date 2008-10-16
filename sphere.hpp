@@ -5,6 +5,7 @@
 
 #include "color.hpp"
 #include "vector.hpp"
+#include "texture.hpp"
 
 
 namespace mn {
@@ -29,7 +30,6 @@ struct Sphere {
 	int getLight() const { return light; }
 	void setLight(int theLight) { light = theLight; }
 
-
 	Sphere &pushSatelite(Sphere &sphere) {
 		Sphere *sp = &sphere;
 		while (sp->next) sp = sp->next;
@@ -42,6 +42,8 @@ struct Sphere {
 
 	static float cutoffDistance2;
 	static bool lowQuality, drawOrbits, drawNames;
+
+	gl::Texture texture;
 
 private:
 	const float distance, size, omega;

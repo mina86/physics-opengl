@@ -68,6 +68,8 @@ int Lexer::nextToken(Value &value, Location &location) {
 			return T_FACTORS;
 		} else if (keyword == "light") {
 			return T_LIGHT;
+		} else if (keyword == "texture") {
+			return T_TEXTURE;
 		} else {
 			return T_ERROR;
 		}
@@ -158,6 +160,7 @@ const char *Lexer::tokenName(int token) {
 
 	case T_FACTORS: return "\"factors\"";
 	case T_LIGHT:   return "\"light\"";
+	case T_TEXTURE: return "\"texture\"";
 
 	case T_REAL:    return "number";
 	case T_STRING:  return "string";

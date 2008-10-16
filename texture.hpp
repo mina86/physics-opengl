@@ -44,6 +44,7 @@ struct Texture {
 	unsigned getHeight() const             { return height; }
 
 	void assign(unsigned theWidth, unsigned theHeight, unsigned char*theData);
+	void load(const char *filename);
 	void free() {
 		delete[] data;
 		if (id) {

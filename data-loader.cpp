@@ -41,7 +41,9 @@ Sphere *loadData(const std::string &filename) {
 		S_SPHERE_READ_G,
 		S_SPHERE_READ_B,
 		S_SPHERE_READ_CPAREN,
-		S_WAIT_OPEN
+		S_WAIT_OPEN,
+		S_READ_TEXTURE,
+		S_READ_TEXTURE_AND_WAIT_OPEN
 	};
 	unsigned state = S_START;
 
@@ -107,6 +109,11 @@ Sphere *loadData(const std::string &filename) {
 				sphere->setLight(++lights);
 				break;
 
+			case Lexer::T_TEXTURE:
+				if (!sphere || sphere->texture) goto error;
+				state = state == S_START ? S_READ_TEXTURE : S_READ_TEXTURE_AND_WAIT_OPEN;
+				break;
+
 			case '{':
 				if (!sphere) goto error;
 				stack.push_back(sphere);
@@ -117,6 +124,14 @@ Sphere *loadData(const std::string &filename) {
 			default:
 				goto error;
 			}
+			break;
+
+		case S_READ_TEXTURE:
+		case S_READ_TEXTURE_AND_WAIT_OPEN:
+			if (token != Lexer::T_STRING) goto error;
+			sphere->texture.load(value.string);
+			delete[] value.string;
+			state = state == S_READ_TEXTURE ? S_START : S_WAIT_OPEN;
 			break;
 
 		case S_FACTORS_READ_0:

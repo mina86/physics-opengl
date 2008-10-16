@@ -37,7 +37,7 @@ struct Lexer {
 	 */
 	enum NamedTokens {
 		T_ERROR = -2, T_EOF = -1, /* errors and such */
-		T_FACTORS = 256, T_LIGHT, /* keywords */
+		T_FACTORS = 256, T_LIGHT, T_TEXTURE, /* keywords */
 		T_REAL, T_STRING /* tokens with parameters */
 	};
 

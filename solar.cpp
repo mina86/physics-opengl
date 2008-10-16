@@ -227,7 +227,7 @@ int main(int argc, char** argv) {
 		unsigned char *stars = new unsigned char[1024 * 1024];
 		memset(stars, 0, sizeof stars);
 		srand(time(0));
-		for (unsigned count = 0; count < 4096; ++count) {
+		for (unsigned count = 0; count < 2048; ++count) {
 #if RAND_MAX >= (1024 * 1024 - 1)
 			const unsigned pos = rand() % (1024 * 1024);
 #else
