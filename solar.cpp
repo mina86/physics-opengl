@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
+#include <string.h>
 
 #ifdef __APPLE__
 #  include <OpenGL/OpenGL.h>
@@ -17,7 +19,9 @@
 
 
 static mn::solar::Sphere *sun;
-static bool headlight = true;
+static bool headlight = true, displayStars = true;
+static GLuint starsTexture = 0;
+
 
 static void handleKeyboard(unsigned key, bool down, int x, int y) {
 	(void)x; (void)y;
@@ -50,6 +54,10 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 			glEnable(GL_LIGHT0);
 			headlight = true;
 		}
+		break;
+
+	case 'm': case 'M':
+		displayStars = !displayStars;
 		break;
 
 	case ' ':
@@ -102,17 +110,24 @@ static void drawScene() {
 	{
 		pushMatrix pm;
 
-		glEnable(GL_LIGHTING);
-		glDisable(GL_COLOR_MATERIAL);
-
 		camera.doLookAt();
 
-		/*
-		static const GLfloat lightColor0[] = {1.0f, 1.0f, 1.0f, 1.0f};
-		static const GLfloat lightPos0[] = {0, 0, 0, 1.0f};
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
-		glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
-		*/
+		if (displayStars && starsTexture) {
+			static mn::gl::Quadric *starsQuadric = 0;
+			if (!starsQuadric) {
+				starsQuadric = new mn::gl::Quadric();
+				gluQuadricOrientation(starsQuadric->get(), GLU_INSIDE);
+				gluQuadricTexture(starsQuadric->get(), 1);
+			}
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, starsTexture);
+			glColor3f(1, 1, 1);
+			gluSphere(starsQuadric->get(), 2000, 360, 360);
+			glDisable(GL_TEXTURE_2D);
+		}
+
+		glEnable(GL_LIGHTING);
+		glDisable(GL_COLOR_MATERIAL);
 
 		sun->draw(mn::gl::Camera::getTicks(), mn::gl::Vector(0, 0, 0));
 
@@ -174,6 +189,7 @@ int main(int argc, char** argv) {
 	glutCreateWindow("Spinning Cube");
 	glutSetCursor(GLUT_CURSOR_NONE);
 
+
 	try {
 		t3d::init("data/charset");
 	}
@@ -182,57 +198,34 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
+
+	unsigned char *stars = new unsigned char[4096 * 4096];
+	memset(stars, 0, sizeof stars);
+	srand(time(0));
+	for (unsigned count = 0; count < 10240; ++count) {
+		const unsigned x = rand() % 4096;
+		const unsigned y = rand() % 4096;
+		stars[x | (y << 12)] = rand() * (256.0f / (RAND_MAX + 1.0f));
+	}
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+	glGenTextures(1, &starsTexture);
+	glBindTexture(GL_TEXTURE_2D, starsTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0,
+	             GL_LUMINANCE, 1024, 1024, 0,
+	             GL_LUMINANCE, GL_UNSIGNED_BYTE, stars);
+	delete[] stars;
+
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_CULL_FACE);
 	glShadeModel(GL_SMOOTH);
-
-#if 0
-	const float distanceFactor = 149597870691e-10;  /* AU */
-	const float sizeFactor = 6371000e-8; /* Earth's mean radius */
-	const float omegaFactor = 0.1;
-
-	sun = new mn::solar::Sphere(0, /*109*/ 20 * sizeFactor, 0,
-	                            mn::gl::color(1, 1, 0), "Sun");
-	mn::solar::Sphere *top = sun;
-#define P(distance, radius, period, r, g, b, name) \
-	top->pushSatelite(*new mn::solar::Sphere(distance * distanceFactor,	\
-	                                         radius * sizeFactor, \
-	                                         omegaFactor/period, \
-	                                         mn::gl::color(r, g, b), name));
-	P(0.38, 0.38, 0.241, 1.0, 1.0, 1.0, "Mercury");
-	P(0.73, 0.95, 0.615, 1.0, 1.0, 1.0, "Venus");
-	top = &P(1.00, 1.00, 1.000, 0.0, 1.0, 1.0, "Earth");
-	P(0.01, 0.01, 0.074, 0.8, 0.8, 0.8, "Moon");
-	top = sun;
-	P(1.50, 0.53, 1.881, 1.0, 0.0, 0.0, "Mars");
-	P(2.36, 0.04, 3.629, 1.0, 1.0, 1.0, "4 Vesta");
-	P(2.77, 0.07, 4.600, 1.0, 1.0, 1.0, "1 Ceres");
-	P(3.14, 0.03, 5.557, 1.0, 1.0, 1.0, "10 Hygiea");
-	P(5.20, 11.2, 11.87, 1.0, 1.0, 1.0, "Jupiter");
-	P(9.58, 9.45, 29.45, 1.0, 1.0, 1.0, "Saturn");
-	P(19.2, 4.00, 84.07, 1.0, 1.0, 1.0, "Uranus");
-	P(30.1, 3.88, 164.9, 1.0, 1.0, 1.0, "Neptune");
-	P(39.5, 0.19, 248.1, 1.0, 1.0, 1.0, "134340 Pluto");
-	P(67.7, 0.19, 557.0, 1.0, 1.0, 1.0, "136199 Eris");
-	P(88.0, 0.14, 12050, 1.0, 1.0, 1.0, "90377 Sedna");
-#undef P
-#endif
-
-	mn::gl::Camera camera;
-	mn::gl::Camera::setDefaultCamera(&camera);
-	mn::gl::Camera::setSize(w, h);
-
-	mn::gl::Camera::keyMovementFactor   *=  3;
-	mn::gl::Camera::mouseMovementFactor *=  3;
-
-	mn::gl::Camera::registerHandlers();
-	mn::gl::Camera::printHelp();
-	puts("c/v  toggle low quality/display mode   b/n  toggle orbits/names\n"
-		 "x    toggle head light");
-	mn::gl::Camera::setResizeFunc(handleResize);
-	mn::gl::Camera::setKeyboardFunc(handleKeyboard);
-	glutDisplayFunc(drawScene);
 
 
 	glEnable(GL_LIGHT0);
@@ -247,6 +240,23 @@ int main(int argc, char** argv) {
 
 
 	glutTimerFunc(1000, zeroFPS, 1000);
+
+
+	mn::gl::Camera camera;
+	mn::gl::Camera::setDefaultCamera(&camera);
+	mn::gl::Camera::setSize(w, h);
+
+	mn::gl::Camera::keyMovementFactor   *=  3;
+	mn::gl::Camera::mouseMovementFactor *=  3;
+
+	mn::gl::Camera::registerHandlers();
+	mn::gl::Camera::printHelp();
+	puts("c/v  toggle low quality/display mode   b/n  toggle orbits/names\n"
+		 "x    toggle head light                 m    toggle stars");
+	mn::gl::Camera::setResizeFunc(handleResize);
+	mn::gl::Camera::setKeyboardFunc(handleKeyboard);
+	glutDisplayFunc(drawScene);
+
 
 	glutMainLoop();
 	return 0;
