@@ -41,9 +41,17 @@ struct Sphere {
 	void draw(unsigned long ticks, const gl::Vector &pos);
 
 	static float cutoffDistance2;
-	static bool lowQuality, drawOrbits, drawNames;
+	static bool lowQuality, drawOrbits, drawNames, useTextures;
 
 	gl::Texture texture;
+	void colorFromTexture() {
+		if (texture) {
+			const gl::Color &avg = texture.getAverageColor();
+			materialColor[0] = avg.r;
+			materialColor[1] = avg.g;
+			materialColor[2] = avg.b;
+		}
+	}
 
 private:
 	const float distance, size, omega, omega2;

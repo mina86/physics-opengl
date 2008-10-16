@@ -132,6 +132,7 @@ Sphere *loadData(const std::string &filename) {
 		case S_READ_TEXTURE_AND_WAIT_OPEN:
 			if (token != Lexer::T_STRING) goto error;
 			sphere->texture.load(value.string);
+			sphere->colorFromTexture();
 			delete[] value.string;
 			state = state == S_READ_TEXTURE ? S_START : S_WAIT_OPEN;
 			break;

@@ -25,11 +25,11 @@ float Sphere::cutoffDistance2 = 2500.0;
 bool Sphere::lowQuality = false;
 bool Sphere::drawOrbits = true;
 bool Sphere::drawNames = true;
+bool Sphere::useTextures = true;
 
-static const GLfloat materialSpecular  [] = { 0.75, 0.75, 0.75, 1 };
-static const GLfloat materialNoEmission[] = { 0, 0, 0, 1 };
-static const GLfloat lightColor        [] = { 1, 1, 1, 1 };
-static const GLfloat lightPos          [] = { 0, 0, 0, 1 };
+static const GLfloat materialSpecular[] = { 0.75, 0.75, 0.75, 1 };
+static const GLfloat zeros           [] = { 0, 0, 0, 1 };
+static const GLfloat ones            [] = { 1, 1, 1, 1 };
 
 
 Sphere::~Sphere() {
@@ -79,8 +79,8 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 
 	if (drawOrbits && distance > 0.1) {
 		glDisable(GL_LIGHTING);
-		glColor3f(materialColor[0] * 0.2, materialColor[1] * 0.2,
-		          materialColor[2] * 0.2);
+		glColor3f(materialColor[0] * 0.4, materialColor[1] * 0.4,
+		          materialColor[2] * 0.4);
 		drawCircle(distance);
 		glEnable(GL_LIGHTING);
 	}
@@ -89,11 +89,12 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 
 	if (light >= 0) {
 		glEnable(GL_LIGHT0 + light);
-		glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, lightColor);
-		glLightfv(GL_LIGHT0 + light, GL_POSITION, lightPos);
+		glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, ones);
+		glLightfv(GL_LIGHT0 + light, GL_POSITION, zeros);
 	}
 
-	if (*texture) {
+	const bool gotTexture = useTextures && *texture;
+	if (gotTexture) {
 		glEnable(GL_TEXTURE_2D);
 		gluQuadricTexture(gl::Quadric::quadric()->get(), 1);
 		glBindTexture(GL_TEXTURE_2D, *texture);
@@ -102,9 +103,12 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 		glRotatef(ticks * omega2, 0, 0, 1);
 	}
 
-	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, light >= 0 ? materialNoEmission : materialSpecular);
-	glMaterialfv(GL_FRONT, GL_EMISSION, light <  0 ? materialNoEmission : materialColor);
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE,
+	             useTextures ? ones : materialColor);
+	glMaterialfv(GL_FRONT, GL_SPECULAR,
+	             light >= 0 ? zeros : materialSpecular);
+	glMaterialfv(GL_FRONT, GL_EMISSION,
+	             light <  0 ? zeros : (useTextures ? ones : materialColor));
 	glMaterialf(GL_FRONT, GL_SHININESS, light >= 0 ? 0 : 12);
 
 	unsigned slices = 60 / distanceFactor2;
@@ -113,7 +117,7 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 	if (slices < 6) slices = 6;
 	gluSphere(gl::Quadric::quadric()->get(), size, slices, slices);
 
-	if (*texture) {
+	if (gotTexture) {
 		glPopMatrix();
 		gluQuadricTexture(gl::Quadric::quadric()->get(), 0);
 		glDisable(GL_TEXTURE_2D);

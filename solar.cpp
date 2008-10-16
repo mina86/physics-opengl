@@ -61,6 +61,10 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 		displayStars = !displayStars;
 		break;
 
+	case 'j': case 'J':
+		mn::solar::Sphere::useTextures = !mn::solar::Sphere::useTextures;
+		break;
+
 	case ' ':
 		mn::gl::Camera::tickRedisplays = mn::gl::Camera::countTicks = !mn::gl::Camera::countTicks;
 		break;
@@ -269,8 +273,8 @@ int main(int argc, char** argv) {
 
 	mn::gl::Camera::registerHandlers();
 	mn::gl::Camera::printHelp();
-	puts("c/v  toggle low quality/display mode   b/n  toggle orbits/names\n"
-		 "x    toggle head light                 m    toggle stars");
+	puts("toggle: c  low quality   v  display mode   b  orbits    n  names\n"
+		 "        x  head light    m  stars          j textures");
 	mn::gl::Camera::setResizeFunc(handleResize);
 	mn::gl::Camera::setKeyboardFunc(handleKeyboard);
 	glutDisplayFunc(drawScene);

@@ -8,6 +8,7 @@
 #  include <GL/glut.h>
 #endif
 
+#include "color.hpp"
 
 namespace mn {
 
@@ -24,7 +25,9 @@ struct Texture {
 	        GLint theInternalFormat = GL_RGB, GLint theFormat = GL_RGB,
 	        GLint theType = GL_UNSIGNED_BYTE)
 		: internalFormat(theInternalFormat), format(theFormat), type(theType),
-		  width(theWidth), height(theHeight), id(0), data(theData) { }
+		  width(theWidth), height(theHeight), id(0), data(theData) {
+		calculatAverage();
+	}
 
 	~Texture() {
 		delete[] data;
@@ -66,6 +69,9 @@ struct Texture {
 	}
 
 
+	const Color &getAverageColor() const { return average; }
+
+
 	operator bool () const { return data || id; }
 	bool operator!() const { return !data && !id; }
 	GLuint operator*() const { return get(); }
@@ -75,11 +81,13 @@ private:
 	Texture(const Texture &t) { (void)t; }
 
 	void makeTexture() const;
+	void calculatAverage();
 
 	GLint internalFormat, format, type;
 	unsigned width, height;
 	mutable GLuint id;
 	mutable unsigned char *data;
+	Color average;
 };
 
 

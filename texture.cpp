@@ -16,6 +16,7 @@ void Texture::assign(unsigned theWidth, unsigned theHeight,
 	width = theWidth;
 	height = theHeight;
 	data = theData;
+	calculatAverage();
 	if (id) {
 		if (data) {
 			makeTexture();
@@ -42,6 +43,34 @@ void Texture::makeTexture() const {
 	delete[] data;
 	data = 0;
 }
+
+
+void Texture::calculatAverage() {
+	if (!data || !width || !height) {
+		fprintf(stderr, "QWEQWE!\n");
+		return;
+	}
+
+	if (format == GL_LUMINANCE) {
+		float avg = 0;
+		for (unsigned char *it=data, *end=it+width*height; it!=end; ++it) {
+			avg += *it;
+		}
+		average.r = average.g = average.b = avg / 255 / (width * height);
+	} else {
+		float r = 0, g = 0, b = 0;
+		for (unsigned char *it=data, *end=it+width*height*3; it!=end; ) {
+			r += *it++;
+			g += *it++;
+			b += *it++;
+		}
+		const float mul = 1.0 / 255.0 / (width * height);
+		average.r = r * mul;
+		average.g = g * mul;
+		average.b = b * mul;
+	}
+}
+
 
 
 namespace {

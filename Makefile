@@ -25,7 +25,7 @@ text3d.o     : text3d.cpp      text3d.hpp
 sintable.o   : sintable.cpp    sintable.hpp
 lexer.o      : lexer.cpp       lexer.hpp
 quadric.o    : quadric.cpp     quadric.hpp
-texture.o    : texture.cpp     texture.hpp
+texture.o    : texture.cpp     texture.hpp color.hpp
 
 
 cube: cube.o camera.o
