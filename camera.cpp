@@ -161,9 +161,6 @@ void Camera::handleTick(int to) {
 	if (countTicks) {
 		++ticks;
 	}
-	if (tickRedisplays) {
-		glutPostRedisplay();
-	}
 	if (camera && (actionsMask & ~(RUN_FLAG | CREEP_FLAG))) {
 		const float run = actionsMask & RUN_FLAG ? runFactor :
 			(actionsMask & CREEP_FLAG ? creepFactor : 1.0);
