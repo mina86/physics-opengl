@@ -95,6 +95,7 @@ struct Camera {
 	}
 	static unsigned long getTicks() { return ticks; }
 	static void registerHandlers();
+	static void printHelp();
 
 	typedef void(*KeyboardFunc)(unsigned key, bool down, int x, int y);
 	static void setKeyboardFunc(KeyboardFunc theKeyboardFunc) {

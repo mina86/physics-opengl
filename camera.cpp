@@ -235,6 +235,13 @@ void Camera::registerHandlers() {
 }
 
 
+
+void Camera::printHelp() {
+	puts("d/g  strage right/left   e/d  move forward/backward    w/s  move up/dow\n"
+		 "e/t  look   right/left   z/a  hold to move fast/slow   y/h  look up/down\n"
+		 "q    reset view                        esc  quit");
+}
+
 }
 
 }

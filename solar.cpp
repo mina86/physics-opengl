@@ -17,7 +17,7 @@
 
 
 static mn::solar::Sphere *sun;
-
+static bool headlight = true;
 
 static void handleKeyboard(unsigned key, bool down, int x, int y) {
 	(void)x; (void)y;
@@ -40,6 +40,16 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 
 	case 'n': case 'N':
 		mn::solar::Sphere::drawNames = !mn::solar::Sphere::drawNames;
+		break;
+
+	case 'x': case 'X':
+		if (headlight) {
+			glDisable(GL_LIGHT0);
+			headlight = false;
+		} else {
+			glEnable(GL_LIGHT0);
+			headlight = true;
+		}
 		break;
 
 	case ' ':
@@ -93,7 +103,6 @@ static void drawScene() {
 		pushMatrix pm;
 
 		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
 		glDisable(GL_COLOR_MATERIAL);
 
 		camera.doLookAt();
@@ -108,7 +117,6 @@ static void drawScene() {
 		sun->draw(mn::gl::Camera::getTicks(), mn::gl::Vector(0, 0, 0));
 
 		glEnable(GL_COLOR_MATERIAL);
-		glDisable(GL_LIGHT0);
 		glDisable(GL_LIGHTING);
 	}
 
@@ -219,18 +227,24 @@ int main(int argc, char** argv) {
 	mn::gl::Camera::mouseMovementFactor *=  3;
 
 	mn::gl::Camera::registerHandlers();
+	mn::gl::Camera::printHelp();
+	puts("c/v  toggle low quality/display mode   b/n  toggle orbits/names\n"
+		 "x    toggle head light");
 	mn::gl::Camera::setResizeFunc(handleResize);
 	mn::gl::Camera::setKeyboardFunc(handleKeyboard);
 	glutDisplayFunc(drawScene);
 
 
-	static const GLfloat lightColor1[] = {0.0f, 1.0f, 1.0f, 1.0f};
-	static const GLfloat lightPos1[] = { 0, 0, 0, 0 };
-	static const GLfloat lightDirection1[] = { 0, 0, 0, -1 };
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor1);
-	glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
-	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, lightDirection1);
-	glLightf (GL_LIGHT1, GL_SPOT_CUTOFF, 15.f);
+	glEnable(GL_LIGHT0);
+	static const GLfloat lightColor[] = {0.01f, 0.2f, 0.2f, 1.0f};
+	static const GLfloat lightPos[] = { 0, 0, 0, 1 };
+	static const GLfloat lightDirection[] = { 0, 0, -1, 0 };
+
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection);
+	glLightf (GL_LIGHT0, GL_SPOT_CUTOFF, 5.f);
+
 
 	glutTimerFunc(1000, zeroFPS, 1000);
 

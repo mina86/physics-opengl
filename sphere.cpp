@@ -88,14 +88,15 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 	glTranslatef(0, 0, distance);
 
 	if (light >= 0) {
+		glEnable(GL_LIGHT0 + light);
 		glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, lightColor);
 		glLightfv(GL_LIGHT0 + light, GL_POSITION, lightPos);
 	}
 
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, materialSpecular);
-	glMaterialfv(GL_FRONT, GL_EMISSION, light < 0 ? materialNoEmission : materialColor);
-	glMaterialf(GL_FRONT, GL_SHININESS, 12);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, light >= 0 ? materialNoEmission : materialSpecular);
+	glMaterialfv(GL_FRONT, GL_EMISSION, light <  0 ? materialNoEmission : materialColor);
+	glMaterialf(GL_FRONT, GL_SHININESS, light >= 0 ? 0 : 12);
 	unsigned slices = 30 / distanceFactor2;
 	if (size > 1) slices *= 2;
 	if (lowQuality) slices /= 3;
