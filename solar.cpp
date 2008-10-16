@@ -16,11 +16,12 @@
 #include "text3d.hpp"
 #include "quadric.hpp"
 #include "data-loader.hpp"
+#include "texture.hpp"
 
 
 static mn::solar::Sphere *sun;
 static bool headlight = true, displayStars = true;
-static GLuint starsTexture = 0;
+static mn::gl::Texture starsTexture(GL_LUMINANCE, GL_LUMINANCE);
 
 
 static void handleKeyboard(unsigned key, bool down, int x, int y) {
@@ -113,7 +114,7 @@ static void drawStars() {
 			gluQuadricTexture(starsQuadric, 1);
 
 			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, starsTexture);
+			glBindTexture(GL_TEXTURE_2D, *starsTexture);
 			glColor3f(1, 1, 1);
 			gluSphere(starsQuadric, 3000, 10, 10);
 			glDisable(GL_TEXTURE_2D);
@@ -218,30 +219,25 @@ int main(int argc, char** argv) {
 	}
 
 
-	unsigned char *stars = new unsigned char[4096 * 4096];
-	memset(stars, 0, sizeof stars);
-	srand(time(0));
-	for (unsigned count = 0; count < 10240; ++count) {
-#if RAND_MAX >= (4096 * 4096 - 1)
-		const unsigned pos = rand() % (4096 * 4096);
-#else
-		const unsigned pos = (rand() * (RAND_MAX + 1) | rand()) % (4096 * 4096);
-#endif
-		stars[pos] = rand() * (256.0f / (RAND_MAX + 1.0f));
-	}
-
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-	glGenTextures(1, &starsTexture);
-	glBindTexture(GL_TEXTURE_2D, starsTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0,
-	             GL_LUMINANCE, 1024, 1024, 0,
-	             GL_LUMINANCE, GL_UNSIGNED_BYTE, stars);
-	delete[] stars;
+	{
+		unsigned char *stars = new unsigned char[1024 * 1024];
+		memset(stars, 0, sizeof stars);
+		srand(time(0));
+		for (unsigned count = 0; count < 4096; ++count) {
+#if RAND_MAX >= (1024 * 1024 - 1)
+			const unsigned pos = rand() % (1024 * 1024);
+#else
+			const unsigned pos = (rand() * (RAND_MAX + 1) | rand()) % (1024 * 1024);
+#endif
+			stars[pos] = rand() * (256.0f / (RAND_MAX + 1.0f));
+		}
+
+		starsTexture.assign(1024, 1024, stars);
+	}
 
 
 	glEnable(GL_DEPTH_TEST);
