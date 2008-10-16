@@ -31,6 +31,10 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 	case 27: /* Escape */
 		exit(0);
 
+	case 'x': case 'X':
+		mn::solar::Sphere::useTextures = !mn::solar::Sphere::useTextures;
+		break;
+
 	case 'c': case 'C':
 		mn::solar::Sphere::lowQuality = !mn::solar::Sphere::lowQuality;
 		break;
@@ -47,7 +51,7 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 		mn::solar::Sphere::drawNames = !mn::solar::Sphere::drawNames;
 		break;
 
-	case 'x': case 'X':
+	case 'j': case 'J':
 		if (headlight) {
 			glDisable(GL_LIGHT0);
 			headlight = false;
@@ -59,10 +63,6 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 
 	case 'm': case 'M':
 		displayStars = !displayStars;
-		break;
-
-	case 'j': case 'J':
-		mn::solar::Sphere::useTextures = !mn::solar::Sphere::useTextures;
 		break;
 
 	case ' ':
@@ -273,8 +273,9 @@ int main(int argc, char** argv) {
 
 	mn::gl::Camera::registerHandlers();
 	mn::gl::Camera::printHelp();
-	puts("toggle: c  low quality   v  display mode   b  orbits    n  names\n"
-		 "        x  head light    m  stars          j textures");
+	puts("toggle: x  textures      c  low quality   v  display mode\n"
+		 "        b  orbits        n  names         m  stars\n"
+		 "        j  head light\n");
 	mn::gl::Camera::setResizeFunc(handleResize);
 	mn::gl::Camera::setKeyboardFunc(handleKeyboard);
 	glutDisplayFunc(drawScene);
