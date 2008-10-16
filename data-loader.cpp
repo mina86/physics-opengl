@@ -14,6 +14,11 @@ namespace mn {
 namespace solar {
 
 
+static inline float toOmega(float period, float factor) {
+	return std::fabs(period) > 0.0001 ? factor / period : 0;
+}
+
+
 Sphere *loadData(const std::string &filename) {
 	Lexer lexer(filename);
 	if (!lexer) {
@@ -92,7 +97,7 @@ Sphere *loadData(const std::string &filename) {
 
 			case Lexer::T_LIGHT:
 				if (!sphere || sphere->getLight() >= 0) goto error;
-				sphere->setLight(lights++);
+				sphere->setLight(++lights);
 				break;
 
 			default:
@@ -126,11 +131,9 @@ Sphere *loadData(const std::string &filename) {
 
 		case S_SPHERE_READ_CPAREN:
 			if (token != ')') goto error;
-			sphere_desc.data[2] = std::fabs(sphere_desc.data[2]) > 0.01
-				? factors[2] / sphere_desc.data[2] : 0;
 			sphere = new Sphere(sphere_desc.data[0] * factors[0],
 			                    sphere_desc.data[1] * factors[1],
-			                    sphere_desc.data[2],
+			                    toOmega(sphere_desc.data[2], factors[2]),
 			                    gl::color(sphere_desc.data[4],
 			                              sphere_desc.data[5],
 			                              sphere_desc.data[6]),
@@ -148,7 +151,7 @@ Sphere *loadData(const std::string &filename) {
 			case Lexer::T_EOF: return sphere;
 			case Lexer::T_LIGHT:
 				if (!sphere || sphere->getLight() >= 0) goto error;
-				sphere->setLight(lights++);
+				sphere->setLight(++lights);
 				break;
 			case '{':
 				stack.push_back(sphere);
