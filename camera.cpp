@@ -185,9 +185,11 @@ void Camera::handleTick(int to) {
 		IF(ROT_TOP)       camera->rotateTop  ( keyRotationTopFactor);
 		IF(ROT_BOTTOM)    camera->rotateTop  (-keyRotationTopFactor);
 #undef IF
+		goto redisplay;
 	}
 
-	if (tickRedisplays || actionsMask) {
+	if (tickRedisplays) {
+	redisplay:
 		glutPostRedisplay();
 	}
 
@@ -238,7 +240,7 @@ void Camera::registerHandlers() {
 
 
 void Camera::printHelp() {
-	puts("d/g  strage right/left   e/d  move forward/backward    w/s  move up/dow\n"
+	puts("d/g  strafe right/left   e/d  move forward/backward    w/s  move up/dow\n"
 		 "e/t  look   right/left   z/a  hold to move fast/slow   y/h  look up/down\n"
 		 "q    reset view                        esc  quit");
 }
