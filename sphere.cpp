@@ -99,6 +99,7 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 		glBindTexture(GL_TEXTURE_2D, *texture);
 		glPushMatrix();
 		glRotatef(90, 1, 0, 0);
+		glRotatef(ticks * omega2, 0, 0, 1);
 	}
 
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);

@@ -15,7 +15,7 @@ namespace solar {
 
 
 static inline float toOmega(float period, float factor) {
-	return std::fabs(period) > 0.0001 ? factor / period : 0;
+	return std::fabs(period) > 0.00000001 ? factor / period : 0;
 }
 
 
@@ -26,16 +26,18 @@ Sphere *loadData(const std::string &filename) {
 		return 0;
 	}
 
-	float factors[3] = { 1, 1, 1 };
+	float factors[4] = { 1, 1, 1, 1 };
 
 	enum State {
 		S_FACTORS_READ_0 = 0,
 		S_FACTORS_READ_1,
 		S_FACTORS_READ_2,
+		S_FACTORS_READ_3,
 		S_START,
 		S_SPHERE_READ_DIST,
 		S_SPHERE_READ_SIZE,
-		S_SPHERE_READ_TIME,
+		S_SPHERE_READ_YEAR,
+		S_SPHERE_READ_DAY,
 		S_SPHERE_READ_OPAREN,
 		S_SPHERE_READ_R,
 		S_SPHERE_READ_G,
@@ -52,7 +54,7 @@ Sphere *loadData(const std::string &filename) {
 	int lights = 0;
 	struct {
 		std::string name;
-		float data[7]; /* dist, size, time, pad, r, g, b */
+		float data[8]; /* dist, size, year, day, pad, r, g, b */
 	} sphere_desc;
 	Sphere *sphere = 0;
 
@@ -137,6 +139,7 @@ Sphere *loadData(const std::string &filename) {
 		case S_FACTORS_READ_0:
 		case S_FACTORS_READ_1:
 		case S_FACTORS_READ_2:
+		case S_FACTORS_READ_3:
 			if (token != Lexer::T_REAL) goto error;
 			factors[state - S_FACTORS_READ_0] = value.real;
 			++state;
@@ -144,7 +147,8 @@ Sphere *loadData(const std::string &filename) {
 
 		case S_SPHERE_READ_DIST:
 		case S_SPHERE_READ_SIZE:
-		case S_SPHERE_READ_TIME:
+		case S_SPHERE_READ_YEAR:
+		case S_SPHERE_READ_DAY:
 		case S_SPHERE_READ_R:
 		case S_SPHERE_READ_G:
 		case S_SPHERE_READ_B:
@@ -163,9 +167,10 @@ Sphere *loadData(const std::string &filename) {
 			sphere = new Sphere(sphere_desc.data[0] * factors[0],
 			                    sphere_desc.data[1] * factors[1],
 			                    toOmega(sphere_desc.data[2], factors[2]),
-			                    gl::color(sphere_desc.data[4],
-			                              sphere_desc.data[5],
-			                              sphere_desc.data[6]),
+			                    toOmega(sphere_desc.data[3], factors[3]),
+			                    gl::color(sphere_desc.data[5],
+			                              sphere_desc.data[6],
+			                              sphere_desc.data[7]),
 			                    sphere_desc.name);
 			if (stack.empty()) {
 				state = S_WAIT_OPEN;
