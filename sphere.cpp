@@ -140,6 +140,8 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 			if (textList) glNewList(textList, GL_COMPILE);
 			glTranslatef(0, size + 0.3, 0);
 			glScalef(0.1, 0.1, 0.1);
+			glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
+			glMaterialfv(GL_FRONT, GL_EMISSION, zeros);
 			t3d::draw3D(name, 0, 0, 0.5);
 			if (textList) {
 				glEndList();
