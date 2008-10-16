@@ -115,7 +115,7 @@ static void drawStars() {
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, starsTexture);
 			glColor3f(1, 1, 1);
-			gluSphere(starsQuadric, 2500, 10, 10);
+			gluSphere(starsQuadric, 3000, 10, 10);
 			glDisable(GL_TEXTURE_2D);
 
 			if (displayList) {
@@ -141,8 +141,6 @@ static void drawScene() {
 		pushMatrix pm;
 
 		camera.doLookAt();
-
-		drawStars();
 
 		glEnable(GL_LIGHTING);
 		glDisable(GL_COLOR_MATERIAL);
@@ -179,6 +177,9 @@ static void drawScene() {
 	glTranslatef(mn::gl::Camera::getDefaultCamera()->getCenterX(),
 	             mn::gl::Camera::getDefaultCamera()->getCenterY(),
 	             mn::gl::Camera::getDefaultCamera()->getCenterZ());
+
+	drawStars();
+
 	glBegin(GL_LINES);
 	glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(0.2, 0, 0);
 	glColor3f(0, 1, 0); glVertex3f(0, 0, 0); glVertex3f(0, 0.2, 0);
