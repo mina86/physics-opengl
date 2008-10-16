@@ -28,6 +28,9 @@ cube: cube.o camera.o
 solar: solar.o camera.o sphere.o text3d.o sintable.o quadric.o lexer.o data-loader.o
 	exec $(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
 
+globe: globe.cpp
+	exec $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+
 %.o: %.cpp
 	exec $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
