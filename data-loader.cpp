@@ -46,7 +46,6 @@ Sphere *loadData(const std::string &filename) {
 	struct {
 		std::string name;
 		float data[7]; /* dist, size, time, pad, r, g, b */
-		int light;
 	} sphere_desc;
 	Sphere *sphere = 0;
 
@@ -73,7 +72,6 @@ Sphere *loadData(const std::string &filename) {
 				if (stack.empty() && sphere) goto error;
 				sphere_desc.name.assign(value.string);
 				delete[] value.string;
-				sphere_desc.light = -1;
 				state = S_SPHERE_READ_DIST;
 				break;
 
@@ -90,6 +88,11 @@ Sphere *loadData(const std::string &filename) {
 				}
 				stack.pop_back();
 				sphere = 0;
+				break;
+
+			case Lexer::T_LIGHT:
+				if (!sphere || sphere->getLight() >= 0) goto error;
+				sphere->setLight(lights++);
 				break;
 
 			default:
@@ -117,18 +120,8 @@ Sphere *loadData(const std::string &filename) {
 			break;
 
 		case S_SPHERE_READ_OPAREN:
-			switch (token) {
-			case Lexer::T_LIGHT:
-				if (sphere_desc.light != -1) goto error;
-				sphere_desc.light = lights;
-				++lights;
-				break;
-			case '(':
-				++state;
-				break;
-			default:
-				goto error;
-			}
+			if (token != '(') goto error;
+			++state;
 			break;
 
 		case S_SPHERE_READ_CPAREN:
@@ -141,7 +134,7 @@ Sphere *loadData(const std::string &filename) {
 			                    gl::color(sphere_desc.data[4],
 			                              sphere_desc.data[5],
 			                              sphere_desc.data[6]),
-			                    sphere_desc.name, sphere_desc.light);
+			                    sphere_desc.name);
 			if (stack.empty()) {
 				state = S_WAIT_OPEN;
 			} else {
@@ -151,10 +144,20 @@ Sphere *loadData(const std::string &filename) {
 			break;
 
 		case S_WAIT_OPEN:
-			if (token == Lexer::T_EOF) return sphere;
-			if (token != '{') goto error;
-			stack.push_back(sphere);
-			state = S_START;
+			switch (token) {
+			case Lexer::T_EOF: return sphere;
+			case Lexer::T_LIGHT:
+				if (!sphere || sphere->getLight() >= 0) goto error;
+				sphere->setLight(lights++);
+				break;
+			case '{':
+				stack.push_back(sphere);
+				state = S_START;
+				break;
+			default:
+				goto error;
+			}
+			break;
 		}
 	}
 

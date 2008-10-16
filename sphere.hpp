@@ -25,6 +25,11 @@ struct Sphere {
 
 	~Sphere();
 
+
+	int getLight() const { return light; }
+	void setLight(int theLight) { light = theLight; }
+
+
 	Sphere &pushSatelite(Sphere &sphere) {
 		Sphere *sp = &sphere;
 		while (sp->next) sp = sp->next;
