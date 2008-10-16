@@ -70,7 +70,7 @@ GLuint g_img = 0;
 GLfloat g_angle_x = 27.0f;
 GLfloat g_inc = 0.0f;
 GLfloat g_rotation = 0.0f;
-char g_filename[128] = "data/earth.rgb";
+char g_filename[128] = "data/earth.sgi";
 
 // light position
 GLfloat g_light_position[4] = { 2.0f, 1.2f, 4.0f, 1.0f };

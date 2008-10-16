@@ -13,7 +13,7 @@ OBJS	 = camera.o data-loader.o lexer.o sintable.o sphere.o texture.o
 OBJS	+= quadric.o solar.o text3d.o
 
 
-all: cube solar
+all: cube solar globe
 
 
 cube.o       : cube.cpp        $(HEADERS)
@@ -43,5 +43,5 @@ globe: globe.cpp
 
 
 clean:
-	exec rm -f -- cube solar *.o parser.[ch]pp *.hh
+	exec rm -f -- cube solar globe *.o parser.[ch]pp *.hh
 
