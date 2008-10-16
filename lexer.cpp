@@ -93,12 +93,22 @@ int Lexer::nextToken(Value &value, Location &location) {
 	}
 
 	/* Not a number */
-	if (!isdigit(ch) && ch != '.') {
+	if (!isdigit(ch) && ch != '.' && ch != '-') {
 		location.end = current;
 		return ch;
 	}
 
+	float mul = 1.0;
 	std::string str;
+	if (ch == '-') {
+		ch = getchar();
+		if (!isdigit(ch) && ch != '.') {
+			ungetchar(ch);
+			return '-';
+		}
+		mul = -1.0;
+	}
+
 	if (ch == '.') {
 		ch = getchar();
 		ungetchar(ch);
@@ -142,7 +152,7 @@ int Lexer::nextToken(Value &value, Location &location) {
 	/* Return number */
 	ungetchar(ch);
 	location.end = current;
-	value.real = std::strtof(str.c_str(), 0);
+	value.real = mul * std::strtof(str.c_str(), 0);
 	return T_REAL;
 }
 
