@@ -222,9 +222,12 @@ int main(int argc, char** argv) {
 	memset(stars, 0, sizeof stars);
 	srand(time(0));
 	for (unsigned count = 0; count < 10240; ++count) {
-		const unsigned x = rand() % 4096;
-		const unsigned y = rand() % 4096;
-		stars[x | (y << 12)] = rand() * (256.0f / (RAND_MAX + 1.0f));
+#if RAND_MAX >= (4096 * 4096 - 1)
+		const unsigned pos = rand() % (4096 * 4096);
+#else
+		const unsigned pos = (rand() * (RAND_MAX + 1) | rand()) % (4096 * 4096);
+#endif
+		stars[pos] = rand() * (256.0f / (RAND_MAX + 1.0f));
 	}
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
