@@ -96,6 +96,36 @@ static void zeroFPS(int param) {
 	glutTimerFunc(param, zeroFPS, param);
 }
 
+
+static void drawStars() {
+	if (displayStars && starsTexture) {
+		static GLuint displayList = 0;
+		if (displayList) {
+			glCallList(displayList);
+		} else {
+			displayList = glGenLists(1);
+			if (displayList) {
+				glNewList(displayList, GL_COMPILE);
+			}
+
+			mn::gl::Quadric starsQuadric;
+			gluQuadricOrientation(starsQuadric, GLU_INSIDE);
+			gluQuadricTexture(starsQuadric, 1);
+
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, starsTexture);
+			glColor3f(1, 1, 1);
+			gluSphere(starsQuadric, 2500, 10, 10);
+			glDisable(GL_TEXTURE_2D);
+
+			if (displayList) {
+				glEndList();
+				glCallList(displayList);
+			}
+		}
+	}
+}
+
 static void drawScene() {
 	++fps_counter;
 
@@ -112,19 +142,7 @@ static void drawScene() {
 
 		camera.doLookAt();
 
-		if (displayStars && starsTexture) {
-			static mn::gl::Quadric *starsQuadric = 0;
-			if (!starsQuadric) {
-				starsQuadric = new mn::gl::Quadric();
-				gluQuadricOrientation(starsQuadric->get(), GLU_INSIDE);
-				gluQuadricTexture(starsQuadric->get(), 1);
-			}
-			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, starsTexture);
-			glColor3f(1, 1, 1);
-			gluSphere(starsQuadric->get(), 2000, 360, 360);
-			glDisable(GL_TEXTURE_2D);
-		}
+		drawStars();
 
 		glEnable(GL_LIGHTING);
 		glDisable(GL_COLOR_MATERIAL);
