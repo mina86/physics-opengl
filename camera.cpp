@@ -29,6 +29,31 @@ void Camera::update() const {
 }
 
 
+void Camera::doRotate() const {
+	if (!valid) update();
+
+	float matrix[16];
+#define M(row, col) matrix[col * 4 + row]
+	M(0, 0) = -left.x;
+	M(0, 1) = -left.y;
+	M(0, 2) = -left.z;
+	M(0, 3) = 0.0;
+	M(1, 0) = top.x;
+	M(1, 1) = top.y;
+	M(1, 2) = top.z;
+	M(1, 3) = 0.0;
+	M(2, 0) = -forward.x;
+	M(2, 1) = -forward.y;
+	M(2, 2) = -forward.z;
+	M(2, 3) = 0.0;
+	M(3, 0) = 0.0;
+	M(3, 1) = 0.0;
+	M(3, 2) = 0.0;
+	M(3, 3) = 1.0;
+#undef M
+	glMultMatrixf(matrix);
+}
+
 
 
 

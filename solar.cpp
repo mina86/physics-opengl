@@ -159,6 +159,23 @@ static void drawScene() {
 	{
 		pushMatrix pm;
 
+		glTranslatef(-1, -0.8, -3);
+		camera.doRotate();
+
+		drawStars();
+
+	glDisable(GL_DEPTH_TEST);
+
+		glBegin(GL_LINES);
+		glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(0.2, 0, 0);
+		glColor3f(0, 1, 0); glVertex3f(0, 0, 0); glVertex3f(0, 0.2, 0);
+		glColor3f(0, 0, 1); glVertex3f(0, 0, 0); glVertex3f(0, 0, 0.2);
+		glEnd();
+	}
+
+	{
+		pushMatrix pm;
+
 		glTranslatef(0, 0, -2);
 
 		glColor3f(0, 0.7, 0);
@@ -177,19 +194,7 @@ static void drawScene() {
 		t3d::draw2D(std::string(buffer), -1, -1);
 	}
 
-	glTranslatef(-1, -0.8, 0);
-	camera.doLookAt();
-	glTranslatef(mn::gl::Camera::getDefaultCamera()->getCenterX(),
-	             mn::gl::Camera::getDefaultCamera()->getCenterY(),
-	             mn::gl::Camera::getDefaultCamera()->getCenterZ());
-
-	drawStars();
-
-	glBegin(GL_LINES);
-	glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(0.2, 0, 0);
-	glColor3f(0, 1, 0); glVertex3f(0, 0, 0); glVertex3f(0, 0.2, 0);
-	glColor3f(0, 0, 1); glVertex3f(0, 0, 0); glVertex3f(0, 0, 0.2);
-	glEnd();
+	glEnable(GL_DEPTH_TEST);
 
 	glutSwapBuffers();
 }

@@ -70,7 +70,7 @@ static void drawScene() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	//glPushMatrix();
+	glPushMatrix();
 	mn::gl::Camera::defaultLookAt();
 
 	glEnable(GL_LIGHTING);
@@ -93,7 +93,6 @@ static void drawScene() {
 	glVertex3f(-100, -2,  100);
 	glEnd();
 
-	glPushMatrix();
 	glRotatef(mn::gl::Camera::getTicks(), 1.0f, 1.0f, 0.0f);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT); glCallList(displayLists.cube);
@@ -103,16 +102,17 @@ static void drawScene() {
 
 	glDisable(GL_LIGHT0);
 	glDisable(GL_LIGHTING);
-	glTranslatef(mn::gl::Camera::getDefaultCamera()->getCenterX(),
-	             mn::gl::Camera::getDefaultCamera()->getCenterY(),
-	             mn::gl::Camera::getDefaultCamera()->getCenterZ());
 
+	glTranslatef(-1, -0.8, -3);
+	mn::gl::Camera::getDefaultCamera()->doRotate();
+
+	glDisable(GL_DEPTH_TEST);
 	glBegin(GL_LINES);
 	glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(0.2, 0, 0);
 	glColor3f(0, 1, 0); glVertex3f(0, 0, 0); glVertex3f(0, 0.2, 0);
 	glColor3f(0, 0, 1); glVertex3f(0, 0, 0); glVertex3f(0, 0, 0.2);
 	glEnd();
-
+	glEnable(GL_DEPTH_TEST);
 
 	glutSwapBuffers();
 }

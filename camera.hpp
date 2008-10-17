@@ -73,24 +73,16 @@ struct Camera {
 		if (!valid) update();
 		return forward;
 	}
-	Vector getCenter() const { return 3.0 * getForward() + eye; }
-	float getCenterX() const { return 3.0 * getForward().x + eye.x; }
-	float getCenterY() const { return 3.0 * getForward().y + eye.y; }
-	float getCenterZ() const { return 3.0 * getForward().z + eye.z; }
 
 	const Vector &getTop() { if (!valid) update(); return top; }
 	float getTopX() { return getTop().x; }
 	float getTopY() { return getTop().y; }
 	float getTopZ() { return getTop().z; }
 
-
+	void doRotate() const;
 	void doLookAt() const {
-		if (!valid) update();
-		gluLookAt(eye.x, eye.y, eye.z,
-		          3.0 * forward.x + eye.x,
-		          3.0 * forward.y + eye.y,
-		          3.0 * forward.z + eye.z,
-		          0, 1, 0);
+		doRotate();
+		glTranslatef(-eye.x, -eye.y, -eye.z);
 	}
 
 
