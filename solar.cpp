@@ -209,6 +209,7 @@ int main(int argc, char** argv) {
 		{ "no-light",    0, 0, 'j' },
 		{ "no-stars",    0, 0, 'm' },
 		{ "help",        0, 0, '?' },
+		{ 0, 0, 0, 0 }
 	};
 	int opt;
 	while ((opt = getopt_long(argc, argv, "123?xcbnjmH", longopts, 0)) != -1){
