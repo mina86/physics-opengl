@@ -13,16 +13,6 @@ namespace solar {
 const std::string Lexer::stdin_filename("<stdin>");
 
 
-FILE *Lexer::openFile(const char *filename) {
-	FILE *fd = fopen(filename, "r");
-	if (!fd) {
-		throw std::runtime_error(std::string(filename) +
-		                         ": could not open file");
-	}
-	return fd;
-}
-
-
 int Lexer::getchar() {
 	int ch;
 	do {

@@ -243,7 +243,7 @@ int main(int argc, char** argv) {
 
 
 	{
-		const char *data = argc == 1 ? "data/helio.txt" : argv[1];
+		const char *data = optind == argc ? "data/helio.txt" : argv[optind];
 		const char *dir = strrchr(data, '/');
 		if (dir) {
 			char *path = new char[dir - data + 2];

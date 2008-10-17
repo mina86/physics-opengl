@@ -62,7 +62,7 @@ struct Lexer {
 	 * \throw error if file could not be opened.
 	 */
 	explicit Lexer(const char *theFilename)
-		: filename(theFilename), stream(openFile(theFilename)),
+		: filename(theFilename), stream(fopen(theFilename, "r")),
 		  closeStream(true) { }
 
 	/**
@@ -76,7 +76,7 @@ struct Lexer {
 	 * \throw error if file could not be opened.
 	 */
 	explicit Lexer(const std::string &theFilename)
-		: filename(theFilename), stream(openFile(theFilename.c_str())),
+		: filename(theFilename), stream(fopen(theFilename.c_str(), "r")),
 		  closeStream(true) { }
 
 	/** Creates lexer reading from standard input.  */
@@ -113,14 +113,6 @@ struct Lexer {
 
 
 private:
-	/**
-	 * Opens given file in read only mode.
-	 * \param filename name of the file to open.
-	 * \return opened stream.
-	 * \throw IOException on error.
-	 */
-	static FILE *openFile(const char *filename);
-
 	/** Name of a standard input stream. */
 	static const std::string stdin_filename;
 
