@@ -1,7 +1,12 @@
+#ifndef _GNU_SOURCE
+#  define _GNU_SOURCE 1
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <getopt.h>
 
 #ifdef __APPLE__
 #  include <OpenGL/OpenGL.h>
@@ -193,16 +198,72 @@ int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
-	mn::initSinTable();
-
-	sun = mn::solar::loadData(argc == 1 ? "data/helio.txt" : argv[1]);
-	if (!sun) {
-		return 1;
+	static const struct option longopts[] = {
+		{ "low",         0, 0, '1' },
+		{ "medium",      0, 0, '2' },
+		{ "high",        0, 0, '3' },
+		{ "no-textures", 0, 0, 'x' },
+		{ "low-detail",  0, 0, 'c' },
+		{ "no-orbits",   0, 0, 'b' },
+		{ "no-names",    0, 0, 'n' },
+		{ "no-light",    0, 0, 'j' },
+		{ "no-stars",    0, 0, 'm' },
+		{ "help",        0, 0, '?' },
+	};
+	int opt;
+	while ((opt = getopt_long(argc, argv, "123?xcbnjmH", longopts, 0)) != -1){
+		switch (opt) {
+		case '1': mn::gl::Texture::filename_suffix = ".lq.sgi"; break;
+		case '2': mn::gl::Texture::filename_suffix = ".mq.sgi"; break;
+		case '3': mn::gl::Texture::filename_suffix = ".hq.sgi"; break;
+		case 'x': mn::solar::Sphere::useTextures = false; break;
+		case 'c': mn::solar::Sphere::lowQuality  = true ; break;
+		case 'b': mn::solar::Sphere::drawOrbits  = false; break;
+		case 'n': mn::solar::Sphere::drawNames   = false; break;
+		case 'j': headlight = false; break;
+		case 'm': displayStars = false; break;
+		case '?':
+			puts("usage: ./solar [ <options> ] [ <data-file> ]\n"
+				 "<options>:\n"
+				 " -1 --low            use low quality textures\n"
+				 " -2 --medium         use medium quality textures\n"
+				 " -3 --high           use high quality textures\n"
+				 "  folowing can be toggled during runtime:\n"
+				 " -x --no-textures    do not use display textures\n"
+				 " -c --low-detail     use fewer vertices\n"
+				 " -b --no-orbits      do not display orbits\n"
+				 " -n --no-names       do not display names\n"
+				 " -j --no-light       turn off headlight\n"
+				 " -m --no-stars       do not display stars");
+			return 0;
+		default:
+			return 1;
+		}
 	}
 
-	int w = glutGet(GLUT_SCREEN_WIDTH);
-	int h = glutGet(GLUT_SCREEN_HEIGHT);
-	glutInitWindowSize(w, h);
+
+	{
+		const char *data = argc == 1 ? "data/helio.txt" : argv[1];
+		const char *dir = strrchr(data, '/');
+		if (dir) {
+			char *path = new char[dir - data + 2];
+			memcpy(path, data, dir - data + 1);
+			path[dir - data + 1] = 0;
+			mn::gl::Texture::filename_prefix = path;
+		}
+
+		sun = mn::solar::loadData(data);
+		if (!sun) {
+			return 1;
+		}
+	}
+
+
+	mn::initSinTable();
+
+
+	glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH),
+	                   glutGet(GLUT_SCREEN_HEIGHT));
 	glutInitWindowPosition(0, 0);
 	glutCreateWindow("Spinning Cube");
 	glutSetCursor(GLUT_CURSOR_NONE);
@@ -243,16 +304,18 @@ int main(int argc, char** argv) {
 	glEnable(GL_CULL_FACE);
 	glShadeModel(GL_SMOOTH);
 
+	{
+		glEnable(GL_LIGHT0);
+		static const GLfloat lightColor[] = {0.01f, 0.4f, 0.2f, 1.0f};
+		static const GLfloat lightPos[] = { 0, 0, 0, 1 };
+		static const GLfloat lightDirection[] = { 0, 0, -1, 0 };
 
-	glEnable(GL_LIGHT0);
-	static const GLfloat lightColor[] = {0.01f, 0.4f, 0.2f, 1.0f};
-	static const GLfloat lightPos[] = { 0, 0, 0, 1 };
-	static const GLfloat lightDirection[] = { 0, 0, -1, 0 };
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
+		glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+		glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection);
+		glLightf (GL_LIGHT0, GL_SPOT_CUTOFF, 2.f);
+	}
 
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor);
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection);
-	glLightf (GL_LIGHT0, GL_SPOT_CUTOFF, 2.f);
 
 	glutTimerFunc(1000, zeroFPS, 1000);
 
@@ -262,12 +325,14 @@ int main(int argc, char** argv) {
 	mn::gl::Camera::keyMovementFactor   *=  3;
 	mn::gl::Camera::mouseMovementFactor *=  3;
 	mn::gl::Camera::registerHandlers();
+	mn::gl::Camera::keyboardFunc = handleKeyboard;
+	glutDisplayFunc(drawScene);
+
+	puts("\n==================== Key Bindings ====================");
 	mn::gl::Camera::printHelp();
 	puts("toggle: x  textures      c  low quality   v  display mode\n"
 		 "        b  orbits        n  names         m  stars\n"
 		 "        j  head light\n");
-	mn::gl::Camera::keyboardFunc = handleKeyboard;
-	glutDisplayFunc(drawScene);
 
 
 	glutMainLoop();

@@ -10,6 +10,10 @@ namespace mn {
 namespace gl {
 
 
+const char *Texture::filename_prefix = "";
+const char *Texture::filename_suffix = ".hq.sgi";
+
+
 void Texture::assign(unsigned theWidth, unsigned theHeight,
                      unsigned char *theData) {
 	delete[] data;
@@ -193,7 +197,11 @@ void RGBImageReader::getRow(uint8_t *buf, int y, int z) {
 }
 
 
-void Texture::load(const char *filename) {
+void Texture::load(const char *filename_) {
+	char filename[1024];
+	snprintf(filename, sizeof filename, "%s%s%s",
+	         filename_prefix, filename_, filename_suffix);
+
 	RGBImageReader image(filename);
 	if (!image.file) return;
 

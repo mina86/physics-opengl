@@ -104,11 +104,11 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 	}
 
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE,
-	             useTextures ? ones : materialColor);
+	             gotTexture ? ones : materialColor);
 	glMaterialfv(GL_FRONT, GL_SPECULAR,
 	             light >= 0 ? zeros : materialSpecular);
 	glMaterialfv(GL_FRONT, GL_EMISSION,
-	             light <  0 ? zeros : (useTextures ? ones : materialColor));
+	             light <  0 ? zeros : (gotTexture ? ones : materialColor));
 	glMaterialf(GL_FRONT, GL_SHININESS, light >= 0 ? 0 : 12);
 
 	unsigned slices = 60 / distanceFactor2;
