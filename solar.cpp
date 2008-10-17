@@ -173,26 +173,22 @@ static void drawScene() {
 		glEnd();
 	}
 
-	{
-		pushMatrix pm;
+	glTranslatef(0, 0, -2);
 
-		glTranslatef(0, 0, -2);
+	glColor3f(0, 0.7, 0);
+	glBegin(GL_LINES);
+	glVertex3f(-0.01,  0.01, 0); glVertex3f(-0.02,  0.02, 0);
+	glVertex3f(-0.01, -0.01, 0); glVertex3f(-0.02, -0.02, 0);
+	glVertex3f( 0.01, -0.01, 0); glVertex3f( 0.02, -0.02, 0);
+	glVertex3f( 0.01,  0.01, 0); glVertex3f( 0.02,  0.02, 0);
+	glEnd();
 
-		glColor3f(0, 0.7, 0);
-		glBegin(GL_LINES);
-		glVertex3f(-0.01,  0.01, 0); glVertex3f(-0.02,  0.02, 0);
-		glVertex3f(-0.01, -0.01, 0); glVertex3f(-0.02, -0.02, 0);
-		glVertex3f( 0.01, -0.01, 0); glVertex3f( 0.02, -0.02, 0);
-		glVertex3f( 0.01,  0.01, 0); glVertex3f( 0.02,  0.02, 0);
-		glEnd();
-
-		glTranslatef(-0.8, 0.8, 0);
-		glScalef(0.03, 0.03, 0.03);
-		char buffer[1024];
-		sprintf(buffer, "position = (%6.2f, %6.2f, %6.2f)\ndistance = %6.2f\nrotation = (%2.2f, %2.2f, %2.2f)\nfps = %3.1f", eye.x, eye.y, eye.z, eye.length(), camera.getRotX() * (180/M_PI), camera.getRotY() * (180/M_PI), 0.0, fps);
-		glColor3f(1, 1, 1);
-		t3d::draw2D(std::string(buffer), -1, -1);
-	}
+	glTranslatef(-0.8, 0.8, 0);
+	glScalef(0.03, 0.03, 0.03);
+	char buffer[1024];
+	sprintf(buffer, "position = (%6.2f, %6.2f, %6.2f)\ndistance = %6.2f\nrotation = (%2.2f, %2.2f, %2.2f)\nfps = %3.1f", eye.x, eye.y, eye.z, eye.length(), camera.getRotX() * (180/M_PI), camera.getRotY() * (180/M_PI), 0.0, fps);
+	glColor3f(1, 1, 1);
+	t3d::draw2D(std::string(buffer), -1, -1);
 
 	glEnable(GL_DEPTH_TEST);
 
