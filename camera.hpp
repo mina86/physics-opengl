@@ -109,17 +109,6 @@ public:
 	static void registerHandlers();
 	static void printHelp();
 
-	static void fullViewport() {
-		if (viewport != 16) {
-			doViewport(16);
-		}
-	}
-	static void doViewport() {
-		if (viewport != 16) {
-			doViewport(viewport);
-		}
-	}
-
 	typedef void(*KeyboardFunc)(unsigned key, bool down, int x, int y);
 
 	static float keyMovementFactor, keyRotationTopFactor;
@@ -132,18 +121,6 @@ public:
 	static Camera *camera;
 	static KeyboardFunc keyboardFunc;
 	static unsigned long ticks;
-
-
-private:
-	static void doViewport(unsigned vp) {
-		const unsigned vW = (wndWidth * vp) / 16;
-		const unsigned vH = (wndHeight * vp) / 16;
-		glViewport((wndWidth - vW) / 2, (wndHeight - vH) / 2, vW, vH);
-	}
-
-	static unsigned wndWidth, wndHeight, viewport;
-
-	friend struct CameraImpl;
 };
 
 

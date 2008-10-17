@@ -158,7 +158,6 @@ static void drawScene() {
 		drawStars();
 
 	glDisable(GL_DEPTH_TEST);
-	mn::gl::Camera::fullViewport();
 
 		glBegin(GL_LINES);
 		glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(0.2, 0, 0);
@@ -184,7 +183,6 @@ static void drawScene() {
 	glColor3f(1, 1, 1);
 	t3d::draw2D(std::string(buffer), -1, -1);
 
-	mn::gl::Camera::doViewport();
 	glEnable(GL_DEPTH_TEST);
 
 	glutSwapBuffers();
@@ -255,7 +253,6 @@ int main(int argc, char** argv) {
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection);
 	glLightf (GL_LIGHT0, GL_SPOT_CUTOFF, 2.f);
-
 
 	glutTimerFunc(1000, zeroFPS, 1000);
 

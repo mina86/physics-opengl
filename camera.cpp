@@ -25,16 +25,7 @@ float Camera::runFactor               = 10.0;
 float Camera::creepFactor             = 0.1;
 float Camera::maxDistance             = 1500.0;
 
-unsigned Camera::wndWidth = 0, Camera::wndHeight = 0;
-unsigned Camera::viewport = 16;
-
-
-struct CameraImpl {
-	static inline unsigned &width   () { return Camera::wndWidth ; }
-	static inline unsigned &height  () { return Camera::wndHeight; }
-	static inline unsigned &viewport() { return Camera::viewport ; }
-	static inline void doViewport(unsigned vp) { Camera::doViewport(vp); }
-};
+static unsigned wndWidth = 0, wndHeight = 0;
 
 
 enum {
@@ -146,19 +137,6 @@ void handleKeyboardDown(unsigned char key, int x, int y) {
 			glutPostRedisplay();
 		}
 		break;
-
-	case '-': case '_':
-		if (CameraImpl::viewport() > 2) {
-			CameraImpl::doViewport(--CameraImpl::viewport());
-			glutPostRedisplay();
-		}
-		break;
-	case '+': case '=':
-		if (CameraImpl::viewport() < 16) {
-			CameraImpl::doViewport(++CameraImpl::viewport());
-			glutPostRedisplay();
-		}
-		break;
 	}
 	if (Camera::keyboardFunc) {
 		Camera::keyboardFunc(key, true, x, y);
@@ -267,10 +245,10 @@ void handleMotion(int x, int y) {
 		first = false;
 		return;
 	}
-	int dX = x - (CameraImpl::width () >> 1);
-	int dY = y - (CameraImpl::height() >> 1);
+	int dX = x - (wndWidth  >> 1);
+	int dY = y - (wndHeight >> 1);
 	if (dX || dY) {
-		glutWarpPointer(CameraImpl::width() >> 1, CameraImpl::height() >> 1);
+		glutWarpPointer(wndWidth >> 1, wndHeight >> 1);
 		if (Camera::camera) {
 			Camera::camera->rotateTop ( dY * Camera::mouseRotationTopFactor);
 			Camera::camera->rotateLeft(-dX * Camera::mouseRotationLeftFactor);
@@ -281,13 +259,13 @@ void handleMotion(int x, int y) {
 
 
 void handleResize(int w, int h) {
-	CameraImpl::width() = w;
-	CameraImpl::height() = h;
-	glutWarpPointer(CameraImpl::width() >> 1, CameraImpl::height() >> 1);
-	CameraImpl::doViewport(CameraImpl::viewport());
+	wndWidth = w;
+	wndHeight = h;
+	glutWarpPointer(wndWidth >> 1, wndHeight >> 1);
+	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0, (double)w / (double)h, 0.01, 10000.0);
+	gluPerspective(45.0, (double)w / (double)h, 0.01, 4000.0);
 }
 
 
@@ -309,7 +287,7 @@ void Camera::registerHandlers() {
 void Camera::printHelp() {
 	puts("d/g  strafe right/left   e/d  move forward/backward    w/s  move up/dow\n"
 		 "e/t  look   right/left   z/a  hold to move fast/slow   y/h  look up/down\n"
-		 "q    reset position      -/=  dec-/increase viewport   esc  quit");
+		 "q    reset position                                    esc  quit");
 }
 
 }
