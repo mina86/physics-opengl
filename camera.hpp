@@ -85,42 +85,6 @@ struct Camera {
 		glTranslatef(-eye.x, -eye.y, -eye.z);
 	}
 
-
-	/* Camera control part */
-	static void setSize(int w, int h) {
-		wndWidth = w, wndHeight = h;
-		glutWarpPointer(wndWidth >> 1, wndHeight >> 1);
-	}
-	static void setDefaultCamera(Camera *theCamera) {
-		camera = theCamera;
-	}
-	static Camera *getDefaultCamera() { return camera; }
-	static void defaultLookAt() {
-		if (camera) camera->doLookAt();
-	}
-	static unsigned long getTicks() { return ticks; }
-	static void registerHandlers();
-	static void printHelp();
-
-	typedef void(*KeyboardFunc)(unsigned key, bool down, int x, int y);
-	static void setKeyboardFunc(KeyboardFunc theKeyboardFunc) {
-		keyboardFunc = theKeyboardFunc;
-	}
-	typedef void(*ResizeFunc)(int w, int h);
-	static void setResizeFunc(ResizeFunc theResizeFunc) {
-		resizeFunc = theResizeFunc;
-	}
-
-	static float keyMovementFactor, keyRotationTopFactor;
-	static float keyRotationLeftFactor, mouseMovementFactor;
-	static float mouseRotationTopFactor, mouseRotationLeftFactor;
-	static float runFactor, creepFactor;
-
-	static float maxDistance;
-
-	static bool tickRedisplays;
-	static bool countTicks;
-
 private:
 	void update() const;
 	void checkDistance() {
@@ -136,21 +100,50 @@ private:
 	mutable bool valid;
 
 
-	/* Camera control part */
-	static void handleKeyboardDown(unsigned char key, int x, int y);
-	static void handleKeyboardUp(unsigned char key, int x, int y);
-	static void handleSpecialKeyboardDown(int key, int x, int y);
-	static void handleSpecialKeyboardUp(int key, int x, int y);
-	static void handleMouse(int button, int state, int x, int y);
-	static void handleTick(int to);
-	static void handleMotion(int x, int y);
-	static void handleResize(int w, int h);
+public:
+	static void defaultLookAt() {
+		if (camera) {
+			camera->doLookAt();
+		}
+	}
+	static void registerHandlers();
+	static void printHelp();
 
+	static void fullViewport() {
+		if (viewport != 16) {
+			doViewport(16);
+		}
+	}
+	static void doViewport() {
+		if (viewport != 16) {
+			doViewport(viewport);
+		}
+	}
+
+	typedef void(*KeyboardFunc)(unsigned key, bool down, int x, int y);
+
+	static float keyMovementFactor, keyRotationTopFactor;
+	static float keyRotationLeftFactor, mouseMovementFactor;
+	static float mouseRotationTopFactor, mouseRotationLeftFactor;
+	static float runFactor, creepFactor;
+	static float maxDistance;
+
+	static bool tickRedisplays, countTicks;
 	static Camera *camera;
-	static int wndWidth, wndHeight;
 	static KeyboardFunc keyboardFunc;
-	static ResizeFunc resizeFunc;
 	static unsigned long ticks;
+
+
+private:
+	static void doViewport(unsigned vp) {
+		const unsigned vW = (wndWidth * vp) / 16;
+		const unsigned vH = (wndHeight * vp) / 16;
+		glViewport((wndWidth - vW) / 2, (wndHeight - vH) / 2, vW, vH);
+	}
+
+	static unsigned wndWidth, wndHeight, viewport;
+
+	friend struct CameraImpl;
 };
 
 

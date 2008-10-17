@@ -76,13 +76,6 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 	glutPostRedisplay();
 }
 
-static void handleResize(int w, int h) {
-	glViewport(0, 0, w, h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(45.0, (double)w / (double)h, 0.01, 10000.0);
-}
-
 
 struct pushMatrix {
 	pushMatrix() { glPushMatrix(); }
@@ -139,7 +132,7 @@ static void drawScene() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	const mn::gl::Camera &camera = *mn::gl::Camera::getDefaultCamera();
+	const mn::gl::Camera &camera = *mn::gl::Camera::camera;
 	const mn::gl::Vector &eye = camera.getEye();
 
 	{
@@ -150,7 +143,7 @@ static void drawScene() {
 		glEnable(GL_LIGHTING);
 		glDisable(GL_COLOR_MATERIAL);
 
-		sun->draw(mn::gl::Camera::getTicks(), mn::gl::Vector(0, 0, 0));
+		sun->draw(mn::gl::Camera::ticks, mn::gl::Vector(0, 0, 0));
 
 		glEnable(GL_COLOR_MATERIAL);
 		glDisable(GL_LIGHTING);
@@ -165,6 +158,7 @@ static void drawScene() {
 		drawStars();
 
 	glDisable(GL_DEPTH_TEST);
+	mn::gl::Camera::fullViewport();
 
 		glBegin(GL_LINES);
 		glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(0.2, 0, 0);
@@ -190,6 +184,7 @@ static void drawScene() {
 	glColor3f(1, 1, 1);
 	t3d::draw2D(std::string(buffer), -1, -1);
 
+	mn::gl::Camera::doViewport();
 	glEnable(GL_DEPTH_TEST);
 
 	glutSwapBuffers();
@@ -266,19 +261,15 @@ int main(int argc, char** argv) {
 
 
 	mn::gl::Camera camera;
-	mn::gl::Camera::setDefaultCamera(&camera);
-	mn::gl::Camera::setSize(w, h);
-
+	mn::gl::Camera::camera = &camera;
 	mn::gl::Camera::keyMovementFactor   *=  3;
 	mn::gl::Camera::mouseMovementFactor *=  3;
-
 	mn::gl::Camera::registerHandlers();
 	mn::gl::Camera::printHelp();
 	puts("toggle: x  textures      c  low quality   v  display mode\n"
 		 "        b  orbits        n  names         m  stars\n"
 		 "        j  head light\n");
-	mn::gl::Camera::setResizeFunc(handleResize);
-	mn::gl::Camera::setKeyboardFunc(handleKeyboard);
+	mn::gl::Camera::keyboardFunc = handleKeyboard;
 	glutDisplayFunc(drawScene);
 
 

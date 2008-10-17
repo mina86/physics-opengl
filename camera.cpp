@@ -9,6 +9,70 @@ namespace mn {
 namespace gl {
 
 
+
+Camera *Camera::camera = 0;
+Camera::KeyboardFunc Camera::keyboardFunc = 0;
+bool Camera::tickRedisplays = true, Camera::countTicks = true;
+unsigned long Camera::ticks = 0;
+
+float Camera::keyMovementFactor       =  .1;
+float Camera::keyRotationTopFactor    = M_PI / 180.0;
+float Camera::keyRotationLeftFactor   = M_PI / 180.0;
+float Camera::mouseMovementFactor     =  .1;
+float Camera::mouseRotationTopFactor  = M_PI / 1800.0;
+float Camera::mouseRotationLeftFactor = M_PI / 1800.0;
+float Camera::runFactor               = 10.0;
+float Camera::creepFactor             = 0.1;
+float Camera::maxDistance             = 1500.0;
+
+unsigned Camera::wndWidth = 0, Camera::wndHeight = 0;
+unsigned Camera::viewport = 16;
+
+
+struct CameraImpl {
+	static inline unsigned &width   () { return Camera::wndWidth ; }
+	static inline unsigned &height  () { return Camera::wndHeight; }
+	static inline unsigned &viewport() { return Camera::viewport ; }
+	static inline void doViewport(unsigned vp) { Camera::doViewport(vp); }
+};
+
+
+enum {
+	MOVE_FORWARD   = 1 <<  0,
+	MOVE_BACKWARD  = 1 <<  1,
+	MOVE_LEFT      = 1 <<  2,
+	MOVE_RIGHT     = 1 <<  3,
+	MOVE_TOP       = 1 <<  4,
+	MOVE_BOTTOM    = 1 <<  5,
+
+	MOUSE_FORWARD  = 1 <<  6,
+	MOUSE_BACKWARD = 1 <<  7,  /* unused */
+	MOUSE_LEFT     = 1 <<  8,
+	MOUSE_RIGHT    = 1 <<  9,
+
+	ROT_LEFT       = 1 << 10,
+	ROT_RIGHT      = 1 << 11,
+	ROT_TOP        = 1 << 12,
+	ROT_BOTTOM     = 1 << 13,
+
+	RUN_FLAG       = 1 << 14,
+	CREEP_FLAG     = 1 << 15
+};
+
+static unsigned actionsMask = 0;
+
+
+
+
+static void handleKeyboardUp(unsigned char key, int x, int y);
+static void handleSpecialKeyboardDown(int key, int x, int y);
+static void handleSpecialKeyboardUp(int key, int x, int y);
+static void handleMouse(int button, int state, int x, int y);
+static void handleTick(int to);
+static void handleMotion(int x, int y);
+
+
+
 void Camera::update() const {
 	const float cx = std::cos(rotX), sx = std::sin(rotX);
 	const float cy = std::cos(rotY), sy = std::sin(rotY);
@@ -57,50 +121,9 @@ void Camera::doRotate() const {
 
 
 
-Camera *Camera::camera = 0;
-int Camera::wndWidth = 0, Camera::wndHeight = 0;
-Camera::KeyboardFunc Camera::keyboardFunc = 0;
-Camera::ResizeFunc Camera::resizeFunc = 0;
-bool Camera::tickRedisplays = true, Camera::countTicks = true;
-unsigned long Camera::ticks = 0;
-
-float Camera::keyMovementFactor       =  .1;
-float Camera::keyRotationTopFactor    = M_PI / 180.0;
-float Camera::keyRotationLeftFactor   = M_PI / 180.0;
-float Camera::mouseMovementFactor     =  .1;
-float Camera::mouseRotationTopFactor  = M_PI / 1800.0;
-float Camera::mouseRotationLeftFactor = M_PI / 1800.0;
-float Camera::runFactor               = 10.0;
-float Camera::creepFactor             = 0.1;
-float Camera::maxDistance             = 1500.0;
 
 
-static unsigned actionsMask = 0;
-enum {
-	MOVE_FORWARD   = 1 <<  0,
-	MOVE_BACKWARD  = 1 <<  1,
-	MOVE_LEFT      = 1 <<  2,
-	MOVE_RIGHT     = 1 <<  3,
-	MOVE_TOP       = 1 <<  4,
-	MOVE_BOTTOM    = 1 <<  5,
-
-	MOUSE_FORWARD  = 1 <<  6,
-	MOUSE_BACKWARD = 1 <<  7,  /* unused */
-	MOUSE_LEFT     = 1 <<  8,
-	MOUSE_RIGHT    = 1 <<  9,
-
-	ROT_LEFT       = 1 << 10,
-	ROT_RIGHT      = 1 << 11,
-	ROT_TOP        = 1 << 12,
-	ROT_BOTTOM     = 1 << 13,
-
-	RUN_FLAG       = 1 << 14,
-	CREEP_FLAG     = 1 << 15
-};
-
-
-
-void Camera::handleKeyboardDown(unsigned char key, int x, int y) {
+void handleKeyboardDown(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'r': case 'R': actionsMask |= MOVE_FORWARD ; break;
 	case 'f': case 'F': actionsMask |= MOVE_BACKWARD; break;
@@ -117,14 +140,32 @@ void Camera::handleKeyboardDown(unsigned char key, int x, int y) {
 	case 'z': case 'Z': actionsMask |= RUN_FLAG     ; break;
 	case 'a': case 'A': actionsMask |= CREEP_FLAG   ; break;
 
-	case 'q': case 'Q': if (camera) camera->reset() ; break;
+	case 'q': case 'Q':
+		if (Camera::camera) {
+			Camera::camera->reset() ;
+			glutPostRedisplay();
+		}
+		break;
+
+	case '-': case '_':
+		if (CameraImpl::viewport() > 2) {
+			CameraImpl::doViewport(--CameraImpl::viewport());
+			glutPostRedisplay();
+		}
+		break;
+	case '+': case '=':
+		if (CameraImpl::viewport() < 16) {
+			CameraImpl::doViewport(++CameraImpl::viewport());
+			glutPostRedisplay();
+		}
+		break;
 	}
-	if (keyboardFunc) {
-		keyboardFunc(key, true, x, y);
+	if (Camera::keyboardFunc) {
+		Camera::keyboardFunc(key, true, x, y);
 	}
 }
 
-void Camera::handleKeyboardUp(unsigned char key, int x, int y) {
+void handleKeyboardUp(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'r': case 'R': actionsMask &= ~MOVE_FORWARD ; break;
 	case 'f': case 'F': actionsMask &= ~MOVE_BACKWARD; break;
@@ -141,29 +182,30 @@ void Camera::handleKeyboardUp(unsigned char key, int x, int y) {
 	case 'z': case 'Z': actionsMask &= ~RUN_FLAG     ; break;
 	case 'a': case 'A': actionsMask &= ~CREEP_FLAG   ; break;
 	}
-	if (keyboardFunc) {
-		keyboardFunc(key, false, x, y);
+	if (Camera::keyboardFunc) {
+		Camera::keyboardFunc(key, false, x, y);
 	}
 }
 
-void Camera::handleSpecialKeyboardDown(int key, int x, int y) {
-	if (keyboardFunc) {
-		keyboardFunc(key + 256, true, x, y);
+void handleSpecialKeyboardDown(int key, int x, int y) {
+	if (Camera::keyboardFunc) {
+		Camera::keyboardFunc(key + 256, true, x, y);
 	}
 }
 
-void Camera::handleSpecialKeyboardUp(int key, int x, int y) {
-	if (keyboardFunc) {
-		keyboardFunc(key + 256, false, x, y);
+void handleSpecialKeyboardUp(int key, int x, int y) {
+	if (Camera::keyboardFunc) {
+		Camera::keyboardFunc(key + 256, false, x, y);
 	}
 }
 
 
-void Camera::handleMouse(int button, int state, int x, int y) {
+void handleMouse(int button, int state, int x, int y) {
 	(void)x; (void)y;
 	if (button == 3 || button == 4) {
-		if (state == GLUT_DOWN) {
-			camera->moveForward((button == 3 ? 5 : -5) * mouseMovementFactor);
+		if (state == GLUT_DOWN && Camera::camera) {
+			Camera::camera->moveForward((button == 3 ? 5 : -5) *
+			                            Camera::mouseMovementFactor);
 			glutPostRedisplay();
 		}
 	} else if (state == GLUT_DOWN) {
@@ -182,35 +224,35 @@ void Camera::handleMouse(int button, int state, int x, int y) {
 }
 
 
-void Camera::handleTick(int to) {
-	if (countTicks) {
-		++ticks;
+void handleTick(int to) {
+	if (Camera::countTicks) {
+		++Camera::ticks;
 	}
-	if (camera && (actionsMask & ~(RUN_FLAG | CREEP_FLAG))) {
-		const float run = actionsMask & RUN_FLAG ? runFactor :
-			(actionsMask & CREEP_FLAG ? creepFactor : 1.0);
-#define IF(mask) if (actionsMask & (mask))
-		IF(MOVE_FORWARD)  camera->moveForward( keyMovementFactor * run);
-		IF(MOVE_BACKWARD) camera->moveForward(-keyMovementFactor * run);
-		IF(MOVE_LEFT)     camera->moveLeft   ( keyMovementFactor * run);
-		IF(MOVE_RIGHT)    camera->moveLeft   (-keyMovementFactor * run);
-		IF(MOVE_TOP)      camera->moveTop    ( keyMovementFactor * run);
-		IF(MOVE_BOTTOM)   camera->moveTop    (-keyMovementFactor * run);
+	if (Camera::camera && (actionsMask & ~(RUN_FLAG | CREEP_FLAG))) {
+		const float speed = actionsMask & RUN_FLAG ? Camera::runFactor :
+			(actionsMask & CREEP_FLAG ? Camera::creepFactor : 1.0);
+#define IF(mask) if (actionsMask & (mask)) Camera::camera->
+		IF(MOVE_FORWARD)  moveForward( Camera::keyMovementFactor   * speed);
+		IF(MOVE_BACKWARD) moveForward(-Camera::keyMovementFactor   * speed);
+		IF(MOVE_LEFT)     moveLeft   ( Camera::keyMovementFactor   * speed);
+		IF(MOVE_RIGHT)    moveLeft   (-Camera::keyMovementFactor   * speed);
+		IF(MOVE_TOP)      moveTop    ( Camera::keyMovementFactor   * speed);
+		IF(MOVE_BOTTOM)   moveTop    (-Camera::keyMovementFactor   * speed);
 
-		IF(MOUSE_FORWARD) camera->moveForward( mouseMovementFactor * run);
+		IF(MOUSE_FORWARD) moveForward( Camera::mouseMovementFactor * speed);
 		/* MOUSE_BACKWARD unused */
-		IF(MOUSE_LEFT)     camera->moveLeft  ( mouseMovementFactor * run);
-		IF(MOUSE_RIGHT)    camera->moveLeft  (-mouseMovementFactor * run);
+		IF(MOUSE_LEFT)    moveLeft   ( Camera::mouseMovementFactor * speed);
+		IF(MOUSE_RIGHT)   moveLeft   (-Camera::mouseMovementFactor * speed);
 
-		IF(ROT_LEFT)      camera->rotateLeft ( keyRotationLeftFactor);
-		IF(ROT_RIGHT)     camera->rotateLeft (-keyRotationLeftFactor);
-		IF(ROT_TOP)       camera->rotateTop  ( keyRotationTopFactor);
-		IF(ROT_BOTTOM)    camera->rotateTop  (-keyRotationTopFactor);
+		IF(ROT_LEFT)      rotateLeft ( Camera::keyRotationLeftFactor);
+		IF(ROT_RIGHT)     rotateLeft (-Camera::keyRotationLeftFactor);
+		IF(ROT_TOP)       rotateTop  ( Camera::keyRotationTopFactor);
+		IF(ROT_BOTTOM)    rotateTop  (-Camera::keyRotationTopFactor);
 #undef IF
 		goto redisplay;
 	}
 
-	if (tickRedisplays) {
+	if (Camera::tickRedisplays) {
 	redisplay:
 		glutPostRedisplay();
 	}
@@ -219,30 +261,33 @@ void Camera::handleTick(int to) {
 }
 
 
-void Camera::handleMotion(int x, int y) {
+void handleMotion(int x, int y) {
 	static bool first = true;
 	if (first) {
 		first = false;
 		return;
 	}
-	int dX = x - (wndWidth  >> 1);
-	int dY = y - (wndHeight >> 1);
+	int dX = x - (CameraImpl::width () >> 1);
+	int dY = y - (CameraImpl::height() >> 1);
 	if (dX || dY) {
-		glutWarpPointer(wndWidth >> 1, wndHeight >> 1);
-		if (camera) {
-			camera->rotateTop(dY   * mouseRotationTopFactor);
-			camera->rotateLeft(-dX * mouseRotationLeftFactor);
+		glutWarpPointer(CameraImpl::width() >> 1, CameraImpl::height() >> 1);
+		if (Camera::camera) {
+			Camera::camera->rotateTop ( dY * Camera::mouseRotationTopFactor);
+			Camera::camera->rotateLeft(-dX * Camera::mouseRotationLeftFactor);
 			glutPostRedisplay();
 		}
 	}
 }
 
 
-void Camera::handleResize(int w, int h) {
-	setSize(w, h);
-	if (resizeFunc) {
-		resizeFunc(w, h);
-	}
+void handleResize(int w, int h) {
+	CameraImpl::width() = w;
+	CameraImpl::height() = h;
+	glutWarpPointer(CameraImpl::width() >> 1, CameraImpl::height() >> 1);
+	CameraImpl::doViewport(CameraImpl::viewport());
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45.0, (double)w / (double)h, 0.01, 10000.0);
 }
 
 
@@ -264,7 +309,7 @@ void Camera::registerHandlers() {
 void Camera::printHelp() {
 	puts("d/g  strafe right/left   e/d  move forward/backward    w/s  move up/dow\n"
 		 "e/t  look   right/left   z/a  hold to move fast/slow   y/h  look up/down\n"
-		 "q    reset view                        esc  quit");
+		 "q    reset position      -/=  dec-/increase viewport   esc  quit");
 }
 
 }

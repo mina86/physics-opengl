@@ -22,13 +22,6 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 	}
 }
 
-static void handleResize(int w, int h) {
-	glViewport(0, 0, w, h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(45.0, (double)w / (double)h, 1.0, 200.0);
-}
-
 
 static void drawCube() {
 	glBegin(GL_QUAD_STRIP);
@@ -93,7 +86,7 @@ static void drawScene() {
 	glVertex3f(-100, -2,  100);
 	glEnd();
 
-	glRotatef(mn::gl::Camera::getTicks(), 1.0f, 1.0f, 0.0f);
+	glRotatef(mn::gl::Camera::ticks, 1.0f, 1.0f, 0.0f);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT); glCallList(displayLists.cube);
 	glCullFace(GL_BACK);  glCallList(displayLists.cube);
@@ -104,7 +97,7 @@ static void drawScene() {
 	glDisable(GL_LIGHTING);
 
 	glTranslatef(-1, -0.8, -3);
-	mn::gl::Camera::getDefaultCamera()->doRotate();
+	mn::gl::Camera::camera->doRotate();
 
 	glDisable(GL_DEPTH_TEST);
 	glBegin(GL_LINES);
@@ -139,12 +132,9 @@ int main(int argc, char** argv) {
 	glEndList();
 
 	mn::gl::Camera camera;
-	mn::gl::Camera::setDefaultCamera(&camera);
-	mn::gl::Camera::setSize(w, h);
-
+	mn::gl::Camera::camera = &camera;
 	mn::gl::Camera::registerHandlers();
-	mn::gl::Camera::setResizeFunc(handleResize);
-	mn::gl::Camera::setKeyboardFunc(handleKeyboard);
+	mn::gl::Camera::keyboardFunc = handleKeyboard;
 	glutDisplayFunc(drawScene);
 
 	glutMainLoop();
