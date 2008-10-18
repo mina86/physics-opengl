@@ -12,8 +12,9 @@ namespace gl {
 
 Camera *Camera::camera = 0;
 Camera::KeyboardFunc Camera::keyboardFunc = 0;
-bool Camera::tickRedisplays = true, Camera::countTicks = true;
-unsigned long Camera::ticks = 0;
+enum Camera::TickRedisplayPolicy Camera::tickRedisplayPolicy = Camera::WHEN_COUNTING;
+bool Camera::nextTickRedisplays = true, Camera::countTicks = true;
+unsigned long Camera::ticks = 0, Camera::tickIncrement = 10;
 
 float Camera::keyMovementFactor       =  .1;
 float Camera::keyRotationTopFactor    = M_PI / 180.0;
@@ -134,8 +135,32 @@ void handleKeyboardDown(unsigned char key, int x, int y) {
 	case 'q': case 'Q':
 		if (Camera::camera) {
 			Camera::camera->reset() ;
-			glutPostRedisplay();
+			Camera::nextTickRedisplays = true;
 		}
+		break;
+
+	case ' ':
+		Camera::countTicks = !Camera::countTicks;
+		Camera::nextTickRedisplays = true;
+		break;
+
+	case '-':
+		if (Camera::tickIncrement > 1) {
+			--Camera::tickIncrement;
+		}
+		break;
+	case '_':
+		if (Camera::tickIncrement > 10) {
+			Camera::tickIncrement -= 10;
+		} else {
+			Camera::tickIncrement = 1;
+		}
+		break;
+	case '=':
+		++Camera::tickIncrement;
+		break;
+	case '+':
+		Camera::tickIncrement += 10;
 		break;
 	}
 	if (Camera::keyboardFunc) {
@@ -184,7 +209,7 @@ void handleMouse(int button, int state, int x, int y) {
 		if (state == GLUT_DOWN && Camera::camera) {
 			Camera::camera->moveForward((button == 3 ? 5 : -5) *
 			                            Camera::mouseMovementFactor);
-			glutPostRedisplay();
+			Camera::nextTickRedisplays = true;
 		}
 	} else if (state == GLUT_DOWN) {
 		switch (button) {
@@ -204,7 +229,7 @@ void handleMouse(int button, int state, int x, int y) {
 
 void handleTick(int to) {
 	if (Camera::countTicks) {
-		++Camera::ticks;
+		Camera::ticks += Camera::tickIncrement;
 	}
 	if (Camera::camera && (actionsMask & ~(RUN_FLAG | CREEP_FLAG))) {
 		const float speed = actionsMask & RUN_FLAG ? Camera::runFactor :
@@ -230,9 +255,13 @@ void handleTick(int to) {
 		goto redisplay;
 	}
 
-	if (Camera::tickRedisplays) {
+	if (Camera::nextTickRedisplays ||
+	    Camera::tickRedisplayPolicy == Camera::ALWAYS ||
+	    (Camera::tickRedisplayPolicy == Camera::WHEN_COUNTING &&
+	     Camera::countTicks)){
 	redisplay:
 		glutPostRedisplay();
+		Camera::nextTickRedisplays = false;
 	}
 
 	glutTimerFunc(to, handleTick, to);
@@ -252,7 +281,7 @@ void handleMotion(int x, int y) {
 		if (Camera::camera) {
 			Camera::camera->rotateTop ( dY * Camera::mouseRotationTopFactor);
 			Camera::camera->rotateLeft(-dX * Camera::mouseRotationLeftFactor);
-			glutPostRedisplay();
+			Camera::nextTickRedisplays = true;
 		}
 	}
 }
@@ -287,7 +316,8 @@ void Camera::registerHandlers() {
 void Camera::printHelp() {
 	puts("d/g  strafe right/left   e/d  move forward/backward    w/s  move up/dow\n"
 		 "e/t  look   right/left   z/a  hold to move fast/slow   y/h  look up/down\n"
-		 "q    reset position                                    esc  quit");
+		 "q    reset position      -/=  inc./dec. speed by 1     spc  pause\n"
+		 "esc  quit                _/+  inc./dec. speed by 10");
 }
 
 }

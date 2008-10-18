@@ -117,10 +117,12 @@ public:
 	static float runFactor, creepFactor;
 	static float maxDistance;
 
-	static bool tickRedisplays, countTicks;
+	enum TickRedisplayPolicy { NEVER, ALWAYS, WHEN_COUNTING };
+	static TickRedisplayPolicy tickRedisplayPolicy;
+	static bool nextTickRedisplays, countTicks;
 	static Camera *camera;
 	static KeyboardFunc keyboardFunc;
-	static unsigned long ticks;
+	static unsigned long ticks, tickIncrement;
 };
 
 
