@@ -133,8 +133,7 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 
 	if (drawNames && distanceFactor2 < 1.1f) {
 		if (cam) {
-			float rot = cam->getRotY();
-			glRotatef(rot * -MN_180_PI - 90, 0, 1, 0);
+			glRotatef(cam->getRotY() * -MN_180_PI, 0, 1, 0);
 		}
 		if (!textList) {
 			textList = glGenLists(1);

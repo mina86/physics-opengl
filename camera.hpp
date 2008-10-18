@@ -1,6 +1,10 @@
 #ifndef H_CAMERA_HPP
 #define H_CAMERA_HPP
 
+#ifndef _BSD_SOURCE
+#  define _BSD_SOURCE 1
+#endif
+
 #include <cmath>
 
 #ifdef __APPLE__
@@ -20,13 +24,12 @@ namespace gl {
 
 
 struct Camera {
-	Camera() : eye(0, 0, 5), rotX(MN_PI_2), rotY(-MN_PI_2), valid(false) { }
+	Camera() : eye(0, 0, 5), rotX(0), rotY(0), valid(false) { }
 
 	void reset() {
 		eye.x = eye.y = 0;
 		eye.z = 5;
-		rotX =  MN_PI_2;
-		rotY = -MN_PI_2;
+		rotX = rotY = 0;
 		valid = false;
 	}
 
@@ -60,12 +63,11 @@ struct Camera {
 	float getRotX() const { return rotX; }
 	float getRotY() const { return rotY; }
 	void setRotX(float v) {
-		rotX = std::fmod(v, MN_2PI); valid = false;
-		if (rotX > MN_PI - 0.02f) rotX = M_PI - 0.02f;
-		else if (rotX < 0.02f) rotX = 0.02f;
+		rotX = std::fabs(rotX)>MN_PI_2 ? copysignf(M_PI_2 - 0.02f, v) : v;
+		valid = false;
 	}
 	void setRotY(float v) {
-		rotY = std::fmod(v, MN_2PI);
+		rotY = std::fmod(v + MN_2PI, MN_2PI);
 		if (rotY > MN_PI) {
 			rotY -= MN_2PI;
 		}
@@ -76,10 +78,10 @@ struct Camera {
 		setRotY(y);
 	}
 
-	void rotateTop(float x) { setRotX(rotX - x); }
+	void rotateTop(float x) { setRotX(rotX + x); }
 	void rotateLeft(float y) { setRotY(rotY - y); }
 	void rotate(const Vector &v) {
-		setRotX(rotX - v.x);
+		setRotX(rotX + v.x);
 		setRotY(rotY - v.y);
 	}
 

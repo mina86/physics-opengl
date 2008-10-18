@@ -67,20 +67,20 @@ static void handleMotion(int x, int y);
 
 
 void Camera::update() const {
-	const float cx = std::cos(rotX), sx = std::sin(rotX);
-	const float cy = std::cos(rotY), sy = std::sin(rotY);
+	const float cx =  std::cos(rotX), sx =  std::sin(rotX);
+	const float cy = -std::cos(rotY), sy =  std::sin(rotY);
 
-	forward.y = cx;
-	forward.x = sx * cy;
-	forward.z = sx * sy;
+	forward.y = sx;
+	forward.x = cx * sy;
+	forward.z = cx * cy;
 
-	top.y = sx;
-	top.x = -cx * cy;
-	top.z = -cx * sy;
+	top.y =  cx;
+	top.x = -sx * sy;
+	top.z = -sx * cy;
 
-	left.y = 0;
-	left.x = sy;
-	left.z = -cy;
+	left.y =   0;
+	left.x =  cy;
+	left.z = -sy;
 
 	valid = true;
 }
