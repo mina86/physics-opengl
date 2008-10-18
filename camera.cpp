@@ -10,6 +10,13 @@ namespace mn {
 namespace gl {
 
 
+const float Camera::ID[16] = {
+	1, 0, 0, 0,
+	0, 1, 0, 0,
+	0, 0, 1, 0,
+	0, 0, 0, 1
+};
+
 
 Camera *Camera::camera = 0;
 Camera::KeyboardFunc Camera::keyboardFunc = 0;
@@ -70,48 +77,25 @@ void Camera::update() const {
 	const float cx =  std::cos(rotX), sx =  std::sin(rotX);
 	const float cy = -std::cos(rotY), sy =  std::sin(rotY);
 
-	forward.y = sx;
-	forward.x = cx * sy;
-	forward.z = cx * cy;
+#define M(row, col) matrix[col * 4 + row]
+	/* x: right */
+	M(0, 0) = -cy;
+	/*M(0, 1) =   0;*/
+	M(0, 2) =  sy;
 
-	top.y =  cx;
-	top.x = -sx * sy;
-	top.z = -sx * cy;
+	/* y: top */
+	M(1, 0) = -sx * sy;
+	M(1, 1) =  cx;
+	M(1, 2) = -sx * cy;
 
-	left.y =   0;
-	left.x =  cy;
-	left.z = -sy;
+	/* z: backward */
+	M(2, 0) = -cx * sy;
+	M(2, 1) = -sx;
+	M(2, 2) = -cx * cy;
+#undef M
 
 	valid = true;
 }
-
-
-void Camera::doRotate() const {
-	if (!valid) update();
-
-	float matrix[16];
-#define M(row, col) matrix[col * 4 + row]
-	M(0, 0) = -left.x;
-	M(0, 1) = -left.y;
-	M(0, 2) = -left.z;
-	M(0, 3) = 0.0;
-	M(1, 0) = top.x;
-	M(1, 1) = top.y;
-	M(1, 2) = top.z;
-	M(1, 3) = 0.0;
-	M(2, 0) = -forward.x;
-	M(2, 1) = -forward.y;
-	M(2, 2) = -forward.z;
-	M(2, 3) = 0.0;
-	M(3, 0) = 0.0;
-	M(3, 1) = 0.0;
-	M(3, 2) = 0.0;
-	M(3, 3) = 1.0;
-#undef M
-	glMultMatrixf(matrix);
-}
-
-
 
 
 
@@ -208,8 +192,8 @@ void handleMouse(int button, int state, int x, int y) {
 	(void)x; (void)y;
 	if (button == 3 || button == 4) {
 		if (state == GLUT_DOWN && Camera::camera) {
-			Camera::camera->moveForward((button == 3 ? 5 : -5) *
-			                            Camera::mouseMovementFactor);
+			Camera::camera->moveZ((button == 3 ? -5 : 5) * 
+			                      Camera::mouseMovementFactor);
 			Camera::nextTickRedisplays = true;
 		}
 	} else if (state == GLUT_DOWN) {
@@ -236,17 +220,17 @@ void handleTick(int to) {
 		const float speed = actionsMask & RUN_FLAG ? Camera::runFactor :
 			(actionsMask & CREEP_FLAG ? Camera::creepFactor : 1.0);
 #define IF(mask) if (actionsMask & (mask)) Camera::camera->
-		IF(MOVE_FORWARD)  moveForward( Camera::keyMovementFactor   * speed);
-		IF(MOVE_BACKWARD) moveForward(-Camera::keyMovementFactor   * speed);
-		IF(MOVE_LEFT)     moveLeft   ( Camera::keyMovementFactor   * speed);
-		IF(MOVE_RIGHT)    moveLeft   (-Camera::keyMovementFactor   * speed);
-		IF(MOVE_TOP)      moveTop    ( Camera::keyMovementFactor   * speed);
-		IF(MOVE_BOTTOM)   moveTop    (-Camera::keyMovementFactor   * speed);
+		IF(MOVE_FORWARD)  moveZ(-Camera::keyMovementFactor   * speed);
+		IF(MOVE_BACKWARD) moveZ( Camera::keyMovementFactor   * speed);
+		IF(MOVE_LEFT)     moveX(-Camera::keyMovementFactor   * speed);
+		IF(MOVE_RIGHT)    moveX( Camera::keyMovementFactor   * speed);
+		IF(MOVE_TOP)      moveY( Camera::keyMovementFactor   * speed);
+		IF(MOVE_BOTTOM)   moveY(-Camera::keyMovementFactor   * speed);
 
-		IF(MOUSE_FORWARD) moveForward( Camera::mouseMovementFactor * speed);
+		IF(MOUSE_FORWARD) moveZ(-Camera::mouseMovementFactor * speed);
 		/* MOUSE_BACKWARD unused */
-		IF(MOUSE_LEFT)    moveLeft   ( Camera::mouseMovementFactor * speed);
-		IF(MOUSE_RIGHT)   moveLeft   (-Camera::mouseMovementFactor * speed);
+		IF(MOUSE_LEFT)    moveX(-Camera::mouseMovementFactor * speed);
+		IF(MOUSE_RIGHT)   moveX( Camera::mouseMovementFactor * speed);
 
 		IF(ROT_LEFT)      rotateLeft ( Camera::keyRotationLeftFactor);
 		IF(ROT_RIGHT)     rotateLeft (-Camera::keyRotationLeftFactor);

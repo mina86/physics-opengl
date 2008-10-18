@@ -24,13 +24,16 @@ namespace gl {
 
 
 struct Camera {
-	Camera() : eye(0, 0, 5), rotX(0), rotY(0), valid(false) { }
+	Camera() : eye(0, 0, 5), rotX(0), rotY(0), valid(true) {
+		for (unsigned i = 0; i < 16; ++i) matrix[i] = ID[i];
+	}
 
 	void reset() {
 		eye.x = eye.y = 0;
 		eye.z = 5;
 		rotX = rotY = 0;
-		valid = false;
+		for (unsigned i = 0; i < 11; ++i) matrix[i] = ID[i];
+		valid = true;
 	}
 
 	const Vector &getEye() const { return eye; }
@@ -39,24 +42,25 @@ struct Camera {
 	float getEyeY() const { return eye.y; }
 	float getEyeZ() const { return eye.z; }
 
-	void moveLeft(float x) {
+	void moveX(float x) {
 		if (!valid) update();
-		eye += x * left;
+		eye.x += x * matrix[ 0];
+		/*eye.y += x * matrix[ 4];*/
+		eye.z += x * matrix[ 8];
 		checkDistance();
 	}
-	void moveTop(float y) {
+	void moveY(float y) {
 		if (!valid) update();
-		eye += y * top;
+		eye.x += y * matrix[ 1];
+		eye.y += y * matrix[ 5];
+		eye.z += y * matrix[ 9];
 		checkDistance();
 	}
-	void moveForward(float z) {
+	void moveZ(float z) {
 		if (!valid) update();
-		eye += z * forward;
-		checkDistance();
-	}
-	void move(const Vector &v) {
-		if (!valid) update();
-		((eye += v.x * left) += v.y * top) += v.z * forward;
+		eye.x += z * matrix[ 2];
+		eye.y += z * matrix[ 6];
+		eye.z += z * matrix[10];
 		checkDistance();
 	}
 
@@ -73,10 +77,6 @@ struct Camera {
 		}
 		valid = false;
 	}
-	void setRot(float x, float y) {
-		setRotX(x);
-		setRotY(y);
-	}
 
 	void rotateTop(float x) { setRotX(rotX + x); }
 	void rotateLeft(float y) { setRotY(rotY - y); }
@@ -85,17 +85,10 @@ struct Camera {
 		setRotY(rotY - v.y);
 	}
 
-	const Vector &getForward() const {
+	void doRotate() const {
 		if (!valid) update();
-		return forward;
+		glMultMatrixf(matrix);
 	}
-
-	const Vector &getTop() { if (!valid) update(); return top; }
-	float getTopX() { return getTop().x; }
-	float getTopY() { return getTop().y; }
-	float getTopZ() { return getTop().z; }
-
-	void doRotate() const;
 	void doLookAt() const {
 		doRotate();
 		glTranslatef(-eye.x, -eye.y, -eye.z);
@@ -112,9 +105,10 @@ private:
 
 	Vector eye;
 	float rotX, rotY;
-	mutable Vector forward, top, left;
+	mutable float matrix[16];
 	mutable bool valid;
 
+	static const float ID[16];
 
 public:
 	static void defaultLookAt() {
