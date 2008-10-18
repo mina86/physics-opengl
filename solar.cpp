@@ -22,6 +22,7 @@
 #include "quadric.hpp"
 #include "data-loader.hpp"
 #include "texture.hpp"
+#include "mconst.h"
 
 
 static mn::solar::Sphere *sun;
@@ -89,7 +90,7 @@ private:
 static unsigned fps_counter = 0;
 static float fps = 0;
 static void zeroFPS(int param) {
-	fps = fps * 0.25 + fps_counter * 0.75;
+	fps = (fps + (3 * fps_counter)) * 0.25f;
 	fps_counter = 0;
 	mn::gl::Camera::nextTickRedisplays = true;
 	glutTimerFunc(param, zeroFPS, param);
@@ -180,7 +181,7 @@ static void drawScene() {
 	glTranslatef(-0.8, 0.8, 0);
 	glScalef(0.03, 0.03, 0.03);
 	char buffer[1024];
-	sprintf(buffer, "position = (%6.2f, %6.2f, %6.2f)\ndistance = %6.2f\nrotation = (%2.2f, %2.2f, %2.2f)\nfps = %3.1f\nspeed = %lu", eye.x, eye.y, eye.z, eye.length(), camera.getRotX() * (180/M_PI), camera.getRotY() * (180/M_PI), 0.0, fps, mn::gl::Camera::countTicks * mn::gl::Camera::tickIncrement);
+	sprintf(buffer, "position = (%6.2f, %6.2f, %6.2f)\ndistance = %6.2f\nrotation = (%2.2f, %2.2f, %2.2f)\nfps = %3.1f\nspeed = %lu", eye.x, eye.y, eye.z, eye.length(), camera.getRotX() * MN_180_PI, camera.getRotY() * MN_180_PI, 0.0, fps, mn::gl::Camera::countTicks * mn::gl::Camera::tickIncrement);
 	glColor3f(1, 1, 1);
 	t3d::draw2D(std::string(buffer), -1, -1);
 

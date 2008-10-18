@@ -68,7 +68,7 @@ void Texture::calculatAverage() {
 			g += *it++;
 			b += *it++;
 		}
-		const float mul = 1.0 / 255.0 / (width * height);
+		const float mul = 1.0f / 255.0f / (width * height);
 		average.r = r * mul;
 		average.g = g * mul;
 		average.b = b * mul;

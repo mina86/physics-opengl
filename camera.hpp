@@ -11,6 +11,7 @@
 #endif
 
 #include "vector.hpp"
+#include "mconst.h"
 
 
 namespace mn {
@@ -19,13 +20,13 @@ namespace gl {
 
 
 struct Camera {
-	Camera() : eye(0, 0, 5), rotX(M_PI/2), rotY(-M_PI/2), valid(false) { }
+	Camera() : eye(0, 0, 5), rotX(MN_PI_2), rotY(-MN_PI_2), valid(false) { }
 
 	void reset() {
 		eye.x = eye.y = 0;
 		eye.z = 5;
-		rotX = M_PI/2;
-		rotY = -M_PI/2;
+		rotX =  MN_PI_2;
+		rotY = -MN_PI_2;
 		valid = false;
 	}
 
@@ -59,15 +60,28 @@ struct Camera {
 	float getRotX() const { return rotX; }
 	float getRotY() const { return rotY; }
 	void setRotX(float v) {
-		rotX = v; valid = false;
-		if (rotX > M_PI - 0.1) rotX = M_PI - 0.1;
-		else if (rotX < 0.1) rotX = 0.1;
+		rotX = std::fmod(v, MN_2PI); valid = false;
+		if (rotX > MN_PI - 0.02f) rotX = M_PI - 0.02f;
+		else if (rotX < 0.02f) rotX = 0.02f;
 	}
-	void setRotY(float v) { rotY = v; valid = false; }
+	void setRotY(float v) {
+		rotY = std::fmod(v, MN_2PI);
+		if (rotY > MN_PI) {
+			rotY -= MN_2PI;
+		}
+		valid = false;
+	}
+	void setRot(float x, float y) {
+		setRotX(x);
+		setRotY(y);
+	}
 
 	void rotateTop(float x) { setRotX(rotX - x); }
-	void rotateLeft(float y) { rotY -= y; valid = false; }
-	void rotate(const Vector &v) { setRotX(rotX - v.x); rotY -= v.y; }
+	void rotateLeft(float y) { setRotY(rotY - y); }
+	void rotate(const Vector &v) {
+		setRotX(rotX - v.x);
+		setRotY(rotY - v.y);
+	}
 
 	const Vector &getForward() const {
 		if (!valid) update();

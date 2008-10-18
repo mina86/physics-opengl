@@ -27,9 +27,9 @@ inline Color color(float r, float g, float b) {
 
 inline Color color(unsigned long color) {
 	Color c;
-	c.r = ((color >> 16) & 255) / 255.0;
-	c.g = ((color >>  8) & 255) / 255.0;
-	c.b = ( color        & 255) / 255.0;
+	c.r = ((color >> 16) & 255) / 255.0f;
+	c.g = ((color >>  8) & 255) / 255.0f;
+	c.b = ( color        & 255) / 255.0f;
 	return c;
 }
 

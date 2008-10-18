@@ -14,6 +14,7 @@
 #include "text3d.hpp"
 #include "sintable.hpp"
 #include "quadric.hpp"
+#include "mconst.h"
 
 
 namespace mn {
@@ -68,7 +69,7 @@ static void drawCircle(float radius) {
 
 void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 	const float phi = ticks * omega;
-	const gl::Vector pos = centerPos + gl::Vector(distance * mn::sin(phi + 0.5), 0, distance * mn::cos(phi + 0.5));
+	const gl::Vector pos = centerPos + gl::Vector(distance * mn::sin(phi + 0.5f), 0, distance * mn::cos(phi + 0.5f));
 	gl::Camera *const cam = gl::Camera::camera;
 	const float distance2 = cam ? cam->getEye().distance2(pos) : 0;
 	const float distanceFactor2 = distance2 > cutoffDistance2 ? std::sqrt(distance2 / cutoffDistance2) : 1;
@@ -77,10 +78,10 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 
 	glRotatef(phi, 0, 1, 0);
 
-	if (drawOrbits && distance > 0.1) {
+	if (drawOrbits && distance > 0.1f) {
 		glDisable(GL_LIGHTING);
-		glColor3f(materialColor[0] * 0.4, materialColor[1] * 0.4,
-		          materialColor[2] * 0.4);
+		glColor3f(materialColor[0] * 0.4f, materialColor[1] * 0.4f,
+		          materialColor[2] * 0.4f);
 		drawCircle(distance);
 		glEnable(GL_LIGHTING);
 	}
@@ -130,15 +131,15 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 		}
 	}
 
-	if (drawNames && distanceFactor2 < 1.1) {
+	if (drawNames && distanceFactor2 < 1.1f) {
 		if (cam) {
 			float rot = cam->getRotY();
-			glRotatef(rot * (-180.0 / M_PI) - 90, 0, 1, 0);
+			glRotatef(rot * -MN_180_PI - 90, 0, 1, 0);
 		}
 		if (!textList) {
 			textList = glGenLists(1);
 			if (textList) glNewList(textList, GL_COMPILE);
-			glTranslatef(0, size + 0.3, 0);
+			glTranslatef(0, size + 0.3f, 0);
 			glScalef(0.1, 0.1, 0.1);
 			glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
 			glMaterialfv(GL_FRONT, GL_EMISSION, zeros);

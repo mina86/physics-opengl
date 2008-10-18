@@ -15,7 +15,7 @@ namespace solar {
 
 
 static inline float toOmega(float period, float factor) {
-	return std::fabs(period) > 0.00000001 ? factor / period : 0;
+	return std::fabs(period) > 0.00000001f ? factor / period : 0;
 }
 
 

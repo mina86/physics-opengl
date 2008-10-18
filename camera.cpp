@@ -3,6 +3,7 @@
 #include <cmath>
 
 #include "camera.hpp"
+#include "mconst.h"
 
 namespace mn {
 
@@ -17,11 +18,11 @@ bool Camera::nextTickRedisplays = true, Camera::countTicks = true;
 unsigned long Camera::ticks = 0, Camera::tickIncrement = 10;
 
 float Camera::keyMovementFactor       =  .1;
-float Camera::keyRotationTopFactor    = M_PI / 180.0;
-float Camera::keyRotationLeftFactor   = M_PI / 180.0;
+float Camera::keyRotationTopFactor    = MN_PI_180;
+float Camera::keyRotationLeftFactor   = MN_PI_180;
 float Camera::mouseMovementFactor     =  .1;
-float Camera::mouseRotationTopFactor  = M_PI / 1800.0;
-float Camera::mouseRotationLeftFactor = M_PI / 1800.0;
+float Camera::mouseRotationTopFactor  = MN_PI_180 * 0.1;
+float Camera::mouseRotationLeftFactor = MN_PI_180 * 0.1;
 float Camera::runFactor               = 10.0;
 float Camera::creepFactor             = 0.1;
 float Camera::maxDistance             = 1500.0;
@@ -294,7 +295,7 @@ void handleResize(int w, int h) {
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0, (double)w / (double)h, 0.01, 4000.0);
+	gluPerspective(45.0, (float)w / (float)h, 0.01, 4000.0);
 }
 
 

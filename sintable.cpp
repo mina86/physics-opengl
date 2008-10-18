@@ -1,6 +1,7 @@
 #include <cmath>
 
 #include "sintable.hpp"
+#include "mconst.h"
 
 namespace mn {
 
@@ -12,7 +13,7 @@ float sinTable[360];
 
 void initSinTable(void) {
 	for (unsigned i = 0; i < sizeof sinTable / sizeof *sinTable; ++i) {
-		sinTable[i] = std::sin((float)i * (M_PI / 180));
+		sinTable[i] = std::sin(i * MN_PI_180);
 	}
 }
 
