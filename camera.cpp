@@ -192,7 +192,7 @@ void handleMouse(int button, int state, int x, int y) {
 	(void)x; (void)y;
 	if (button == 3 || button == 4) {
 		if (state == GLUT_DOWN && Camera::camera) {
-			Camera::camera->moveZ((button == 3 ? -5 : 5) * 
+			Camera::camera->moveZ((button == 3 ? -5 : 5) *
 			                      Camera::mouseMovementFactor);
 			Camera::nextTickRedisplays = true;
 		}
@@ -279,7 +279,7 @@ void handleResize(int w, int h) {
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0, (float)w / (float)h, 0.01, 4000.0);
+	gluPerspective(45.0, (float)w / (float)h, 0.01, 3000.0);
 }
 
 

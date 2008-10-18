@@ -115,7 +115,7 @@ static void drawStars() {
 			glEnable(GL_TEXTURE_2D);
 			glBindTexture(GL_TEXTURE_2D, *starsTexture);
 			glColor3f(1, 1, 1);
-			gluSphere(starsQuadric, 3000, 10, 10);
+			gluSphere(starsQuadric, 10, 10, 10);
 			glDisable(GL_TEXTURE_2D);
 
 			if (displayList) {
@@ -140,31 +140,31 @@ static void drawScene() {
 	{
 		pushMatrix pm;
 
-		camera.doLookAt();
+		camera.doRotate();
+		drawStars();
+		camera.doMove();
 
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 		glEnable(GL_LIGHTING);
-		glDisable(GL_COLOR_MATERIAL);
 
 		sun->draw(mn::gl::Camera::ticks, mn::gl::Vector(0, 0, 0));
 
-		glEnable(GL_COLOR_MATERIAL);
 		glDisable(GL_LIGHTING);
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
 	}
 
 	{
 		pushMatrix pm;
 
-		glTranslatef(-1, -0.8, -3);
+		glTranslatef(-0.3, -0.3, -1);
 		camera.doRotate();
 
-		drawStars();
-
-	glDisable(GL_DEPTH_TEST);
-
 		glBegin(GL_LINES);
-		glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(0.2, 0, 0);
-		glColor3f(0, 1, 0); glVertex3f(0, 0, 0); glVertex3f(0, 0.2, 0);
-		glColor3f(0, 0, 1); glVertex3f(0, 0, 0); glVertex3f(0, 0, 0.2);
+		glColor3f(1, 0, 0); glVertex3f(0, 0, 0); glVertex3f(0.05, 0, 0);
+		glColor3f(0, 1, 0); glVertex3f(0, 0, 0); glVertex3f(0, 0.05, 0);
+		glColor3f(0, 0, 1); glVertex3f(0, 0, 0); glVertex3f(0, 0, 0.05);
 		glEnd();
 	}
 
@@ -184,8 +184,6 @@ static void drawScene() {
 	sprintf(buffer, "position = (%6.2f, %6.2f, %6.2f)\ndistance = %6.2f\nrotation = (%2.2f, %2.2f, %2.2f)\nfps = %3.1f\nspeed = %lu", eye.x, eye.y, eye.z, eye.length(), camera.getRotX() * MN_180_PI, camera.getRotY() * MN_180_PI, 0.0, fps, mn::gl::Camera::countTicks * mn::gl::Camera::tickIncrement);
 	glColor3f(1, 1, 1);
 	t3d::draw2D(std::string(buffer), -1, -1);
-
-	glEnable(GL_DEPTH_TEST);
 
 	glutSwapBuffers();
 }
@@ -297,9 +295,6 @@ int main(int argc, char** argv) {
 	}
 
 
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_COLOR_MATERIAL);
-	glEnable(GL_CULL_FACE);
 	glShadeModel(GL_SMOOTH);
 
 	{

@@ -89,9 +89,12 @@ struct Camera {
 		if (!valid) update();
 		glMultMatrixf(matrix);
 	}
+	void doMove() const {
+		glTranslatef(-eye.x, -eye.y, -eye.z);
+	}
 	void doLookAt() const {
 		doRotate();
-		glTranslatef(-eye.x, -eye.y, -eye.z);
+		doMove();
 	}
 
 private:
