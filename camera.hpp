@@ -113,6 +113,7 @@ private:
 
 	static const float ID[16];
 
+
 public:
 	static void defaultLookAt() {
 		if (camera) {
@@ -121,6 +122,8 @@ public:
 	}
 	static void registerHandlers();
 	static void printHelp();
+
+	static float aspect() { return _aspect; }
 
 	typedef void(*KeyboardFunc)(unsigned key, bool down, int x, int y);
 
@@ -136,6 +139,11 @@ public:
 	static Camera *camera;
 	static KeyboardFunc keyboardFunc;
 	static unsigned long ticks, tickIncrement;
+
+private:
+	static float _aspect;
+
+	friend struct CameraImpl;
 };
 
 

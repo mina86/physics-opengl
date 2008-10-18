@@ -35,7 +35,13 @@ float Camera::creepFactor             = 0.1;
 float Camera::maxDistance             = 1500.0;
 
 static unsigned wndWidth = 0, wndHeight = 0;
+float Camera::_aspect = 0;
 
+struct CameraImpl {
+	static float &aspect() { return Camera::_aspect; }
+	static float &aspect(float v) { return Camera::_aspect = v; }
+	static float &aspect(float w, float h) { return Camera::_aspect = w / h; }
+};
 
 enum {
 	MOVE_FORWARD   = 1 <<  0,
@@ -279,7 +285,7 @@ void handleResize(int w, int h) {
 	glViewport(0, 0, w, h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0, (float)w / (float)h, 0.01, 3000.0);
+	gluPerspective(45.0, CameraImpl::aspect(w, h), 0.01, 3000.0);
 }
 
 
