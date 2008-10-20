@@ -12,6 +12,7 @@ namespace gl {
 
 const char *Texture::filename_prefix = "";
 const char *Texture::filename_suffix = ".hq.sgi";
+bool Texture::useNearest = false;
 
 
 void Texture::assign(unsigned theWidth, unsigned theHeight,
@@ -38,8 +39,13 @@ void Texture::makeTexture() const {
 		glGenTextures(1, &id);
 	}
 	glBindTexture(GL_TEXTURE_2D, id);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	if (useNearest) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	} else {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
 	glTexImage2D(GL_TEXTURE_2D, 0,
 	             internalFormat, width, height, 0,
 	             format, type, data);

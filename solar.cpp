@@ -222,6 +222,7 @@ int main(int argc, char** argv) {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
 	static const struct option longopts[] = {
+		{ "very-low",    0, 0, '0' },
 		{ "low",         0, 0, '1' },
 		{ "medium",      0, 0, '2' },
 		{ "high",        0, 0, '3' },
@@ -235,8 +236,9 @@ int main(int argc, char** argv) {
 		{ 0, 0, 0, 0 }
 	};
 	int opt, quality = 3;
-	while ((opt = getopt_long(argc, argv, "123?xcbnjmH", longopts, 0)) != -1){
+	while ((opt = getopt_long(argc, argv, "0123?xcbnjmH", longopts, 0))!=-1){
 		switch (opt) {
+		case '0':
 		case '1':
 		case '2':
 		case '3': quality = opt - '1'; break;
@@ -249,6 +251,7 @@ int main(int argc, char** argv) {
 		case '?':
 			puts("usage: ./solar [ <options> ] [ <data-file> ]\n"
 				 "<options>:\n"
+				 " -0 --very-low       like -1 with NEAREST textures filter\n"
 				 " -1 --low            use low quality textures\n"
 				 " -2 --medium         use medium quality textures\n"
 				 " -3 --high           use high quality textures\n"
@@ -266,9 +269,12 @@ int main(int argc, char** argv) {
 	}
 
 	switch (quality) {
-	case 0: mn::gl::Texture::filename_suffix = ".lq.sgi"; break;
-	case 1: mn::gl::Texture::filename_suffix = ".mq.sgi"; break;
-	case 2: mn::gl::Texture::filename_suffix = ".hq.sgi"; break;
+	case -1:
+		mn::gl::Texture::useNearest = true;
+		quality = 0;
+	case  0: mn::gl::Texture::filename_suffix = ".lq.sgi"; break;
+	case  1: mn::gl::Texture::filename_suffix = ".mq.sgi"; break;
+	case  2: mn::gl::Texture::filename_suffix = ".hq.sgi"; break;
 	}
 
 	{

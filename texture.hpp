@@ -48,7 +48,7 @@ struct Texture {
 
 	void assign(unsigned theWidth, unsigned theHeight, unsigned char*theData);
 
-	static const char *filename_prefix; 
+	static const char *filename_prefix;
 	static const char *filename_suffix;
 
 	void load(const char *filename);
@@ -79,6 +79,9 @@ struct Texture {
 	operator bool () const { return data || id; }
 	bool operator!() const { return !data && !id; }
 	GLuint operator*() const { return get(); }
+
+
+	static bool useNearest;
 
 
 private:
