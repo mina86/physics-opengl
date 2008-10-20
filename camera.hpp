@@ -67,7 +67,7 @@ struct Camera {
 	float getRotX() const { return rotX; }
 	float getRotY() const { return rotY; }
 	void setRotX(float v) {
-		rotX = std::fabs(rotX)>MN_PI_2 ? copysignf(M_PI_2 - 0.02f, v) : v;
+		rotX = std::fabs(v)>MN_PI_2-0.02f ? copysignf(MN_PI_2-0.02f, v) : v;
 		valid = false;
 	}
 	void setRotY(float v) {

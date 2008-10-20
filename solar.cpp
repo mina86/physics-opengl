@@ -123,7 +123,7 @@ static void drawStars() {
 	const unsigned stacks_deg = 60;
 	const float texMul = 1 / 120.0f;
 
-	for (unsigned i = 0; i < 360; i += stacks_deg) {
+	for (unsigned i = 0; i < 180; i += stacks_deg) {
 		const float cos1 = mn::cos(i);
 		const float sin1 = mn::sin(i);
 		const float cos2 = mn::cos(i + stacks_deg);
