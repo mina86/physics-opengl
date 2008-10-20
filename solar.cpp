@@ -96,33 +96,54 @@ static void zeroFPS(int param) {
 	glutTimerFunc(param, zeroFPS, param);
 }
 
-
 static void drawStars() {
-	if (displayStars && starsTexture) {
-		static GLuint displayList = 0;
-		if (displayList) {
-			glCallList(displayList);
-		} else {
-			displayList = glGenLists(1);
-			if (displayList) {
-				glNewList(displayList, GL_COMPILE);
-			}
+	if (!displayStars) return;
 
-			mn::gl::Quadric starsQuadric;
-			gluQuadricOrientation(starsQuadric, GLU_INSIDE);
-			gluQuadricTexture(starsQuadric, 1);
+	if (!*starsTexture) {
+		displayStars = false;
+		return;
+	}
 
-			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, *starsTexture);
-			glColor3f(1, 1, 1);
-			gluSphere(starsQuadric, 10, 10, 10);
-			glDisable(GL_TEXTURE_2D);
+	static GLuint displayList = 0;
+	if (displayList) {
+		glCallList(displayList);
+		return;
+	}
 
-			if (displayList) {
-				glEndList();
-				glCallList(displayList);
-			}
+	displayList = glGenLists(1);
+	if (displayList) {
+		glNewList(displayList, GL_COMPILE);
+	}
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, *starsTexture);
+	glColor3f(1, 1, 1);
+
+	const unsigned slices_deg = 60;
+	const unsigned stacks_deg = 60;
+	const float texMul = 1 / 120.0f;
+
+	for (unsigned i = 0; i < 360; i += stacks_deg) {
+		const float cos1 = mn::cos(i);
+		const float sin1 = mn::sin(i);
+		const float cos2 = mn::cos(i + stacks_deg);
+		const float sin2 = mn::sin(i + stacks_deg);
+
+		glBegin(GL_QUAD_STRIP);
+		for (unsigned j = 0; j <= 360; j += slices_deg) {
+			glTexCoord2f(j * texMul, i * texMul);
+			glVertex3f(sin1 * mn::sin(j), sin1 * mn::cos(j), cos1);
+			glTexCoord2f(j * texMul, (i + stacks_deg) * texMul);
+			glVertex3f(sin2 * mn::sin(j), sin2 * mn::cos(j), cos2);
 		}
+		glEnd();
+	}
+
+	glDisable(GL_TEXTURE_2D);
+
+	if (displayList) {
+		glEndList();
+		glCallList(displayList);
 	}
 }
 
@@ -213,12 +234,12 @@ int main(int argc, char** argv) {
 		{ "help",        0, 0, '?' },
 		{ 0, 0, 0, 0 }
 	};
-	int opt;
+	int opt, quality = 3;
 	while ((opt = getopt_long(argc, argv, "123?xcbnjmH", longopts, 0)) != -1){
 		switch (opt) {
-		case '1': mn::gl::Texture::filename_suffix = ".lq.sgi"; break;
-		case '2': mn::gl::Texture::filename_suffix = ".mq.sgi"; break;
-		case '3': mn::gl::Texture::filename_suffix = ".hq.sgi"; break;
+		case '1':
+		case '2':
+		case '3': quality = opt - '1'; break;
 		case 'x': mn::solar::Sphere::useTextures = false; break;
 		case 'c': mn::solar::Sphere::lowQuality  = true ; break;
 		case 'b': mn::solar::Sphere::drawOrbits  = false; break;
@@ -244,6 +265,11 @@ int main(int argc, char** argv) {
 		}
 	}
 
+	switch (quality) {
+	case 0: mn::gl::Texture::filename_suffix = ".lq.sgi"; break;
+	case 1: mn::gl::Texture::filename_suffix = ".mq.sgi"; break;
+	case 2: mn::gl::Texture::filename_suffix = ".hq.sgi"; break;
+	}
 
 	{
 		const char *data = optind == argc ? "data/helio.txt" : argv[optind];
@@ -286,19 +312,21 @@ int main(int argc, char** argv) {
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	{
-		unsigned char *stars = new unsigned char[1024 * 1024];
-		memset(stars, 0, sizeof stars);
-		srand(time(0));
-		for (unsigned count = 0; count < 2048; ++count) {
-#if RAND_MAX >= (1024 * 1024 - 1)
-			const unsigned pos = rand() % (1024 * 1024);
-#else
-			const unsigned pos = (rand() * (RAND_MAX + 1) | rand()) % (1024 * 1024);
-#endif
-			stars[pos] = rand() * (256.0f / (RAND_MAX + 1.0f));
-		}
+		const unsigned size = 1 << (8 + quality), size2 = size * size;
+		const unsigned mask = size2 - 1;
 
-		starsTexture.assign(1024, 1024, stars);
+		unsigned char *stars = new unsigned char[size2];
+		memset(stars, 0, size2);
+		srand(time(0));
+
+		unsigned count = 2 * size;
+		do {
+			const unsigned pos =
+				((RAND_MAX<mask ? rand() * (RAND_MAX+1) : 0) + rand()) & mask;
+			stars[pos] = rand() * (256.0f / (RAND_MAX + 1.0f));
+		} while (--count);
+
+		starsTexture.assign(size, size, stars);
 	}
 
 
