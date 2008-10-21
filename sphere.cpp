@@ -73,6 +73,7 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 	gl::Camera *const cam = gl::Camera::camera;
 	const float distance2 = cam ? cam->getEye().distance2(pos) : 0;
 	const float distanceFactor2 = distance2 > cutoffDistance2 ? std::sqrt(distance2 / cutoffDistance2) : 1;
+	const bool inFront = cam ? cam->isInFront(pos) : true;
 
 	glPushMatrix();
 
@@ -88,40 +89,43 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 
 	glTranslatef(0, 0, distance);
 
-	if (light >= 0) {
-		glEnable(GL_LIGHT0 + light);
-		glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, ones);
-		glLightfv(GL_LIGHT0 + light, GL_POSITION, zeros);
-	}
+	if (inFront) {
 
-	const bool gotTexture = useTextures && *texture;
-	if (gotTexture) {
-		glEnable(GL_TEXTURE_2D);
-		gluQuadricTexture(gl::Quadric::quadric()->get(), 1);
-		glBindTexture(GL_TEXTURE_2D, *texture);
-		glPushMatrix();
-		glRotatef(90, 1, 0, 0);
-		glRotatef(ticks * omega2, 0, 0, 1);
-	}
+		if (light >= 0) {
+			glEnable(GL_LIGHT0 + light);
+			glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, ones);
+			glLightfv(GL_LIGHT0 + light, GL_POSITION, zeros);
+		}
 
-	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE,
-	             gotTexture ? ones : materialColor);
-	glMaterialfv(GL_FRONT, GL_SPECULAR,
-	             light >= 0 ? zeros : materialSpecular);
-	glMaterialfv(GL_FRONT, GL_EMISSION,
-	             light <  0 ? zeros : (gotTexture ? ones : materialColor));
-	glMaterialf(GL_FRONT, GL_SHININESS, light >= 0 ? 0 : 12);
+		const bool gotTexture = useTextures && *texture;
+		if (gotTexture) {
+			glEnable(GL_TEXTURE_2D);
+			gluQuadricTexture(gl::Quadric::quadric()->get(), 1);
+			glBindTexture(GL_TEXTURE_2D, *texture);
+			glPushMatrix();
+			glRotatef(90, 1, 0, 0);
+			glRotatef(ticks * omega2, 0, 0, 1);
+		}
 
-	unsigned slices = 60 / distanceFactor2;
-	if (size > 1) slices *= 2;
-	if (lowQuality) slices /= 3;
-	if (slices < 6) slices = 6;
-	gluSphere(gl::Quadric::quadric()->get(), size, slices, slices);
+		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE,
+		             gotTexture ? ones : materialColor);
+		glMaterialfv(GL_FRONT, GL_SPECULAR,
+		             light >= 0 ? zeros : materialSpecular);
+		glMaterialfv(GL_FRONT, GL_EMISSION,
+		             light <  0 ? zeros : (gotTexture ? ones : materialColor));
+		glMaterialf(GL_FRONT, GL_SHININESS, light >= 0 ? 0 : 12);
 
-	if (gotTexture) {
-		glPopMatrix();
-		gluQuadricTexture(gl::Quadric::quadric()->get(), 0);
-		glDisable(GL_TEXTURE_2D);
+		unsigned slices = 60 / distanceFactor2;
+		if (size > 1) slices *= 2;
+		if (lowQuality) slices /= 3;
+		if (slices < 6) slices = 6;
+		gluSphere(gl::Quadric::quadric()->get(), size, slices, slices);
+
+		if (gotTexture) {
+			glPopMatrix();
+			gluQuadricTexture(gl::Quadric::quadric()->get(), 0);
+			glDisable(GL_TEXTURE_2D);
+		}
 	}
 
 	glRotatef(-phi, 0, 1, 0);
@@ -131,7 +135,7 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 		}
 	}
 
-	if (drawNames && distanceFactor2 < 1.1f) {
+	if (inFront && drawNames && distanceFactor2 < 1.1f) {
 		if (cam) {
 			glRotatef(cam->getRotY() * -MN_180_PI, 0, 1, 0);
 		}

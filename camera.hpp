@@ -97,6 +97,20 @@ struct Camera {
 		doMove();
 	}
 
+
+	bool isInFront(const Vector &point) {
+		const float md1 =
+			eye.x * matrix[ 2] +
+			eye.y * matrix[ 6] +
+			eye.z * matrix[10];
+		const float md2 =
+			point.x * matrix[ 2] +
+			point.y * matrix[ 6] +
+			point.z * matrix[10];
+		return md2 < md1;
+	}
+
+
 private:
 	void update() const;
 	void checkDistance() {
