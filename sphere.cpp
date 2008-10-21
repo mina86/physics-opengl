@@ -89,14 +89,13 @@ void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
 
 	glTranslatef(0, 0, distance);
 
+	if (light >= 0) {
+		glEnable(GL_LIGHT0 + light);
+		glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, ones);
+		glLightfv(GL_LIGHT0 + light, GL_POSITION, zeros);
+	}
+
 	if (inFront) {
-
-		if (light >= 0) {
-			glEnable(GL_LIGHT0 + light);
-			glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, ones);
-			glLightfv(GL_LIGHT0 + light, GL_POSITION, zeros);
-		}
-
 		const bool gotTexture = useTextures && *texture;
 		if (gotTexture) {
 			glEnable(GL_TEXTURE_2D);
