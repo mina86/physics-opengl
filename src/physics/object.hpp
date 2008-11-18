@@ -27,6 +27,9 @@ struct Object {
 	}
 
 
+	const gl::Vector &getPosition() const {
+		return point;
+	}
 	void setPosition(const gl::Vector &thePoint) {
 		point = nextPoint = thePoint;
 	}
@@ -112,6 +115,10 @@ struct Object {
 			materialColor[2] = avg.b;
 		}
 	}
+
+
+	Object *getNext() { return next; }
+	const Object *getNext() const { return next; }
 
 
 private:

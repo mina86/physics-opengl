@@ -43,6 +43,7 @@ struct Camera {
 	float getEyeZ() const { return eye.z; }
 
 	void moveX(float x) {
+		moved = true;
 		if (!valid) update();
 		eye.x += x * matrix[ 0];
 		/*eye.y += x * matrix[ 4];*/
@@ -50,6 +51,7 @@ struct Camera {
 		checkDistance();
 	}
 	void moveY(float y) {
+		moved = true;
 		if (!valid) update();
 		eye.x += y * matrix[ 1];
 		eye.y += y * matrix[ 5];
@@ -57,6 +59,7 @@ struct Camera {
 		checkDistance();
 	}
 	void moveZ(float z) {
+		moved = true;
 		if (!valid) update();
 		eye.x += z * matrix[ 2];
 		eye.y += z * matrix[ 6];
@@ -110,6 +113,8 @@ struct Camera {
 		return md2 < md1;
 	}
 
+
+	bool moved;
 
 private:
 	void update() const;

@@ -33,6 +33,7 @@ namespace mn {
 namespace physics {
 
 static Object *objects;
+static const Object *tabPosition = 0;
 static bool headlight = true, displayStars = true;
 static gl::Texture starsTexture(GL_LUMINANCE, GL_LUMINANCE);
 
@@ -43,6 +44,11 @@ static void handleKeyboard(unsigned key, bool down, int x, int y) {
 	switch (key) {
 	case 27: /* Escape */
 		exit(0);
+
+	case '\t':
+		tabPosition = (tabPosition ? tabPosition : objects)->getNext();
+		gl::Camera::camera->moved = false;
+		break;
 
 	case 'x': case 'X':
 		Object::useTextures = !Object::useTextures;
@@ -160,7 +166,14 @@ static void drawScene() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	const mn::gl::Camera &camera = *mn::gl::Camera::camera;
+	mn::gl::Camera &camera = *mn::gl::Camera::camera;
+
+	if (!camera.moved && tabPosition) {
+		camera.setEye(tabPosition->getPosition());
+		camera.moveZ(5);
+		camera.moved = false;
+	}
+
 	const mn::gl::Vector &eye = camera.getEye();
 
 	{
