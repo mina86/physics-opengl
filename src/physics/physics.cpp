@@ -221,8 +221,8 @@ static void drawScene() {
 	glutSwapBuffers();
 
 
-	if (gl::Camera::countTicks) {
-		objects->tickAll(gl::Camera::tickIncrement * 0.001);
+	if (gl::Camera::countTicks && gl::Camera::tickIncrement) {
+		objects->ticksAll(gl::Camera::tickIncrement, 0.001);
 		objects->updatePointAll();
 	}
 }

@@ -95,11 +95,11 @@ struct Object {
 	}
 
 	void ticksAll(unsigned count, float dt) {
-		dt /= count;
-		do {
+		tickAll(dt);
+		while (--count) {
 			updatePointAll();
 			tickAll(dt);
-		} while (--count);
+		}
 	}
 
 
