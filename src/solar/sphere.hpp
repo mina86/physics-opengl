@@ -3,9 +3,9 @@
 
 #include <string>
 
-#include "color.hpp"
-#include "vector.hpp"
-#include "texture.hpp"
+#include "../common/color.hpp"
+#include "../common/vector.hpp"
+#include "../common/texture.hpp"
 
 
 namespace mn {

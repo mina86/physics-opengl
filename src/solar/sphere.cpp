@@ -5,16 +5,17 @@
 #  include <GL/glut.h>
 #endif
 
+#include "sphere.hpp"
+
 #include <stdio.h>
 
 #include <cmath>
 
-#include "sphere.hpp"
-#include "camera.hpp"
-#include "text3d.hpp"
-#include "sintable.hpp"
-#include "quadric.hpp"
-#include "mconst.h"
+#include "../common/camera.hpp"
+#include "../common/text3d.hpp"
+#include "../common/sintable.hpp"
+#include "../common/quadric.hpp"
+#include "../common/mconst.h"
 
 
 namespace mn {

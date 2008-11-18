@@ -1,10 +1,11 @@
+#include "data-loader.hpp"
+
 #include <stdio.h>
 
 #include <stdexcept>
 #include <vector>
 #include <string>
 
-#include "data-loader.hpp"
 #include "sphere.hpp"
 #include "lexer.hpp"
 

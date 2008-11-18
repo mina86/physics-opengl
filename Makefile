@@ -25,7 +25,7 @@ dist/globe: objs/globe.o
 
 dist/data::
 	mkdir -p dist
-	ln -fs ../data dist/data
+	ln -fs ../data dist/
 
 
 # Object files

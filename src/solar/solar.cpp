@@ -15,14 +15,14 @@
 #  include <GL/glut.h>
 #endif
 
-#include "camera.hpp"
+#include "../common/camera.hpp"
 #include "sphere.hpp"
-#include "sintable.hpp"
-#include "text3d.hpp"
-#include "quadric.hpp"
+#include "../common/sintable.hpp"
+#include "../common/text3d.hpp"
+#include "../common/quadric.hpp"
 #include "data-loader.hpp"
-#include "texture.hpp"
-#include "mconst.h"
+#include "../common/texture.hpp"
+#include "../common/mconst.h"
 
 
 static mn::solar::Sphere *sun;
