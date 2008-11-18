@@ -1,6 +1,7 @@
+#include "sintable.hpp"
+
 #include <cmath>
 
-#include "sintable.hpp"
 #include "mconst.h"
 
 namespace mn {

@@ -1,8 +1,9 @@
+#include "camera.hpp"
+
 #include <stdio.h>
 
 #include <cmath>
 
-#include "camera.hpp"
 #include "mconst.h"
 
 namespace mn {

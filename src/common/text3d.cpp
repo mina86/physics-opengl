@@ -85,6 +85,8 @@
  * of the model, counterclockwise order is relative to the front face.
  */
 
+#include "text3d.hpp"
+
 #include <fstream>
 #include <math.h>
 
@@ -95,7 +97,6 @@
 #include <GL/glut.h>
 #endif
 
-#include "text3d.hpp"
 
 namespace t3d {
 

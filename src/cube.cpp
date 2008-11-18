@@ -8,7 +8,7 @@
 #  include <GL/glut.h>
 #endif
 
-#include "camera.hpp"
+#include "common/camera.hpp"
 
 
 static struct { GLuint cube; } displayLists;

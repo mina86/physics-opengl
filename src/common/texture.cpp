@@ -1,8 +1,8 @@
+#include "texture.hpp"
+
 #include <stdint.h>
 
 #include <fstream>
-
-#include "texture.hpp"
 
 
 namespace mn {
