@@ -19,12 +19,13 @@
 #endif
 
 #include "../common/camera.hpp"
-#include "object.hpp"
 #include "../common/sintable.hpp"
 #include "../common/text3d.hpp"
 #include "../common/quadric.hpp"
 #include "../common/texture.hpp"
 #include "../common/mconst.h"
+#include "object.hpp"
+#include "data-loader.hpp"
 
 
 namespace mn {
@@ -292,16 +293,26 @@ int main(int argc, char** argv) {
 	mn::initSinTable();
 
 
-	mn::physics::Object *last = 0;
-#define O(x, y, z, Vx, Vy, Vz, mass, size, r, g, b, name)				\
-	last = new mn::physics::Object(mn::gl::Vector(x, y, z), mn::gl::Vector(Vx, Vy, Vz), mass, size, mn::gl::color(r, g, b), name, last);
-	O( 0,  0,  0,   0,  0,  0,  1000,    1,  1, 1, 0,  "Foo");
-	O(10,  0,  0,   0,  5,  0,    10, 0.25,  0, 1, 1,  "Bar");
-	O(15,  0,  0,   0, 10,  0,    10, 0.25,  1, 0, 1,  "Baz");
-	O(30, 10,  0,   0,  1, 10,    50, 0.25,  0, 0, 1,  "Quux");
-	O(10, 10, 10,   4,  4,  4,    10, 0.25,  1, 0, 0,  "Fred");
-#undef O
-	mn::physics::objects = last;
+	{
+		const char *data = optind == argc ? 0 : argv[optind], *dir;
+		if (!data) {
+			mn::gl::Texture::filename_prefix = "./data/";
+		} else if ((dir = strrchr(data, '/'))) {
+			char *path = new char[dir - data + 2];
+			memcpy(path, data, dir - data + 1);
+			path[dir - data + 1] = 0;
+			mn::gl::Texture::filename_prefix = path;
+		}
+
+		if (!data) {
+			puts("Reading data from standard input");
+		}
+		mn::physics::objects = mn::physics::loadData(data);
+		if (!mn::physics::objects) {
+			return 1;
+		}
+	}
+
 
 	glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH),
 	                   glutGet(GLUT_SCREEN_HEIGHT));

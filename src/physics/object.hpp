@@ -16,23 +16,59 @@ namespace physics {
 
 
 struct Object {
-	Object(const gl::Vector &thePoint, const gl::Vector &theVelocity,
-	       float theMass, float theSize,
-	       const gl::Color &theColor, const std::string &theName,
-	       Object *previous = 0)
-		: point(thePoint), nextPoint(thePoint), velocity(theVelocity),
-		  mass(theMass), size(theSize), name(theName), light(-1),
+	Object(const std::string &theName, Object *previous)
+		: mass(1), size(1), name(theName), light(-1),
 		  textList(0), next(this) {
-		materialColor[0] = theColor.r;
-		materialColor[1] = theColor.g;
-		materialColor[2] = theColor.b;
-		materialColor[3] = 1;
-
+		setColor(1, 1, 1);
 		if (previous) {
 			next = previous->next;
 			previous->next = this;
 		}
 	}
+
+
+	void setPosition(const gl::Vector &thePoint) {
+		point = nextPoint = thePoint;
+	}
+
+	void setPosition(float x, float y, float z) {
+		point.x = nextPoint.x = x;
+		point.y = nextPoint.y = y;
+		point.z = nextPoint.z = z;
+	}
+
+	void setVelocity(const gl::Vector &theVelocity) {
+		velocity = theVelocity;
+	}
+
+	void setVelocity(float x, float y, float z) {
+		velocity.x = x;
+		velocity.y = y;
+		velocity.z = z;
+	}
+
+	void setMass(float theMass) {
+		mass = theMass;
+	}
+
+	void setSize(float theSize) {
+		size = theSize;
+	}
+
+	void setColor(const gl::Color &theColor) {
+		materialColor[0] = theColor.r;
+		materialColor[1] = theColor.g;
+		materialColor[2] = theColor.b;
+		materialColor[3] = 1;
+	}
+
+	void setColor(float r, float g, float b) {
+		materialColor[0] = r;
+		materialColor[1] = g;
+		materialColor[2] = b;
+		materialColor[3] = 1;
+	}
+
 
 	int getLight() const { return light; }
 	void setLight(int theLight) { light = theLight; }
@@ -80,7 +116,7 @@ struct Object {
 
 private:
 	gl::Vector point, nextPoint, velocity;
-	const float mass, size;
+	float mass, size;
 	const std::string name;
 	int light;
 
