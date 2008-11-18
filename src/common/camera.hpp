@@ -98,7 +98,7 @@ struct Camera {
 	}
 
 
-	bool isInFront(const Vector &point) {
+	bool isInFront(const Vector &point) const {
 		const float md1 =
 			eye.x * matrix[ 2] +
 			eye.y * matrix[ 6] +

@@ -1,5 +1,5 @@
-#ifndef H_PLANET_HPP
-#define H_PLANET_HPP
+#ifndef H_SPHERE_HPP
+#define H_SPHERE_HPP
 
 #include <string>
 

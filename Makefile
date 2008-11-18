@@ -7,7 +7,7 @@ LIBS    = -lglut
 endif
 
 
-all: dist/data dist/cube dist/solar dist/globe
+all: dist/data dist/cube dist/solar dist/globe dist/physics
 
 
 # Binaries
@@ -18,6 +18,11 @@ dist/solar: objs/common/camera.o objs/common/quadric.o \
   objs/common/sintable.o objs/common/texture.o \
   objs/solar/data-loader.o objs/solar/lexer.o objs/solar/solar.o \
   objs/solar/sphere.o objs/common/text3d.o
+	exec $(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+dist/physics: objs/common/camera.o objs/common/quadric.o \
+  objs/common/sintable.o objs/common/texture.o objs/common/text3d.o \
+  objs/physics/physics.o objs/physics/object.o
 	exec $(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 dist/globe: objs/globe.o
@@ -39,26 +44,31 @@ objs/common/text3d.o: src/common/text3d.cpp src/common/text3d.hpp
 objs/common/texture.o: src/common/texture.cpp src/common/texture.hpp \
   src/common/color.hpp
 objs/solar/data-loader.o: src/solar/data-loader.cpp src/solar/data-loader.hpp \
-  src/solar/sphere.hpp src/solar/../common/color.hpp \
-  src/solar/../common/vector.hpp src/solar/../common/texture.hpp \
-  src/solar/../common/color.hpp src/solar/lexer.hpp
+  src/solar/sphere.hpp src/common/color.hpp src/common/vector.hpp \
+  src/common/texture.hpp src/common/color.hpp src/solar/lexer.hpp
 objs/solar/lexer.o: src/solar/lexer.cpp src/solar/lexer.hpp
-objs/solar/solar.o: src/solar/solar.cpp src/solar/../common/camera.hpp \
-  src/solar/../common/vector.hpp src/solar/../common/mconst.h \
-  src/solar/sphere.hpp src/solar/../common/color.hpp \
-  src/solar/../common/vector.hpp src/solar/../common/texture.hpp \
-  src/solar/../common/color.hpp src/solar/../common/sintable.hpp \
-  src/solar/../common/text3d.hpp src/solar/../common/quadric.hpp \
-  src/solar/data-loader.hpp src/solar/../common/mconst.h
+objs/solar/solar.o: src/solar/solar.cpp src/common/camera.hpp \
+  src/common/vector.hpp src/common/mconst.h src/solar/sphere.hpp \
+  src/common/color.hpp src/common/vector.hpp src/common/texture.hpp \
+  src/common/color.hpp src/common/sintable.hpp src/common/text3d.hpp \
+  src/common/quadric.hpp src/solar/data-loader.hpp src/common/mconst.h
 objs/solar/sphere.o: src/solar/sphere.cpp src/solar/sphere.hpp \
-  src/solar/../common/color.hpp src/solar/../common/vector.hpp \
-  src/solar/../common/texture.hpp src/solar/../common/color.hpp \
-  src/solar/../common/camera.hpp src/solar/../common/vector.hpp \
-  src/solar/../common/mconst.h src/solar/../common/text3d.hpp \
-  src/solar/../common/sintable.hpp src/solar/../common/quadric.hpp \
-  src/solar/../common/mconst.h
+  src/common/color.hpp src/common/vector.hpp src/common/texture.hpp \
+  src/common/color.hpp src/common/camera.hpp src/common/vector.hpp \
+  src/common/mconst.h src/common/text3d.hpp src/common/sintable.hpp \
+  src/common/quadric.hpp src/common/mconst.h
 objs/cube.o: src/cube.cpp src/common/camera.hpp src/common/vector.hpp \
   src/common/mconst.h
+objs/physics/object.o: src/physics/object.cpp src/physics/object.hpp \
+  src/common/color.hpp src/common/vector.hpp src/common/texture.hpp \
+  src/common/color.hpp src/common/camera.hpp src/common/vector.hpp \
+  src/common/mconst.h src/common/text3d.hpp src/common/sintable.hpp \
+  src/common/quadric.hpp src/common/mconst.h
+objs/physics/physics.o: src/physics/physics.cpp src/common/camera.hpp \
+  src/common/vector.hpp src/common/mconst.h src/physics/object.hpp \
+  src/common/color.hpp src/common/vector.hpp src/common/texture.hpp \
+  src/common/color.hpp src/common/sintable.hpp src/common/text3d.hpp \
+  src/common/quadric.hpp src/common/mconst.h
 
 objs/%.o: src/%.cpp
 	exec mkdir -p $(dir $@)
