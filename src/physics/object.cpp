@@ -27,6 +27,7 @@ float Object::cutoffDistance2 = 2500.0;
 bool Object::lowQuality = false;
 bool Object::drawNames = true;
 bool Object::useTextures = true;
+float Object::G = 1;
 
 static const GLfloat materialSpecular[] = { 0.75, 0.75, 0.75, 1 };
 static const GLfloat zeros           [] = { 0, 0, 0, 1 };
@@ -118,7 +119,7 @@ void Object::tick(float dt) {
 		const gl::Vector r = o->point - point;
 		const float l2 = r.length2();
 		if (l2 > 0.01) {
-			a += (o->mass / powf(l2, 1.5)) * r;
+			a += (G * o->mass / powf(l2, 1.5)) * r;
 		}
 	}
 

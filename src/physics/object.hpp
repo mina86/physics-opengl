@@ -27,36 +27,31 @@ struct Object {
 	}
 
 
-	const gl::Vector &getPosition() const {
-		return point;
-	}
+	const gl::Vector &getPosition() const { return point; }
+	gl::Vector &getPosition() { return point; }
 	void setPosition(const gl::Vector &thePoint) {
 		point = nextPoint = thePoint;
 	}
-
 	void setPosition(float x, float y, float z) {
 		point.x = nextPoint.x = x;
 		point.y = nextPoint.y = y;
 		point.z = nextPoint.z = z;
 	}
 
-	void setVelocity(const gl::Vector &theVelocity) {
-		velocity = theVelocity;
-	}
-
+	gl::Vector &getVelocity() { return velocity; }
+	const gl::Vector &getVelocity() const { return velocity; }
+	void setVelocity(const gl::Vector &theVelocity) { velocity = theVelocity; }
 	void setVelocity(float x, float y, float z) {
 		velocity.x = x;
 		velocity.y = y;
 		velocity.z = z;
 	}
 
-	void setMass(float theMass) {
-		mass = theMass;
-	}
+	float getMass() const { return mass; }
+	void setMass(float theMass) { mass = theMass; }
 
-	void setSize(float theSize) {
-		size = theSize;
-	}
+	float getSize() const { return size; }
+	void setSize(float theSize) { size = theSize; }
 
 	void setColor(const gl::Color &theColor) {
 		materialColor[0] = theColor.r;
@@ -119,6 +114,17 @@ struct Object {
 
 	Object *getNext() { return next; }
 	const Object *getNext() const { return next; }
+	Object *find(const std::string &theName) {
+		return const_cast<Object*>(const_cast<const Object*>(this)->find(theName));
+	}
+	const Object *find(const std::string &theName) const {
+		const Object *o = this;
+		do if (o->name == theName) return o; while ((o = o->next) != this);
+		return 0;
+	}
+
+
+	static float G;
 
 
 private:

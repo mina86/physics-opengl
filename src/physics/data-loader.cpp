@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <math.h>
 
 #include <stdexcept>
 #include <vector>
@@ -14,6 +15,26 @@
 namespace mn {
 
 namespace physics {
+
+
+
+static void autoVelocity(Object &object, const char *name) {
+	const Object *const o = object.find(name);
+	delete[] name;
+	if (!o) {
+		return;
+	}
+
+	const gl::Vector r = o->getPosition() - object.getPosition();
+	const float l2 = r.length2();
+	if (l2 < 0.01) {
+		return;
+	}
+
+	const float V2 = Object::G * o->getMass() / sqrtf(l2);
+	object.getVelocity().normalize();
+	object.setVelocity(object.getVelocity() * sqrt(V2));
+}
 
 
 Object *loadData(const std::string &filename) {
@@ -32,6 +53,7 @@ Object *loadData(const std::string &filename) {
 		S_VELOCITY,         /* takes 3 floats */
 		S_VELOCITY_READ_1,
 		S_VELOCITY_READ_2,
+		S_VELOCITY_DONE,
 		S_COLOR,            /* takes 3 floats */
 		S_COLOR_READ_1,
 		S_COLOR_READ_2,
@@ -56,6 +78,16 @@ Object *loadData(const std::string &filename) {
 			if (token != Lexer::T_STRING) goto error;
 			goto s_cont_string;
 
+		case S_VELOCITY_DONE:
+			state = S_CONT;
+			if (token == Lexer::T_AUTO) {
+				token = lexer.nextToken(value, location);
+				if (token != Lexer::T_STRING) goto error;
+				autoVelocity(*object, value.string);
+				break;
+			}
+			/* FALL THROUGH */
+
 		case S_CONT:
 			switch (token) {
 
@@ -70,6 +102,24 @@ Object *loadData(const std::string &filename) {
 			case '@'              : state = S_POSITION; break;
 			case Lexer::T_VELOCITY: state = S_VELOCITY; break;
 			case Lexer::T_COLOR   : state = S_COLOR   ; break;
+
+			case 'x':
+				token = lexer.nextToken(value, location);
+				if (token != Lexer::T_REAL) goto error;
+				object->getPosition().x =value.real * distFactor;
+				break;
+
+			case 'y':
+				token = lexer.nextToken(value, location);
+				if (token != Lexer::T_REAL) goto error;
+				object->getPosition().y =value.real * distFactor;
+				break;
+
+			case 'z':
+				token = lexer.nextToken(value, location);
+				if (token != Lexer::T_REAL) goto error;
+				object->getPosition().z =value.real * distFactor;
+				break;
 
 			case Lexer::T_LIGHT:
 				if (object->getLight() >= 0) goto error;
@@ -105,8 +155,8 @@ Object *loadData(const std::string &filename) {
 			}
 			break;
 
-		case S_POSITION:
 		case S_VELOCITY:
+		case S_POSITION:
 		case S_COLOR:
 			if (token != Lexer::T_REAL) goto error;
 			x = value.real;
@@ -130,7 +180,7 @@ Object *loadData(const std::string &filename) {
 		case S_VELOCITY_READ_2:
 			if (token != Lexer::T_REAL) goto error;
 			object->setVelocity(x * velFactor, y * velFactor, value.real * velFactor);
-			state = S_CONT;
+			state = S_VELOCITY_DONE;
 			break;
 
 		case S_COLOR_READ_2:

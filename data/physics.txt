@@ -1,11 +1,16 @@
 * @ 149597870691e-10 vel 149597870691e-10 size 6371000e-8
-"Sun"                                  size 20   mass 2000 color 1.00 0.97 0.66 texture "sun" light
-"Mercury"      @ 0 0 0.38 vel 1.40 0 0 size 0.38 mass 0.06 color 0.63 0.44 0.21 texture "mercury"
-"Venus"        @ 0 0 0.73 vel 0.90 0 0 size 0.95 mass 1.82 color 0.65 0.37 0.10 texture "venus"
-"Earth"        @ 0 0 1.00 vel 0.80 0 0 size 1.00 mass 1.00 color 0.34 0.44 0.46 texture "earth"
-"Mars"         @ 0 0 1.50 vel 0.70 0 0 size 0.53 mass 0.11 color 0.58 0.38 0.34 texture "mars"
-"Jupiter"      @ 0 0 5.20 vel 0.60 0 0 size 11.2 mass 318. color 0.79 0.60 0.43 texture "jupiter"
-"Saturn"       @ 0 0 9.58 vel 0.50 0 0 size 9.45 mass 95.2 color 0.81 0.67 0.53 texture "saturn"
-"Uranus"       @ 0 0 19.2 vel 0.40 0 0 size 4.00 mass 14.5 color 0.60 0.69 0.72 texture "uranus"
-"Neptune"      @ 0 0 30.1 vel 0.30 0 0 size 3.88 mass 17.2 color 0.37 0.49 0.84 texture "neptune"
-"134340 Pluto" @ 0 0 39.5 vel 0.20 0 0 size 0.19 mass 0.01 color 0.54 0.58 0.61 texture "pluto"
+"Sun"                                      size 20   mass 2000 color 1.00 0.97 0.66 texture "sun" light
+"Mercury"      z 0.38 vel 1 0 0 auto "Sun" size 0.38 mass 0.06 color 0.63 0.44 0.21 texture "mercury"
+"Venus"        z 0.73 vel 1 0 0 auto "Sun" size 0.95 mass 1.82 color 0.65 0.37 0.10 texture "venus"
+"Earth"        z 1.00 vel 1 0 0 auto "Sun" size 1.00 mass 1.00 color 0.34 0.44 0.46 texture "earth"
+"Mars"         z 1.50 vel 1 0 0 auto "Sun" size 0.53 mass 0.11 color 0.58 0.38 0.34 texture "mars"
+"4 Vesta"      z 2.36 vel 1 0 0 auto "Sun" size 0.04 mass 0.01 color 0.75 0.75 0.75
+"1 Ceres"      z 2.77 vel 1 0 0 auto "Sun" size 0.07 mass 0.01 color 0.75 0.75 0.75
+"10 Hygiea"    z 3.14 vel 1 0 0 auto "Sun" size 0.03 mass 0.01 color 0.75 0.75 0.75
+"Jupiter"      z 5.20 vel 1 0 0 auto "Sun" size 11.2 mass 318. color 0.79 0.60 0.43 texture "jupiter"
+"Saturn"       z 9.58 vel 1 0 0 auto "Sun" size 9.45 mass 95.2 color 0.81 0.67 0.53 texture "saturn"
+"Uranus"       z 19.2 vel 1 0 0 auto "Sun" size 4.00 mass 14.5 color 0.60 0.69 0.72 texture "uranus"
+"Neptune"      z 30.1 vel 1 0 0 auto "Sun" size 3.88 mass 17.2 color 0.37 0.49 0.84 texture "neptune"
+"134340 Pluto" z 39.5 vel 1 0 0 auto "Sun" size 0.19 mass 0.01 color 0.54 0.58 0.61 texture "pluto"
+"136199 Eris"  z 67.7 vel 1 0 0 auto "Sun" size 0.19 mass 0.01 color 0.75 0.75 0.75
+"90377 Sedna"  z 88.0 vel 1 0 0 auto "Sun" size 0.14 mass 0.01 color 0.75 0.75 0.75

@@ -45,6 +45,7 @@ struct Keyword {
 };
 static const Keyword keywords[] = {
 	/* !!! KEEP THAT SORTED !!! */
+	{ "auto",     Lexer::T_AUTO     },
 	{ "color",    Lexer::T_COLOR    },
 	{ "light",    Lexer::T_LIGHT    },
 	{ "mass",     Lexer::T_MASS     },
@@ -79,6 +80,10 @@ int Lexer::nextToken(Value &value, Location &location) {
 		} while (isalpha(ch = getchar()));
 		ungetchar(ch);
 		location.end = current;
+
+		if (keyword.size() == 1) {
+			return keyword[0];
+		}
 
 		const Keyword *kw = std::lower_bound(keywords, keywords + sizeof keywords / sizeof *keywords, keyword.c_str());
 		return strcmp(kw->name, keyword.c_str()) ? (int)T_ERROR : kw->num;
