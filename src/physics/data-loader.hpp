@@ -11,7 +11,7 @@ namespace physics {
 
 struct Object;
 
-Object *loadData(const std::string &filename);
+Object *loadData(const char *filename);
 
 }
 

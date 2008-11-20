@@ -36,8 +36,8 @@ struct Camera {
 		valid = true;
 	}
 
-	const Vector &getEye() const { return eye; }
-	void setEye(const Vector &v) { eye = v; checkDistance(); }
+	const Vector<float> &getEye() const { return eye; }
+	void setEye(const Vector<float> &v) { eye = v; checkDistance(); }
 	float getEyeX() const { return eye.x; }
 	float getEyeY() const { return eye.y; }
 	float getEyeZ() const { return eye.z; }
@@ -83,7 +83,7 @@ struct Camera {
 
 	void rotateTop(float x) { setRotX(rotX + x); }
 	void rotateLeft(float y) { setRotY(rotY - y); }
-	void rotate(const Vector &v) {
+	void rotate(const Vector<float> &v) {
 		setRotX(rotX + v.x);
 		setRotY(rotY - v.y);
 	}
@@ -101,7 +101,7 @@ struct Camera {
 	}
 
 
-	bool isInFront(const Vector &point) const {
+	bool isInFront(const Vector<float> &point) const {
 		const float md1 =
 			eye.x * matrix[ 2] +
 			eye.y * matrix[ 6] +
@@ -125,7 +125,7 @@ private:
 		}
 	}
 
-	Vector eye;
+	Vector<float> eye;
 	float rotX, rotY;
 	mutable float matrix[16];
 	mutable bool valid;

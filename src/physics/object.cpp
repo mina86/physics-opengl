@@ -23,11 +23,11 @@ namespace mn {
 namespace physics {
 
 
-float Object::cutoffDistance2 = 2500.0;
+Object::Vector::value_type Object::cutoffDistance2 = 2500.0;
 bool Object::lowQuality = false;
 bool Object::drawNames = true;
 bool Object::useTextures = true;
-float Object::G = 1;
+Object::Vector::value_type Object::G = 1;
 
 static const GLfloat materialSpecular[] = { 0.75, 0.75, 0.75, 1 };
 static const GLfloat zeros           [] = { 0, 0, 0, 1 };
@@ -75,8 +75,8 @@ void Object::draw() {
 	             light <  0 ? zeros : (gotTexture ? ones : materialColor));
 	glMaterialf(GL_FRONT, GL_SHININESS, light >= 0 ? 0 : 12);
 
-	const float distance2 = cam ? cam->getEye().distance2(point) : 0;
-	const float distanceFactor2 = distance2 > cutoffDistance2 ? std::sqrt(distance2 / cutoffDistance2) : 1;
+	const Vector::value_type distance2 = cam ? cam->getEye().distance2(point) : 0;
+	const Vector::value_type distanceFactor2 = distance2 > cutoffDistance2 ? std::sqrt(distance2 / cutoffDistance2) : 1;
 	unsigned slices = 60 / distanceFactor2;
 	if (size > 1) slices *= 2;
 	if (lowQuality) slices /= 3;
@@ -113,13 +113,13 @@ void Object::draw() {
 }
 
 
-void Object::tick(float dt) {
-	gl::Vector a(0, 0, 0);
+void Object::tick_(Vector::value_type dt) {
+	Vector a(0, 0, 0);
 	for (Object *o = next; o != this; o = o->next) {
-		const gl::Vector r = o->point - point;
-		const float l2 = r.length2();
+		const Vector r = o->point - point;
+		const Vector::value_type l2 = r.length2();
 		if (l2 > 0.01) {
-			a += (G * o->mass / powf(l2, 1.5)) * r;
+			a += (G * o->mass / pow(l2, 1.5)) * r;
 		}
 	}
 

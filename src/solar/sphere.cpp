@@ -68,9 +68,9 @@ static void drawCircle(float radius) {
 }
 
 
-void Sphere::draw(unsigned long ticks, const gl::Vector &centerPos) {
+void Sphere::draw(unsigned long ticks, const gl::Vector<float> &centerPos) {
 	const float phi = ticks * omega;
-	const gl::Vector pos = centerPos + gl::Vector(distance * mn::sin(phi + 0.5f), 0, distance * mn::cos(phi + 0.5f));
+	const gl::Vector<float> pos = centerPos + gl::Vector<float>(distance * mn::sin(phi + 0.5f), 0, distance * mn::cos(phi + 0.5f));
 	gl::Camera *const cam = gl::Camera::camera;
 	const float distance2 = cam ? cam->getEye().distance2(pos) : 0;
 	const float distanceFactor2 = distance2 > cutoffDistance2 ? std::sqrt(distance2 / cutoffDistance2) : 1;

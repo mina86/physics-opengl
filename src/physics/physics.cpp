@@ -174,7 +174,7 @@ static void drawScene() {
 		camera.moved = false;
 	}
 
-	const mn::gl::Vector &eye = camera.getEye();
+	const mn::gl::Vector<float> &eye = camera.getEye();
 
 	{
 		PushMatrix pm;

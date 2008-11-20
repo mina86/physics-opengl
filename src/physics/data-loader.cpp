@@ -25,7 +25,7 @@ static void autoVelocity(Object &object, const char *name) {
 		return;
 	}
 
-	const gl::Vector r = o->getPosition() - object.getPosition();
+	const Object::Vector r = o->getPosition() - object.getPosition();
 	const float l2 = r.length2();
 	if (l2 < 0.01) {
 		return;
@@ -37,10 +37,10 @@ static void autoVelocity(Object &object, const char *name) {
 }
 
 
-Object *loadData(const std::string &filename) {
+Object *loadData(const char *filename) {
 	Lexer lexer(filename);
 	if (!lexer) {
-		fprintf(stderr, "%s: could not open\n", filename.c_str());
+		fprintf(stderr, "%s: could not open\n", filename);
 		return 0;
 	}
 
@@ -119,6 +119,11 @@ Object *loadData(const std::string &filename) {
 				token = lexer.nextToken(value, location);
 				if (token != Lexer::T_REAL) goto error;
 				object->getPosition().z =value.real * distFactor;
+				break;
+
+			case Lexer::T_FROZEN:
+				if (object->isFrozen()) goto error;
+				object->setFrozen(true);
 				break;
 
 			case Lexer::T_LIGHT:

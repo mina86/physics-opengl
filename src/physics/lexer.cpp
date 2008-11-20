@@ -1,5 +1,6 @@
 #include "lexer.hpp"
 
+#include <assert.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -47,6 +48,7 @@ static const Keyword keywords[] = {
 	/* !!! KEEP THAT SORTED !!! */
 	{ "auto",     Lexer::T_AUTO     },
 	{ "color",    Lexer::T_COLOR    },
+	{ "frozen",   Lexer::T_FROZEN   },
 	{ "light",    Lexer::T_LIGHT    },
 	{ "mass",     Lexer::T_MASS     },
 	{ "size",     Lexer::T_SIZE     },
@@ -188,6 +190,8 @@ const char *Lexer::tokenName(int token) {
 	case T_LIGHT:    return "\"light\"";
 	case T_TEXTURE:  return "\"texture\"";
 	case T_COLOR:    return "\"color\"";
+	case T_AUTO:     return "\"auto\"";
+	case T_FROZEN:   return "\"frozen\"";
 
 	case T_REAL:     return "number";
 	case T_STRING:   return "string";
@@ -199,6 +203,7 @@ const char *Lexer::tokenName(int token) {
 		} else if ((unsigned)token < 128) {
 			sprintf(buf, "'%c'", token);
 		} else {
+			assert(0);
 			return "UNKNOWN"; /* dead code */
 		}
 		return buf;

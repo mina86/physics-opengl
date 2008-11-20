@@ -156,7 +156,7 @@ static void drawScene() {
 	glLoadIdentity();
 
 	const mn::gl::Camera &camera = *mn::gl::Camera::camera;
-	const mn::gl::Vector &eye = camera.getEye();
+	const mn::gl::Vector<float> &eye = camera.getEye();
 
 	{
 		pushMatrix pm;
@@ -169,7 +169,7 @@ static void drawScene() {
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_LIGHTING);
 
-		sun->draw(mn::gl::Camera::ticks, mn::gl::Vector(0, 0, 0));
+		sun->draw(mn::gl::Camera::ticks, mn::gl::Vector<float>(0, 0, 0));
 
 		glDisable(GL_LIGHTING);
 		glDisable(GL_CULL_FACE);
@@ -278,7 +278,7 @@ int main(int argc, char** argv) {
 	}
 
 	{
-		const char *data = optind == argc ? "data/helio.txt" : argv[optind];
+		const char *data = optind == argc ? "data/helio.sol" : argv[optind];
 		const char *dir = strrchr(data, '/');
 		if (dir) {
 			char *path = new char[dir - data + 2];

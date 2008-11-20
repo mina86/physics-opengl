@@ -67,7 +67,7 @@ objs/physics/object.o: src/physics/object.hpp src/common/color.hpp \
 objs/physics/physics.o: src/common/camera.hpp src/common/vector.hpp \
   src/common/mconst.h src/physics/object.hpp src/common/texture.hpp \
   src/common/color.hpp src/common/sintable.hpp src/common/text3d.hpp \
-  src/common/quadric.hpp
+  src/common/quadric.hpp src/physics/data-loader.hpp
 objs/physics/data-loader.o: src/physics/data-loader.hpp \
   src/physics/object.hpp src/common/color.hpp src/common/vector.hpp \
   src/common/texture.hpp src/physics/lexer.hpp

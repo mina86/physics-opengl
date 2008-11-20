@@ -1,0 +1,3 @@
+"Foo" x -3 frozen mass 100 size 1     light
+"Bar" x  3 frozen mass 100 size 1     light
+"Baz" y  3        mass 1   size 0.25

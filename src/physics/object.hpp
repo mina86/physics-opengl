@@ -16,8 +16,11 @@ namespace physics {
 
 
 struct Object {
+	typedef gl::Vector<double> Vector;
+
+
 	Object(const std::string &theName, Object *previous)
-		: mass(1), size(1), name(theName), light(-1),
+		: mass(1), size(1), name(theName), light(-1), frozen(false),
 		  textList(0), next(this) {
 		setColor(1, 1, 1);
 		if (previous) {
@@ -27,31 +30,34 @@ struct Object {
 	}
 
 
-	const gl::Vector &getPosition() const { return point; }
-	gl::Vector &getPosition() { return point; }
-	void setPosition(const gl::Vector &thePoint) {
+	const Vector &getPosition() const { return point; }
+	Vector &getPosition() { return point; }
+	void setPosition(const Vector &thePoint) {
 		point = nextPoint = thePoint;
 	}
-	void setPosition(float x, float y, float z) {
+	void setPosition(Vector::value_type x, Vector::value_type y, Vector::value_type z) {
 		point.x = nextPoint.x = x;
 		point.y = nextPoint.y = y;
 		point.z = nextPoint.z = z;
 	}
 
-	gl::Vector &getVelocity() { return velocity; }
-	const gl::Vector &getVelocity() const { return velocity; }
-	void setVelocity(const gl::Vector &theVelocity) { velocity = theVelocity; }
-	void setVelocity(float x, float y, float z) {
+	Vector &getVelocity() { return velocity; }
+	const Vector &getVelocity() const { return velocity; }
+	void setVelocity(const Vector &theVelocity) { velocity = theVelocity; }
+	void setVelocity(Vector::value_type x, Vector::value_type y, Vector::value_type z) {
 		velocity.x = x;
 		velocity.y = y;
 		velocity.z = z;
 	}
 
-	float getMass() const { return mass; }
-	void setMass(float theMass) { mass = theMass; }
+	bool isFrozen() const { return frozen; }
+	void setFrozen(bool theFrozen) { frozen = theFrozen; }
 
-	float getSize() const { return size; }
-	void setSize(float theSize) { size = theSize; }
+	Vector::value_type getMass() const { return mass; }
+	void setMass(Vector::value_type theMass) { mass = theMass; }
+
+	Vector::value_type getSize() const { return size; }
+	void setSize(Vector::value_type theSize) { size = theSize; }
 
 	void setColor(const gl::Color &theColor) {
 		materialColor[0] = theColor.r;
@@ -71,7 +77,7 @@ struct Object {
 	int getLight() const { return light; }
 	void setLight(int theLight) { light = theLight; }
 
-	static float cutoffDistance2;
+	static Vector::value_type cutoffDistance2;
 	static bool lowQuality, drawNames, useTextures;
 
 	void draw();
@@ -80,19 +86,27 @@ struct Object {
 		do o->draw(); while ((o = o->next) != this);
 	}
 
-	void tick(float dt);
-	void tickAll(float dt) {
+	void tick(Vector::value_type dt) {
+		if (!frozen) {
+			tick_(dt);
+		}
+	}
+	void tickAll(Vector::value_type dt) {
 		Object *o = this;
 		do o->tick(dt); while ((o = o->next) != this);
 	}
 
-	void updatePoint() { point = nextPoint; }
+	void updatePoint() {
+		if (!frozen) {
+			point = nextPoint;
+		}
+	}
 	void updatePointAll() {
 		Object *o = this;
 		do o->updatePoint(); while ((o = o->next) != this);
 	}
 
-	void ticksAll(unsigned count, float dt) {
+	void ticksAll(unsigned count, Vector::value_type dt) {
 		tickAll(dt);
 		while (--count) {
 			updatePointAll();
@@ -124,19 +138,22 @@ struct Object {
 	}
 
 
-	static float G;
+	static Vector::value_type G;
 
 
 private:
-	gl::Vector point, nextPoint, velocity;
-	float mass, size;
+	Vector point, nextPoint, velocity;
+	Vector::value_type mass, size;
 	const std::string name;
 	int light;
+	bool frozen;
 
 	float materialColor[4];
 	unsigned int textList;
 
 	Object *next;
+
+	void tick_(Vector::value_type dt);
 };
 
 

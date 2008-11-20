@@ -300,7 +300,7 @@ void Camera::registerHandlers() {
 	glutMotionFunc(handleMotion);
 	glutPassiveMotionFunc(handleMotion);
 	glutReshapeFunc(handleResize);
-	glutTimerFunc(20, handleTick, 20);
+	glutTimerFunc(40, handleTick, 40);
 }
 
 

@@ -9,16 +9,21 @@ namespace mn {
 namespace gl {
 
 
+template<class T = float>
 struct Vector {
-	float x, y, z;
+	typedef T value_type;
 
-	Vector(float theX = 0, float theY = 0, float theZ = 0)
+	T x, y, z;
+
+	Vector(T theX = 0, T theY = 0, T theZ = 0)
 		: x(theX), y(theY), z(theZ) { }
+	template<class T2>
+	Vector(const Vector<T2> &v) : x(v.x), y(v.y), z(v.z) { }
 
-	float length   () const { return std::sqrt(length2()); }
-	float length2  () const { return x*x + y*y + z*z; }
-	inline float distance (const Vector &v) const;
-	inline float distance2(const Vector &v) const;
+	T length   () const { return std::sqrt(length2()); }
+	T length2  () const { return x*x + y*y + z*z; }
+	T distance (const Vector &v) const { return (*this - v).length (); }
+	T distance2(const Vector &v) const { return (*this - v).length2(); }
 	void normalize () { *this *= 1 / length(); }
 
 
@@ -36,14 +41,14 @@ struct Vector {
 		return *this;
 	}
 
-	Vector &operator*=(float r) {
+	Vector &operator*=(T r) {
 		x *= r;
 		y *= r;
 		z *= r;
 		return *this;
 	}
 
-	Vector &operator/=(float r) {
+	Vector &operator/=(T r) {
 		return *this *= 1 / r;
 	}
 
@@ -56,20 +61,16 @@ struct Vector {
 	}
 };
 
-
-inline Vector operator+(Vector a, const Vector &b) { return a += b; }
-inline Vector operator-(Vector a, const Vector &b) { return a -= b; }
-inline Vector operator*(Vector a, float r) { return a *= r; }
-inline Vector operator*(float r, Vector a) { return a *= r; }
-inline Vector operator/(Vector a, float r) { return a /= r; }
-
-
-inline float Vector::distance (const Vector &v) const {
-	return (*this - v).length (); 
-}
-inline float Vector::distance2(const Vector &v) const {
-	return (*this - v).length2(); 
-}
+template<class T>
+inline Vector<T> operator+(Vector<T> a, const Vector<T> &b) { return a += b; }
+template<class T>
+inline Vector<T> operator-(Vector<T> a, const Vector<T> &b) { return a -= b; }
+template<class T>
+inline Vector<T> operator*(Vector<T> a, T r) { return a *= r; }
+template<class T>
+inline Vector<T> operator*(T r, Vector<T> a) { return a *= r; }
+template<class T>
+inline Vector<T> operator/(Vector<T> a, T r) { return a /= r; }
 
 
 }
