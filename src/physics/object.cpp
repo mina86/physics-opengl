@@ -10,6 +10,8 @@
 #include <stdio.h>
 
 #include <cmath>
+#include <vector>
+#include <queue>
 
 #include "../common/camera.hpp"
 #include "../common/text3d.hpp"
@@ -113,17 +115,43 @@ void Object::draw() {
 }
 
 
+namespace {
+	struct Acceleration {
+		Object::Vector vector;
+		Object::Vector::value_type value;
+
+		Acceleration(const Object::Vector &theVector,
+		             const Object::Vector::value_type &theValue)
+			: vector(theVector), value(theValue) { }
+		Acceleration(const Object::Vector &theVector)
+			: vector(theVector), value(theVector.length()) { }
+
+		bool operator<(const Acceleration &a) const {
+			return value < a.value;
+		}
+	};
+}
+
 void Object::tick_(Vector::value_type dt) {
-	Vector a(0, 0, 0);
+	static std::priority_queue<Acceleration> accelerations;
+
 	for (Object *o = next; o != this; o = o->next) {
+		if (o->mass < 0.01) continue;
 		const Vector r = o->point - point;
 		const Vector::value_type l2 = r.length2();
-		if (l2 > 0.01) {
-			a += (G * o->mass / pow(l2, 1.5)) * r;
-		}
+		if (l2 < 0.01) continue;
+		Vector::value_type value = G * o->mass / l2;
+		accelerations.push(Acceleration(r * (value / sqrt(l2)), value));
 	}
 
-	velocity += a * dt;
+	if (!accelerations.empty()) {
+		Vector a(0, 0, 0);
+		do {
+			a += accelerations.top().vector;
+			accelerations.pop();
+		} while (!accelerations.empty());
+		velocity += a * dt;
+	}
 	nextPoint = point + velocity * dt;
 }
 
