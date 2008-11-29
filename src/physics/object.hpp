@@ -138,7 +138,7 @@ struct Object {
 	}
 
 
-	static Vector::value_type G;
+	static const Vector::value_type G;
 
 
 private:

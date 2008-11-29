@@ -224,7 +224,7 @@ static void drawScene() {
 	glTranslatef(0.1-mn::gl::Camera::aspect(), 0.9, 0);
 	glScalef(0.03, 0.03, 0.03);
 	char buffer[1024];
-	sprintf(buffer, "position = (%6.2f, %6.2f, %6.2f)\ndistance = %6.2f\nrotation = (%2.2f, %2.2f, %2.2f)\nfps = %3.1f\nspeed = %lu", eye.x, eye.y, eye.z, eye.length(), camera.getRotX() * MN_180_PI, camera.getRotY() * MN_180_PI, 0.0, fps, mn::gl::Camera::countTicks * mn::gl::Camera::tickIncrement);
+	sprintf(buffer, "position = (%6.2f, %6.2f, %6.2f)\ndistance = %6.2f\nrotation = (%2.2f, %2.2f, %2.2f)\nfps = %3.1f\nspeed = %.1f", eye.x, eye.y, eye.z, eye.length(), camera.getRotX() * MN_180_PI, camera.getRotY() * MN_180_PI, 0.0, fps, mn::gl::Camera::countTicks * mn::gl::Camera::tickIncrement / 10.0f);
 	glColor3f(1, 1, 1);
 	t3d::draw2D(std::string(buffer), -1, -1);
 
@@ -235,7 +235,7 @@ static void drawScene() {
 
 
 	if (gl::Camera::countTicks && gl::Camera::tickIncrement) {
-		objects->ticksAll(gl::Camera::tickIncrement, 0.001);
+		objects->ticksAll(gl::Camera::tickIncrement, 1/250.0f);
 		objects->updatePointAll();
 	}
 }

@@ -29,7 +29,7 @@ Object::Vector::value_type Object::cutoffDistance2 = 2500.0;
 bool Object::lowQuality = false;
 bool Object::drawNames = true;
 bool Object::useTextures = true;
-Object::Vector::value_type Object::G = 1;
+const Object::Vector::value_type Object::G = 6.67428-1;
 
 static const GLfloat materialSpecular[] = { 0.75, 0.75, 0.75, 1 };
 static const GLfloat zeros           [] = { 0, 0, 0, 1 };

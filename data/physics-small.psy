@@ -1,6 +1,6 @@
-* @ 149597870691e-10 vel 149597870691e-10 size 6371000e-8
-"Sun"                                      size 20   mass 2000 color 1.00 0.97 0.66 texture "sun" light
-"Mercury"      z 0.38 vel 1 0 0 auto "Sun" size 0.38 mass 0.06 color 0.63 0.44 0.21 texture "mercury"
-"Venus"        z 0.73 vel 1 0 0 auto "Sun" size 0.95 mass 1.82 color 0.65 0.37 0.10 texture "venus"
-"Earth"        z 1.00 vel 1 0 0 auto "Sun" size 1.00 mass 1.00 color 0.34 0.44 0.46 texture "earth"
-"Mars"         z 1.50 vel 1 0 0 auto "Sun" size 0.53 mass 0.11 color 0.58 0.38 0.34 texture "mars"
+* @ 149597887.5e-7 size 6371e-5 mass 5.9736e-6
+"Sun"                                      size 20   mass 332946 color 1.00 0.97 0.66 texture "sun" light
+"Mercury"      z 0.38 vel 1 0 0 auto "Sun" size 0.38 mass 0.06   color 0.63 0.44 0.21 texture "mercury"
+"Venus"        z 0.73 vel 1 0 0 auto "Sun" size 0.95 mass 1.82   color 0.65 0.37 0.10 texture "venus"
+"Earth"        z 1.00 vel 1 0 0 auto "Sun" size 1.00 mass 1.00   color 0.34 0.44 0.46 texture "earth"
+"Mars"         z 1.50 vel 1 0 0 auto "Sun" size 0.53 mass 0.11   color 0.58 0.38 0.34 texture "mars"
