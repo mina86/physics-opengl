@@ -29,6 +29,8 @@ struct Object {
 		}
 	}
 
+	const std::string &getName() const { return name; }
+
 
 	const Vector &getPosition() const { return point; }
 	Vector &getPosition() { return point; }
@@ -128,6 +130,7 @@ struct Object {
 
 	Object *getNext() { return next; }
 	const Object *getNext() const { return next; }
+
 	Object *find(const std::string &theName) {
 		return const_cast<Object*>(const_cast<const Object*>(this)->find(theName));
 	}

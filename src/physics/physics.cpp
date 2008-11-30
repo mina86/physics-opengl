@@ -223,8 +223,22 @@ static void drawScene() {
 
 	glTranslatef(0.1-mn::gl::Camera::aspect(), 0.9, 0);
 	glScalef(0.03, 0.03, 0.03);
-	char buffer[1024];
-	sprintf(buffer, "position = (%6.2f, %6.2f, %6.2f)\ndistance = %6.2f\nrotation = (%2.2f, %2.2f, %2.2f)\nfps = %3.1f\nspeed = %.1f", eye.x, eye.y, eye.z, eye.length(), camera.getRotX() * MN_180_PI, camera.getRotY() * MN_180_PI, 0.0, fps, mn::gl::Camera::countTicks * mn::gl::Camera::tickIncrement / 10.0f);
+	char buffer[2048];
+	int i = sprintf(buffer,
+	                "pos = (%6.2f, %6.2f, %6.2f); dist = %6.2f\n"
+	                "rot = (%2.2f, %2.2f, %2.2f)\nfps = %3.1f\nspeed = %.1f",
+	                eye.x, eye.y, eye.z, eye.length(),
+	                camera.getRotX()*MN_180_PI, camera.getRotY()*MN_180_PI, 0.0,
+	                fps,
+	                mn::gl::Camera::countTicks*mn::gl::Camera::tickIncrement/10.0f);
+	if (tabPosition) {
+		const Object::Vector &pos = tabPosition->getPosition();
+		const Object::Vector &vel = tabPosition->getVelocity();
+		sprintf(buffer + i,
+		        "\n\n%s\nr = (%6.2f, %6.2f, %6.2f)\nV = (%6.2f, %6.2f, %6.2f)",
+		        tabPosition->getName().c_str(),
+		        pos.x, pos.y, pos.z, vel.x, vel.y, vel.z);
+	}
 	glColor3f(1, 1, 1);
 	t3d::draw2D(std::string(buffer), -1, -1);
 
@@ -395,8 +409,9 @@ int main(int argc, char** argv) {
 
 	puts("\n==================== Key Bindings ====================");
 	mn::gl::Camera::printHelp();
-	puts("toggle: x  textures      c  low quality   v  display mode\n"
-		 "        j  head light    n  names         m  stars\n");
+	puts("tab  follow object\n"
+	     "toggle: x  textures      c  low quality   v  display mode\n"
+	     "        j  head light    n  names         m  stars\n");
 
 
 	glutMainLoop();
