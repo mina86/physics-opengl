@@ -7,7 +7,7 @@ LIBS    = -lglut
 endif
 
 
-all: dist/data dist/cube dist/solar dist/globe dist/physics
+all: dist/data dist/solar dist/physics
 
 
 # Documentation
@@ -16,9 +16,6 @@ doc::
 
 
 # Binaries
-dist/cube: objs/cube.o objs/common/camera.o
-	exec $(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
-
 dist/solar: objs/common/camera.o objs/common/quadric.o \
   objs/common/sintable.o objs/common/texture.o \
   objs/solar/data-loader.o objs/solar/lexer.o objs/solar/solar.o \
@@ -31,20 +28,12 @@ dist/physics: objs/common/camera.o objs/common/quadric.o \
   objs/physics/data-loader.o
 	exec $(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
 
-dist/globe: objs/globe.o
-	exec $(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
-
 dist/data::
 	mkdir -p dist
 	ln -fs ../data dist/
 
 
 # Object files
-objs/cube.o: src/cube.cpp src/common/camera.hpp src/common/vector.hpp \
-  src/common/mconst.h
-
-objs/globe.o: src/globe.cpp
-
 objs/common/camera.o: src/common/camera.hpp \
   src/common/vector.hpp src/common/mconst.h
 objs/common/quadric.o: src/common/quadric.hpp
