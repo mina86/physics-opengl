@@ -10,6 +10,11 @@ endif
 all: dist/data dist/cube dist/solar dist/globe dist/physics
 
 
+# Documentation
+doc::
+	exec doxygen Doxyfile
+
+
 # Binaries
 dist/cube: objs/cube.o objs/common/camera.o
 	exec $(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
@@ -83,5 +88,5 @@ clean::
 	exec rm -rf -- objs
 
 distclean::
-	exec rm -rf -- objs dist
+	exec rm -rf -- objs dist doc
 

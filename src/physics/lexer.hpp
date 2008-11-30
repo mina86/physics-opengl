@@ -53,13 +53,10 @@ struct Lexer {
 
 
 	/**
-	 * Creates lexer reading from a file.  If \a theStream is \c NULL
-	 * constructor will try to open file specified by \a theFilename,
-	 * otherwise it will use \a theStream as input stream and assume
-	 * theFilename is corresponding file name.
+	 * Creates lexer reading from a file.  \a theFilename specifies
+	 * file name of a file to open.
 	 *
 	 * \param theFilename file name.
-	 * \param theStream input stream to read from or \c NULL.
 	 * \throw error if file could not be opened.
 	 */
 	explicit Lexer(const char *theFilename)
@@ -68,13 +65,10 @@ struct Lexer {
 		  closeStream(theFilename) { }
 
 	/**
-	 * Creates lexer reading from a file.  If \a theStream is \c NULL
-	 * constructor will try to open file specified by \a theFilename,
-	 * otherwise it will use \a theStream as input stream and assume
-	 * theFilename is corresponding file name.
+	 * Creates lexer reading from a file.  \a theFilename specifies
+	 * file name of a file to open.
 	 *
 	 * \param theFilename file name.
-	 * \param theStream input stream to read from or \c NULL.
 	 * \throw error if file could not be opened.
 	 */
 	explicit Lexer(const std::string &theFilename)
