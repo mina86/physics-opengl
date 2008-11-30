@@ -30,6 +30,32 @@
 
 namespace mn {
 
+
+/** \namespace mn::physics
+ *
+ * This namespace contains source code of an application that
+ * simulates the way bodies interact with each other as ar as
+ * gravitation is concerned.
+ *
+ * When invoked, application reads specification of objects either
+ * from standard input (if no input file was given on command line) or
+ * a given file.  For description of accepted file format see
+ * documentation of loadData() function.
+ *
+ * Application accepts several switches which affect the way things
+ * are displayed.  Most of those can also be toggled in run time.  For
+ * list of switches invoke the program with <tt>-h</tt> argument and
+ * to know possible key bindings see the output program written just
+ * priory to starting simulation.
+ *
+ * For a quick start, after building programs (<tt>make</tt> in root
+ * directory) invoke one of <tt>./physics data/physics.psy</tt>,
+ * <tt>./physics data/physics-small.psy</tt> or <tt>./physics
+ * data/harmonic.psy</tt> in <tt>dist</tt> directory.  In case of
+ * animation being slow (less then 24 fps) try adding the following
+ * switches: <tt>-m -c -x0</tt> as well as pressing <tt>v</tt> while
+ * simulation is running.
+ */
 namespace physics {
 
 static Object *objects;

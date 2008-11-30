@@ -1,0 +1,24 @@
+/**
+
+\mainpage
+
+<p>This is a&nbsp;package contains two applications \link mn::solar
+solar\endlink and \link mn::physics physics\endlink which use OpenGL
+for some nifty 3D animations.</p>
+
+<p>The first one draws a&nbsp;set of spheres which float around each
+other in a&nbsp;single plane, which makes a&nbsp;really nice Solar
+system simulator (hence the name) - it even comes with a&nbsp;nice
+data set with all the planets (and not only planets).  For further
+information about this program reffer to mn::solar namespace
+documentation.</p>
+
+<p>The second one is a&nbsp;simulator where laws of physics are
+applied (hence the name).  User defines a&nbsp;set of objects
+specifying their position, initial location and velocity and program
+simulates the way they affect each other.  The package comes with
+a&nbsp;configuration file with the planets as well as simple
+presentation of a&nbsp;harmonic movement.  For further information
+about this program reffer to mn::physics namespace documentation.</p>
+
+ */

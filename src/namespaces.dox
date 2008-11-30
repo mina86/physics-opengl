@@ -1,0 +1,18 @@
+/** \namespace mn
+
+A namespace containing various code written and maintained by Michal Nazarewicz.
+
+*/
+
+/** \namespace mn::gl
+
+A namespace containing code written and maintained by Michal
+Nazarewicz which somehow reffer to OpenGL.
+
+*/
+
+/** \namespace t3d
+
+A code for displaying a 3D text.
+
+*/

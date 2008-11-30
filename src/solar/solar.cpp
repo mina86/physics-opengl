@@ -25,6 +25,31 @@
 #include "../common/mconst.h"
 
 
+/** \namespace mn::solar
+ *
+ * This namespace contains source code of an application that
+ * simulates the Solar system.
+ *
+ * When invoked, application reads specification of objects from
+ * a file specified on command line or a <tt>data/helio.sol</tt> file.
+ * For description of accepted file format see documentation of
+ * loadData() function.
+ *
+ * Application accepts several switches which affect the way things
+ * are displayed.  Most of those can also be toggled in run time.  For
+ * list of switches invoke the program with <tt>-h</tt> argument and
+ * to know possible key bindings see the output program written just
+ * priory to starting simulation.
+ *
+ * For a quick start, after building programs (<tt>make</tt> in root
+ * directory) invoke one of <tt>./solar</tt> or <tt>./solar
+ * data/geo.sol</tt> in <tt>dist</tt> directory.  In case of animation
+ * being slow (less then 24 fps) try adding the following switches:
+ * <tt>-m -x0 -c</tt> as well as pressing <tt>v</tt> while simulation
+ * is running.
+ */
+
+
 static mn::solar::Sphere *sun;
 static bool headlight = true, displayStars = true;
 static mn::gl::Texture starsTexture(GL_LUMINANCE, GL_LUMINANCE);

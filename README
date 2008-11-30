@@ -1,0 +1,12 @@
+To build OpenGL programs simply invoke "make" command.  It will create
+a temporary "objs" directory and a "dist" directory containing
+executable files.
+
+The package contains two applications:
+* solar -- a simulation of the Solar system.  No physics are applied
+           in it, only a bunch of spheres flying around each other.
+* physics -- a physics simulator.
+
+To build documentation call "make doc" which will build HTML
+documentation in doc/html/index.html -- for further information you
+should refer to this file.
