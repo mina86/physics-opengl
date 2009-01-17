@@ -17,3 +17,8 @@ http://planetpixelemporium.com/planets.html
     models and  sold in any form.  The  maps may not be  given away in
     whole or in part on another website or in a freeware or commercial
     product without my permission.
+
+Charset data taken from "Drawing Text" lesson from OpenGL tutorial
+available at <http://www.videotutorialsrock.com/> presumably written
+by Bill Jacobs.  It's license is unclear but a new BSD license can be
+assumed (if in doubt visit the web site and contact the author).

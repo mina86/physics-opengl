@@ -15,6 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/*
+ * Original version taken from "Drawing Text" lesson from OpenGL
+ * tutorial available at <http://www.videotutorialsrock.com/>
+ * presumably written by Bill Jacobs.
+ */
+
 /* Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
