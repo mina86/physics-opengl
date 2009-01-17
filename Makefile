@@ -20,17 +20,19 @@ dist/solar: objs/common/camera.o objs/common/quadric.o \
   objs/common/sintable.o objs/common/texture.o \
   objs/solar/data-loader.o objs/solar/lexer.o objs/solar/solar.o \
   objs/solar/sphere.o objs/common/text3d.o
+	@exec mkdir -p dist
 	exec $(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 dist/physics: objs/common/camera.o objs/common/quadric.o \
   objs/common/sintable.o objs/common/texture.o objs/common/text3d.o \
   objs/physics/physics.o objs/physics/object.o objs/physics/lexer.o \
   objs/physics/data-loader.o
+	@exec mkdir -p dist
 	exec $(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 dist/data::
-	mkdir -p dist
-	ln -fs ../data dist/
+	exec mkdir -p dist/data
+	exec $(MAKE) -C data DATA_DIR=../dist/data all
 
 
 # Object files
@@ -68,7 +70,7 @@ objs/physics/data-loader.o: src/physics/data-loader.hpp \
 objs/physics/lexer.o: src/physics/lexer.hpp
 
 objs/%.o: src/%.cpp
-	exec mkdir -p $(dir $@)
+	@exec mkdir -p $(dir $@)
 	exec $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 
@@ -76,6 +78,6 @@ objs/%.o: src/%.cpp
 clean::
 	exec rm -rf -- objs
 
-distclean::
-	exec rm -rf -- objs dist doc
+distclean:: clean
+	exec rm -rf -- dist doc
 
