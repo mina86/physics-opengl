@@ -7,3 +7,4 @@ globe
 objs
 dist
 doc
+src/*.pro.user

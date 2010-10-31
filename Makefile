@@ -13,7 +13,7 @@ doc::
 
 dist/physics:
 	@exec mkdir -p -- objs
-	exec qmake -makefile -o objs/physics.make -unix src/project.pro TARGET=physics
+	exec qmake -makefile -o objs/physics.make -unix src/physics.pro
 	exec make -C objs -f physics.make
 
 dist/data:
