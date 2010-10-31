@@ -24,14 +24,7 @@ int main(int argc, char **argv) {
 		return ret;
 	}
 
-	window->resize(window->sizeHint());
-
-	if (3 * QApplication::desktop()->width() >= 4 * window->width() &&
-	    3 * QApplication::desktop()->height() >= 4 * window->height()) {
-		window->show();
-	} else {
-		window->showMaximized();
-	}
+	window->show();
 
 	return app.exec();
 }

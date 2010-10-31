@@ -12,19 +12,20 @@
 #include "widget.hpp"
 #include "data-loader.hpp"
 #include "object.hpp"
+#include "mainwindow.hpp"
 
 namespace mn {
 
 namespace physics {
 
 struct Window : public QWidget {
-	Window(Object *theObjects, gl::Configuration::ptr &config);
+	Window(QWidget *parent, Object *theObjects, gl::Configuration::ptr &config);
 
 private:
 	ui::GLPane *pane;
 };
 
-Window::Window(Object *theObjects, gl::Configuration::ptr &config) {
+Window::Window(QWidget *parent, Object *theObjects, gl::Configuration::ptr &config) : QWidget(parent) {
 	PhysicsWidget *gl;
 	try {
 		gl = new PhysicsWidget(theObjects, config);
@@ -126,7 +127,9 @@ int initialize(int argc, char **argv, QWidget *&window) {
 		return 1;
 	}
 
-	window = new physics::Window(objects, config);
+	QMainWindow *mainWindow = new MainWindow();
+	mainWindow->setCentralWidget(new physics::Window(mainWindow, objects, config));
+	window = mainWindow;
 	return 0;
 }
 
