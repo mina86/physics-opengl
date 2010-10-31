@@ -15,6 +15,7 @@ Configuration::Configuration()
 	  showTextures(true),
 	  lowQuality(false),
 	  showHelperAxis(true),
+	  showStars(true),
 	  references(1) {
 
 	connect(&cutOffDistance2, SIGNAL(changed(value_type)),
@@ -27,6 +28,8 @@ Configuration::Configuration()
 	connect(&lowQuality, SIGNAL(changed(bool)),
 	        this, SLOT(somethingChanged()));
 	connect(&showHelperAxis, SIGNAL(changed(bool)),
+	        this, SLOT(somethingChanged()));
+	connect(&showStars, SIGNAL(changed(bool)),
 	        this, SLOT(somethingChanged()));
 
 	connect(&quad, SIGNAL(drawStyleChanged(GLenum)),

@@ -6,6 +6,7 @@
 #include "text3d.hpp"
 #include "texture.hpp"
 #include "mconst.h"
+#include "sintable.hpp"
 
 namespace mn {
 
@@ -168,21 +169,20 @@ void GLWidget::resizeGL(int width, int height) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(45.0, _aspect, 0.01, 3000.0);
-//	glFrustum(-_aspect, +_aspect, -1, +1, 1.0, 1000.0);
-
-	glMatrixMode(GL_MODELVIEW);
 }
 
 void GLWidget::paintGL() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 
-	glEnable(GL_DEPTH_TEST);
-
+	/* Stars and move and rotate camera */
 	glLoadIdentity();
-	doLookAt();
-	glTranslatef(0, 0, -5);
+	doRotate();
+	paintStars();
+	doMove();
 
+	/* Draw the scene */
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_CULL_FACE);
 
@@ -192,7 +192,7 @@ void GLWidget::paintGL() {
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 
-
+	/* Draw helper axis in lower left */
 	glLoadIdentity();
 	glTranslatef(-0.4 * aspect(), -0.4, -1.2);
 	doRotate();
@@ -202,6 +202,43 @@ void GLWidget::paintGL() {
 	glColor3f(0, 1, 0); glVertex3f(0, 0, 0); glVertex3f(0, 0.05, 0);
 	glColor3f(0, 0, 1); glVertex3f(0, 0, 0); glVertex3f(0, 0, 0.05);
 	glEnd();
+}
+
+void GLWidget::paintStars() {
+	if (!config->showStars) {
+		return;
+	}
+
+	GLuint id = gl::Texture::stars();
+	if (!id) {
+		return;
+	}
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, id);
+	glColor3f(1, 1, 1);
+
+	const unsigned slices_deg = 60;
+	const unsigned stacks_deg = 60;
+	const float texMul = 1 / 120.0f;
+
+	for (unsigned i = 0; i < 180; i += stacks_deg) {
+		const float cos1 = mn::cos(i);
+		const float sin1 = mn::sin(i);
+		const float cos2 = mn::cos(i + stacks_deg);
+		const float sin2 = mn::sin(i + stacks_deg);
+
+		glBegin(GL_QUAD_STRIP);
+		for (unsigned j = 0; j <= 360; j += slices_deg) {
+			glTexCoord2f(j * texMul, i * texMul);
+			glVertex3f(sin1 * mn::sin(j), sin1 * mn::cos(j), cos1);
+			glTexCoord2f(j * texMul, (i + stacks_deg) * texMul);
+			glVertex3f(sin2 * mn::sin(j), sin2 * mn::cos(j), cos2);
+		}
+		glEnd();
+	}
+
+	glDisable(GL_TEXTURE_2D);
 }
 
 

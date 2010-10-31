@@ -18,9 +18,11 @@
 #include "texture.hpp"
 
 #include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include <fstream>
-
 
 namespace mn {
 
@@ -69,7 +71,6 @@ void Texture::makeTexture() const {
 
 void Texture::calculatAverage() {
 	if (!data || !width || !height) {
-		fprintf(stderr, "QWEQWE!\n");
 		return;
 	}
 
@@ -146,7 +147,6 @@ struct RGBImageReader {
 		}
 	}
 };
-
 
 RGBImageReader::RGBImageReader(const char *filename)
 	: tmp(0), rowStart(0), rowSize(0) {
@@ -257,6 +257,53 @@ void Texture::load(const char *filename_) {
 	type = GL_UNSIGNED_BYTE;
 
 	assign(xsize, ysize, d);
+}
+
+unsigned Texture::starsQuality = 2;
+
+GLuint Texture::stars() {
+	static Texture texture(GL_LUMINANCE, GL_LUMINANCE);
+
+	static enum { NONE, FAILED, OK } state = NONE;
+
+	if (state == FAILED) {
+		return 0;
+	}
+
+	if (state == NONE) {
+		if (starsQuality > 2) {
+			starsQuality = 2;
+		}
+		const unsigned size = 256 << starsQuality, size2 = size * size;
+		const unsigned mask = size2 - 1;
+
+		unsigned char *data = new unsigned char[size2];
+		memset(data, 0, size2);
+		srand(time(0));
+
+		unsigned count = 2 * size;
+		do {
+#if RAND_MAX < (1 << 20) - 1
+			const unsigned pos =
+				((RAND_MAX < mask ? (unsigned)rand() * (RAND_MAX + 1) : 0) +
+				 (unsigned)rand()) & mask;
+#else
+			const unsigned pos = rand();
+#endif
+			data[pos & mask] = rand();
+		} while (--count);
+
+		texture.assign(size, size, data);
+	}
+
+	GLuint id = *texture;
+	if (id) {
+		state = OK;
+	} else {
+		texture.assign(0, 0, NULL);
+		state = FAILED;
+	}
+	return id;
 }
 
 }

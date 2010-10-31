@@ -96,6 +96,9 @@ struct Texture {
 
 	static bool useNearest;
 
+	static GLuint stars();
+	static unsigned starsQuality;
+
 private:
 	Texture(const Texture &t) { (void)t; }
 

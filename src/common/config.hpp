@@ -139,7 +139,7 @@ struct Configuration : public QObject {
 	cfg::Real mouseMovementFactor, mouseRotationFactor;
 	cfg::Real runFactor, creepFactor;
 	cfg::Real cutOffDistance2;
-	cfg::Bool showText, showTextures, lowQuality, showHelperAxis;
+	cfg::Bool showText, showTextures, lowQuality, showHelperAxis, showStars;
 
 	cfg::Quadric quad;
 

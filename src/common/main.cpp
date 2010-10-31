@@ -5,8 +5,11 @@
 
 #include "application.hpp"
 #include "text3d.hpp"
+#include "sintable.hpp"
 
 int main(int argc, char **argv) {
+	mn::initSinTable();
+
 	QApplication app(argc, argv);
 	QWidget *window;
 	int ret;

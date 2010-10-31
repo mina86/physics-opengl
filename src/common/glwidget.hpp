@@ -101,8 +101,6 @@ struct GLWidget : public QGLWidget {
 
 	bool isInFront(const Vector &v) const;
 
-	unsigned getDrawStyle() const { return drawStyle; }
-
 	void updateMatrix() const {
 		if (!matrixValid) {
 			doUpdateMatrix();
@@ -146,6 +144,7 @@ protected:
 	void paintGL();
 	void resizeGL(int width, int height);
 
+	virtual void paintStars();
 	virtual void doPaint() = 0;
 
 	void keyPressEvent(QKeyEvent *event);
@@ -171,8 +170,6 @@ private:
 	mutable bool matrixValid;
 
 	QPoint lastPos;
-
-	unsigned drawStyle;
 
 	Q_OBJECT
 };
