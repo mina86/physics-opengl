@@ -23,14 +23,19 @@
 
 #include <algorithm>
 
+#include <QLocale>
 
 namespace mn {
 
 namespace physics {
 
+Lexer::Lexer(const char *theFilename)
+		: filename(theFilename ? theFilename : stdin_filename),
+		  stream(theFilename ? fopen(theFilename, "r") : stdin),
+		  closeStream(theFilename), locale("C") {
+}
 
 const std::string Lexer::stdin_filename("<stdin>");
-
 
 int Lexer::getchar() {
 	int ch;
@@ -55,7 +60,6 @@ void Lexer::ungetchar(int ch) {
 		ungetc(ch, stream);
 	}
 }
-
 
 struct Keyword {
 	char name[12];
@@ -83,7 +87,6 @@ static inline bool operator<(const char *a, const Keyword &b) {
 static inline bool operator<(const Keyword &a, const char *b) {
 	return strcmp(a.name, b) < 0;
 }
-
 
 int Lexer::nextToken(Value &value, Location &location) {
 	int ch;
@@ -185,7 +188,7 @@ int Lexer::nextToken(Value &value, Location &location) {
 	/* Return number */
 	ungetchar(ch);
 	location.end = current;
-	value.real = mul * std::strtof(str.c_str(), 0);
+	value.real = mul * locale.toFloat(str.c_str());
 	return T_REAL;
 }
 

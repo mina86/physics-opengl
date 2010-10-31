@@ -23,11 +23,11 @@
 #include <string>
 #include <stdexcept>
 
+#include <QLocale>
 
 namespace mn {
 
 namespace physics {
-
 
 struct Lexer {
 	struct Position {
@@ -46,8 +46,6 @@ struct Lexer {
 			: begin(position), end(position) { }
 	};
 
-
-
 	/**
 	 * Named tokens.  Other tokens correspond directly to character
 	 * codes.
@@ -62,12 +60,10 @@ struct Lexer {
 	/** Returns a user readable name of a token. */
 	static const char *tokenName(int token);
 
-
 	union Value {
 		float real;
 		char *string;
 	};
-
 
 	/**
 	 * Creates lexer reading from a file.  \a theFilename specifies
@@ -76,10 +72,7 @@ struct Lexer {
 	 * \param theFilename file name.
 	 * \throw error if file could not be opened.
 	 */
-	explicit Lexer(const char *theFilename)
-		: filename(theFilename ? theFilename : stdin_filename),
-		  stream(theFilename ? fopen(theFilename, "r") : stdin),
-		  closeStream(theFilename) { }
+	explicit Lexer(const char *theFilename);
 
 	/**
 	 * Creates lexer reading from a file.  \a theFilename specifies
@@ -105,9 +98,7 @@ struct Lexer {
 		}
 	}
 
-
 	bool operator!() const { return !stream; }
-
 
 	/**
 	 * Returns next token from stream.
@@ -124,18 +115,16 @@ struct Lexer {
 	/** Returns current position in stream. */
 	const Position &getPosition() const { return current; }
 
-
 private:
 	/** Name of a standard input stream. */
 	static const std::string stdin_filename;
-
 
 	/**
 	 * Copying not allowed.
 	 * \param lexer object to copy.
 	 */
-	Lexer(const Lexer &lexer) { (void)lexer; }
-
+	Lexer(const Lexer &);
+	void operator=(const Lexer &);
 
 	/** Name of the file we are reading from. */
 	std::string filename;
@@ -147,7 +136,8 @@ private:
 	Position current;
 	/** A position in stream before last character was read. */
 	Position previous;
-
+	/** Locale class used to parse input. */
+	QLocale locale;
 
 	/** Returns next character from file and updates location. */
 	int getchar();

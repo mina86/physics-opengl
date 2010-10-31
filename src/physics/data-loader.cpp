@@ -82,7 +82,7 @@ Object *loadData(const char *filename) {
 	Lexer::Value value;
 	Lexer::Location location;
 	int token, lights = 0;
-	float x, y;
+	float x = 0, y = 0;
 
 	float massFactor = 1, sizeFactor = 1, distFactor = 1, velFactor = 1;
 
