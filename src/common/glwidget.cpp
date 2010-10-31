@@ -64,7 +64,8 @@ void GLWidget::rotation(int h, int v) {
 		rotY = h;
 		matrixValid = false;
 		emit needRepaint();
-		emit rotationChanged(rotY, rotX);
+		emit rotationChanged(rotY >= 180 * ticks_per_angle
+		                   ? rotY - 360 * ticks_per_angle : rotY, rotX);
 	}
 }
 

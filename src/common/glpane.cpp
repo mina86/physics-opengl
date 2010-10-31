@@ -12,7 +12,7 @@ namespace ui {
 GLPane::GLPane(GLWidget *theGL, QWidget *parent)
 	: QWidget(parent), gl(theGL) {
 	vslider = new QSlider(Qt::Vertical);
-	vslider->setSingleStep(GLWidget::ticks_per_angle);
+	vslider->setSingleStep(GLWidget::ticks_per_angle / 10);
 	vslider->setPageStep(30 * GLWidget::ticks_per_angle);
 	vslider->setRange(-GLWidget::vtick_limit, GLWidget::vtick_limit);
 	vslider->setSliderPosition(0);
@@ -20,7 +20,7 @@ GLPane::GLPane(GLWidget *theGL, QWidget *parent)
 	vslider->setTickInterval(30 * GLWidget::ticks_per_angle);
 
 	hslider = new QSlider(Qt::Horizontal);
-	hslider->setSingleStep(GLWidget::ticks_per_angle);
+	hslider->setSingleStep(GLWidget::ticks_per_angle / 10);
 	hslider->setPageStep(30 * GLWidget::ticks_per_angle);
 	hslider->setRange(-180 * GLWidget::ticks_per_angle,
 	                  180 * GLWidget::ticks_per_angle - 1);
