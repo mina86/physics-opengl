@@ -127,7 +127,7 @@ int initialize(int argc, char **argv, QWidget *&window) {
 		return 1;
 	}
 
-	QMainWindow *mainWindow = new MainWindow();
+	QMainWindow *mainWindow = new MainWindow(config);
 	mainWindow->setCentralWidget(new physics::Window(mainWindow, objects, config));
 	window = mainWindow;
 	return 0;

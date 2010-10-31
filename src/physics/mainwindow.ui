@@ -45,6 +45,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="action_Settings"/>
     <addaction name="actionE_xit"/>
    </widget>
    <addaction name="menu_File"/>
@@ -59,6 +60,11 @@
   <action name="actionE_xit">
    <property name="text">
     <string>E&amp;xit</string>
+   </property>
+  </action>
+  <action name="action_Settings">
+   <property name="text">
+    <string>&amp;Settings</string>
    </property>
   </action>
  </widget>
