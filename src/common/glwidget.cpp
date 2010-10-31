@@ -44,10 +44,15 @@ void GLWidget::camera(value_type x, value_type y, value_type z) {
 }
 
 void GLWidget::move(value_type x, value_type y, value_type z) {
+	updateMatrix();
 	/* M(0, 1) is always zero, see doUpdateMatrix(). */
-	camera(cam.x + x * M(0, 0) +             z * M(0, 2),
-	       cam.y + x * M(1, 0) + y * M(1, 1) + z * M(1, 2),
-	       cam.z + x * M(2, 0) + y * M(2, 1) + z * M(2, 2));
+	/*
+	 * Also, let top-down movement change only y.  And finally, let
+	 * left-right and forward-backward movement affect only x and z.
+	 */
+	camera(cam.x + x * M(0, 0) +               z * M(2, 0),
+	       cam.y +               y * M(1, 1)              ,
+	       cam.z + x * M(0, 2) +               z * M(2, 2));
 }
 
 void GLWidget::rotation(int h, int v) {
@@ -367,7 +372,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 		factor = 1.0;
 	}
 
-	int dx = lastPos.x() - event->x(), dy = event->y() - lastPos.y();
+	int dx = event->x() - lastPos.x(), dy = lastPos.y() - event->y();
 
 	if (event->modifiers() & Qt::AltModifier) {
 		factor *= config->mouseRotationFactor;
@@ -375,9 +380,9 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 	} else /* !Alt */ {
 		factor *= config->mouseMovementFactor;
 		if (event->buttons() & Qt::LeftButton) {
-			move(dx * factor, dy * factor, 0.0);
+			move(-dx * factor, -dy * factor, 0.0);
 		} else /* RightButton */ {
-			move(dx * factor, 0.0, -dy * factor);
+			move(-dx * factor, 0.0, dy * factor);
 		}
 	}
 
