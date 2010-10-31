@@ -124,6 +124,8 @@ struct Object {
 		}
 	}
 
+	void deleteAll();
+
 	gl::Texture texture;
 	void colorFromTexture() {
 		if (texture) {

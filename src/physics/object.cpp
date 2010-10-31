@@ -97,6 +97,17 @@ void Object::draw(const PhysicsWidget &gl) {
 	// }
 }
 
+void Object::deleteAll() {
+	Object *o = getNext();
+	for (;;) {
+		Object *n = o->getNext();
+		delete o;
+		if (o == this)
+			return;
+		o = n;
+	}
+}
+
 namespace {
 	struct Acceleration {
 		Object::Vector vector;

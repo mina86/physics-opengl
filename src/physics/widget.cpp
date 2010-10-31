@@ -118,38 +118,8 @@ PhysicsWidget::PhysicsWidget(Object *theObjects, gl::Configuration &cfg,
 	: ui::GLWidget(parent, cfg), objects(theObjects) {
 }
 
-void PhysicsWidget::deleteObjects(Object *objects) {
-	if (objects) {
-		Object *o = objects, *n;
-		do {
-			n = o->getNext();
-			delete o;
-		} while (n != objects);
-	}
-}
-
 PhysicsWidget::~PhysicsWidget() {
-	deleteObjects(objects);
-}
-
-ui::GLWidget *PhysicsWidget::Factory::create(gl::Configuration &theConfig,
-                                             QWidget *parent) {
-	if (!objects) {
-		throw std::bad_alloc();
-	}
-	Object *o = objects;
-	objects = NULL;
-	try {
-		return new PhysicsWidget(o, theConfig, parent);
-	}
-	catch (...) {
-		deleteObjects(o);
-		throw;
-	}
-}
-
-PhysicsWidget::Factory::~Factory() {
-	deleteObjects(objects);
+	objects->deleteAll();
 }
 
 }

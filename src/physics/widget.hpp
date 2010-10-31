@@ -14,22 +14,6 @@ namespace physics {
 struct Object;
 
 struct PhysicsWidget : public ui::GLWidget {
-	struct Factory : public ui::GLPane::GLWidgetFactory {
-		Factory(Object *theObjects, gl::Configuration &cfg)
-			: GLWidgetFactory(cfg), objects(theObjects) {
-			if (!theObjects) {
-				throw std::bad_alloc();
-			}
-		}
-		~Factory();
-
-	protected:
-		GLWidget *create(gl::Configuration &theConfig, QWidget *parent);
-
-	private:
-		Object *objects;
-	};
-
 	PhysicsWidget(Object *theObjects, gl::Configuration &cfg,
 	              QWidget *parent = NULL);
 	~PhysicsWidget();
@@ -40,8 +24,6 @@ protected:
 
 private:
 	Object *objects;
-
-	static void deleteObjects(Object *objects);
 };
 
 }

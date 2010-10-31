@@ -25,8 +25,16 @@ private:
 };
 
 Window::Window(Object *theObjects, gl::Configuration::ptr &config) {
-	PhysicsWidget::Factory factory(theObjects, config);
-	pane = new ui::GLPane(factory);
+	PhysicsWidget *gl;
+	try {
+		gl = new PhysicsWidget(theObjects, config);
+	}
+	catch (...) {
+		theObjects->deleteAll();
+		throw;
+	}
+
+	pane = new ui::GLPane(gl);
 
 	QHBoxLayout *layout = new QHBoxLayout();
 	layout->addWidget(pane);

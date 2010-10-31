@@ -9,10 +9,8 @@ namespace mn {
 
 namespace ui {
 
-GLPane::GLPane(GLWidgetFactory &factory, QWidget *parent)
-	: QWidget(parent) {
-	gl = factory.create();
-
+GLPane::GLPane(GLWidget *theGL, QWidget *parent)
+	: QWidget(parent), gl(theGL) {
 	vslider = new QSlider(Qt::Vertical);
 	vslider->setSingleStep(GLWidget::ticks_per_angle);
 	vslider->setPageStep(30 * GLWidget::ticks_per_angle);
