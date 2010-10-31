@@ -5,6 +5,8 @@
 
 #include "config.hpp"
 
+struct QSlider;
+
 namespace mn {
 
 namespace ui {
@@ -32,7 +34,12 @@ struct GLPane : public QWidget {
 
 	GLWidget *gl;
 
+public slots:
+	void rotationChanged(int h, int v);
+
 private:
+	QSlider *hslider, *vslider;
+
 	Q_OBJECT
 };
 
