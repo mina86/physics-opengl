@@ -312,11 +312,14 @@ bool GLWidget::sphere(value_type size, const Vector &point,
 		glEnable(GL_TEXTURE_2D);
 		gluQuadricTexture(config->quad, 1);
 		glBindTexture(GL_TEXTURE_2D, texture->get());
+		glPushMatrix();
+		glRotatef(90, 1, 0, 0);
 	}
 
 	gluSphere(config->quad, size, slices, slices);
 
 	if (gotTexture) {
+		glPopMatrix();
 		gluQuadricTexture(config->quad, 0);
 		glDisable(GL_TEXTURE_2D);
 	}
