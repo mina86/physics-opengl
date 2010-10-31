@@ -26,11 +26,9 @@ namespace mn {
 
 namespace gl {
 
-
 const char *Texture::filename_prefix = "";
 const char *Texture::filename_suffix = ".hq.sgi";
 bool Texture::useNearest = false;
-
 
 void Texture::assign(unsigned theWidth, unsigned theHeight,
                      unsigned char *theData) {
@@ -48,7 +46,6 @@ void Texture::assign(unsigned theWidth, unsigned theHeight,
 		}
 	}
 }
-
 
 void Texture::makeTexture() const {
 	if (!data) return;
@@ -69,7 +66,6 @@ void Texture::makeTexture() const {
 	delete[] data;
 	data = 0;
 }
-
 
 void Texture::calculatAverage() {
 	if (!data || !width || !height) {
@@ -97,10 +93,7 @@ void Texture::calculatAverage() {
 	}
 }
 
-
-
 namespace {
-
 
 struct RGBImageReader {
 	struct {
@@ -117,7 +110,6 @@ struct RGBImageReader {
 	uint8_t *tmp;
 	unsigned long rleEnd;
 	uint32_t *rowStart, *rowSize;
-
 
 	RGBImageReader(const char *filename);
 	~RGBImageReader() {
@@ -187,7 +179,6 @@ RGBImageReader::RGBImageReader(const char *filename)
 	}
 }
 
-
 void RGBImageReader::getRow(uint8_t *buf, int y, int z) {
 	uint8_t *iPtr, *oPtr, pixel;
 	int count;
@@ -218,7 +209,6 @@ void RGBImageReader::getRow(uint8_t *buf, int y, int z) {
 
 }
 
-
 void Texture::load(const char *filename_) {
 	char filename[1024];
 	snprintf(filename, sizeof filename, "%s%s%s",
@@ -234,7 +224,7 @@ void Texture::load(const char *filename_) {
 
 	if (image.header.zsize < 3) {
 		isRGB = false;
-		data = new unsigned char[xsize * ysize];
+		d = new unsigned char[xsize * ysize];
 		unsigned char *optr = d;
 		for (unsigned y = ysize; y--; ) {
 			image.getRow(optr, y, 0);
@@ -268,7 +258,6 @@ void Texture::load(const char *filename_) {
 
 	assign(xsize, ysize, d);
 }
-
 
 }
 

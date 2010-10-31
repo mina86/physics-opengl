@@ -20,11 +20,9 @@
 
 #include <cmath>
 
-
 namespace mn {
 
 namespace gl {
-
 
 template<class T = float>
 struct Vector {
@@ -42,7 +40,6 @@ struct Vector {
 	T distance (const Vector &v) const { return (*this - v).length (); }
 	T distance2(const Vector &v) const { return (*this - v).length2(); }
 	void normalize () { *this *= 1 / length(); }
-
 
 	Vector &operator+=(const Vector &v) {
 		x += v.x;
@@ -88,7 +85,6 @@ template<class T>
 inline Vector<T> operator*(T r, Vector<T> a) { return a *= r; }
 template<class T>
 inline Vector<T> operator/(Vector<T> a, T r) { return a /= r; }
-
 
 }
 

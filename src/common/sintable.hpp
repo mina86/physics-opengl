@@ -26,7 +26,6 @@ extern float sinTable[91];
 extern float sinTable[360];
 #endif
 
-
 void initSinTable(void);
 
 inline float sin(int arg) {

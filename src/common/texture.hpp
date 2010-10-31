@@ -31,7 +31,6 @@ namespace mn {
 
 namespace gl {
 
-
 struct Texture {
 	Texture(GLint theInternalFormat = GL_RGB, GLint theFormat = GL_RGB,
 	        GLint theType = GL_UNSIGNED_BYTE)
@@ -89,17 +88,13 @@ struct Texture {
 		return ret;
 	}
 
-
 	const Color &getAverageColor() const { return average; }
-
 
 	operator bool () const { return data || id; }
 	bool operator!() const { return !data && !id; }
 	GLuint operator*() const { return get(); }
 
-
 	static bool useNearest;
-
 
 private:
 	Texture(const Texture &t) { (void)t; }
@@ -113,7 +108,6 @@ private:
 	mutable unsigned char *data;
 	Color average;
 };
-
 
 }
 

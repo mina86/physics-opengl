@@ -31,23 +31,15 @@ namespace mn {
 
 namespace physics {
 
+struct PhysicsWidget;
 
 struct Object {
 	typedef gl::Vector<double> Vector;
 
-
-	Object(const std::string &theName, Object *previous)
-		: mass(1), size(1), name(theName), light(-1), frozen(false),
-		  textList(0), next(this) {
-		setColor(1, 1, 1);
-		if (previous) {
-			next = previous->next;
-			previous->next = this;
-		}
-	}
+	Object(const std::string &theName, Object *previous);
+	~Object();
 
 	const std::string &getName() const { return name; }
-
 
 	const Vector &getPosition() const { return point; }
 	Vector &getPosition() { return point; }
@@ -92,17 +84,16 @@ struct Object {
 		materialColor[3] = 1;
 	}
 
-
 	int getLight() const { return light; }
 	void setLight(int theLight) { light = theLight; }
 
 	static Vector::value_type cutoffDistance2;
 	static bool lowQuality, drawNames, useTextures;
 
-	void draw();
-	void drawAll() {
+	void draw(const PhysicsWidget &gl);
+	void drawAll(const PhysicsWidget &gl) {
 		Object *o = this;
-		do o->draw(); while ((o = o->next) != this);
+		do o->draw(gl); while ((o = o->next) != this);
 	}
 
 	void tick(Vector::value_type dt) {
@@ -133,7 +124,6 @@ struct Object {
 		}
 	}
 
-
 	gl::Texture texture;
 	void colorFromTexture() {
 		if (texture) {
@@ -143,7 +133,6 @@ struct Object {
 			materialColor[2] = avg.b;
 		}
 	}
-
 
 	Object *getNext() { return next; }
 	const Object *getNext() const { return next; }
@@ -157,9 +146,7 @@ struct Object {
 		return 0;
 	}
 
-
 	static const Vector::value_type G;
-
 
 private:
 	Vector point, nextPoint, velocity;
@@ -175,7 +162,6 @@ private:
 
 	void tick_(Vector::value_type dt);
 };
-
 
 }
 
