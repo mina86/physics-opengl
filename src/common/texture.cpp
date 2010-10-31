@@ -122,14 +122,9 @@ struct RGBImageReader {
 	void getRow(uint8_t *buf, int y, int z);
 
 	static void convertShort(uint16_t *array, unsigned length) {
-		unsigned short b1, b2;
-		uint8_t *ptr;
-
-		ptr = (uint8_t *)array;
 		while (length--) {
-			b1 = *ptr++;
-			b2 = *ptr++;
-			*array++ = (b1 << 8) | (b2);
+			uint16_t v = *array;
+			*array++ = (v >> 8) | ((v & 0xff) << 8);
 		}
 	}
 
@@ -151,7 +146,7 @@ struct RGBImageReader {
 RGBImageReader::RGBImageReader(const char *filename)
 	: tmp(0), rowStart(0), rowSize(0) {
 
-	union { int testWord; char testByte[4]; } endianTest;
+	union { uint32_t testWord; char testByte[4]; } endianTest;
 	endianTest.testWord = 1;
 	const bool swapFlag = endianTest.testByte[0] == 1;
 
@@ -192,17 +187,22 @@ void RGBImageReader::getRow(uint8_t *buf, int y, int z) {
 	fseek(file, rowStart[y + z * header.ysize], SEEK_SET);
 	fread(tmp, 1, rowSize[y + z * header.ysize], file);
 
+	/*
+	 * XXX There's some bug somewhere which makes textures flip.  At
+	 * least on spheres which we are using.  Let's just work around
+	 * the issue and flip the texture when reading.
+	 */
 	iPtr = tmp;
-	oPtr = buf;
+	oPtr = buf + header.xsize;
 	for (;;) {
 		pixel = *iPtr++;
 		count = (int)(pixel & 0x7F);
 		if (!count) return;
 		if (pixel & 0x80) {
-			while (count--) *oPtr++ = *iPtr++;
+			while (count--) *--oPtr = *iPtr++;
 		} else {
 			pixel = *iPtr++;
-			while (count--) *oPtr++ = pixel;
+			while (count--) *--oPtr = pixel;
 		}
 	}
 }
