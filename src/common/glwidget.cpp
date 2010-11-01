@@ -36,8 +36,8 @@ void GLWidget::camera(value_type x, value_type y, value_type z) {
 	cam.z = z;
 
 	const value_type length = cam.length();
-	if (length > config->maxDistance) {
-		cam *= config->maxDistance / length;
+	if (length > MAX_DISTANCE) {
+		cam *= MAX_DISTANCE / length;
 	}
 
 	emit needRepaint();

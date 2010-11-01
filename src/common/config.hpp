@@ -136,8 +136,6 @@ struct Configuration : public QObject {
 		}
 	}
 
-	static const value_type maxDistance;
-
 	cfg::Real mouseMovementFactor, mouseRotationFactor;
 	cfg::Real runFactor, creepFactor;
 	cfg::Real cutOffDistance2;
