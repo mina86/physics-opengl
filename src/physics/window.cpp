@@ -4,10 +4,12 @@
 #include <getopt.h>
 
 #include <QtGui>
+#include <QObject>
 
 #include "../common/glwidget.hpp"
 #include "../common/glpane.hpp"
 #include "../common/texture.hpp"
+#include "../common/playercontrolwidget.hpp"
 
 #include "widget.hpp"
 #include "data-loader.hpp"
@@ -99,7 +101,13 @@ int initialize(int argc, char **argv, QWidget *&window) {
 	gl->connect(gl, SIGNAL(needRepaint()), gl, SLOT(updateGL()));
 
 	QMainWindow *mainWindow = new MainWindow(config);
+	QDockWidget *dockPlayer = new QDockWidget(QObject::tr("Player controls"), mainWindow);
+	dockPlayer->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
+	PlayerControlWidget *pcw = new PlayerControlWidget(dockPlayer);
+	dockPlayer->setWidget(pcw);
+	mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
 	mainWindow->setCentralWidget(new ui::GLPane(gl, mainWindow));
+	QObject::connect(pcw, SIGNAL(nextFramePlayed()), gl, SLOT(updateGL()));
 	window = mainWindow;
 
 	return 0;
