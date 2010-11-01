@@ -5,6 +5,8 @@ namespace mn {
 
 namespace gl {
 
+const Configuration::value_type Configuration::maxDistance = MAX_DISTANCE;
+
 Configuration::Configuration()
 	: mouseMovementFactor(0.01),
 	  mouseRotationFactor(10),

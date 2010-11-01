@@ -1,6 +1,8 @@
 #ifndef H_CONFIG_HPP
 #define H_CONFIG_HPP
 
+#define MAX_DISTANCE 1500.0
+
 #include <qobject.h>
 
 #ifdef __APPLE__
@@ -134,7 +136,7 @@ struct Configuration : public QObject {
 		}
 	}
 
-	static const value_type maxDistance = 1500.0;
+	static const value_type maxDistance;
 
 	cfg::Real mouseMovementFactor, mouseRotationFactor;
 	cfg::Real runFactor, creepFactor;
