@@ -9,10 +9,9 @@ namespace mn {
 
 namespace ui {
 
-GLPane::GLPane(std::auto_ptr<gl::AbstractObjects> theObjects,
-               gl::Configuration theConfig) {
+GLPane::GLPane(gl::Configuration theConfig, QWidget *parent)
+	: QWidget(parent) {
 	gl = new gl::Widget(theConfig);
-	gl->setObjects(theObjects);
 
 	vslider = new QSlider(Qt::Vertical);
 	vslider->setSingleStep(gl::Widget::ticks_per_angle / 10);

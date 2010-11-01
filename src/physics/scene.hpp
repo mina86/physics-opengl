@@ -1,5 +1,5 @@
 /*
- * src/physics/objects.hpp
+ * src/physics/scene.hpp
  * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or
@@ -18,7 +18,7 @@
 #ifndef H_OBJECTS_HPP
 #define H_OBJECTS_HPP
 
-#include "../common/abstract-objects.hpp"
+#include "../common/abstract-scene.hpp"
 
 namespace mn {
 
@@ -26,17 +26,17 @@ namespace physics {
 
 struct Object;
 
-struct Objects : public gl::AbstractObjects {
-	Objects(Object *theObjects) : objects(theObjects) { }
-	~Objects();
+struct Scene : public gl::AbstractScene {
+	Scene(Object *theObjects) : objects(theObjects) { }
+	~Scene();
 
 	void initializeGL();
 	void drawScene(const gl::Widget &gl);
 	void updateState(unsigned ticks, float dt);
 
 private:
-	Objects(const Objects &);
-	void operator=(const Object &);
+	Scene(const Scene &);
+	void operator=(const Scene &);
 
 	void updateStateOnce(float dt);
 	void updatePointAll();

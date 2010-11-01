@@ -8,7 +8,7 @@
 #include "vector.hpp"
 #include "config.hpp"
 #include "mconst.h"
-#include "abstract-objects.hpp"
+#include "abstract-scene.hpp"
 
 namespace mn {
 
@@ -106,11 +106,11 @@ struct Widget : public QGLWidget {
 
 	bool isInFront(const Vector &v) const;
 
-	void setObjects(std::auto_ptr<AbstractObjects> theObjects) {
-		objects = theObjects;
+	void setScene(AbstractScene::ptr theScene) {
+		scene = theScene;
 	}
-	AbstractObjects *getObjects() {
-		return objects.get();
+	AbstractScene *getScene() {
+		return scene.get();
 	}
 
 	const Configuration config;
@@ -134,8 +134,8 @@ public slots:
 private slots:
 	void configChanged();
 	void updateState(unsigned ticks, float dt) {
-		if (objects.get()) {
-			objects->updateState(ticks, dt);
+		if (scene.get()) {
+			scene->updateState(ticks, dt);
 		}
 	}
 
@@ -161,7 +161,7 @@ private:
 	Widget(const Widget &);
 	Widget &operator=(const Widget &);
 
-	std::auto_ptr<AbstractObjects> objects;
+	AbstractScene::ptr scene;
 
 	Vector cam;
 	value_type _aspect;

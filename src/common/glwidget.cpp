@@ -160,8 +160,8 @@ void Widget::initializeGL() {
 	glClearColor(0.6, 0.6, 0.6, 1.0);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_MULTISAMPLE);
-	if (objects.get()) {
-		objects->initializeGL();
+	if (scene.get()) {
+		scene->initializeGL();
 	}
 }
 
@@ -190,8 +190,8 @@ void Widget::paintGL() {
 	glEnable(GL_LIGHTING);
 	glEnable(GL_CULL_FACE);
 
-	if (objects.get()) {
-		objects->drawScene(*this);
+	if (scene.get()) {
+		scene->drawScene(*this);
 	}
 
 	glDisable(GL_LIGHTING);

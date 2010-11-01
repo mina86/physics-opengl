@@ -12,7 +12,7 @@
 #include "../common/playercontrolwidget.hpp"
 
 #include "data-loader.hpp"
-#include "objects.hpp"
+#include "scene.hpp"
 #include "mainwindow.hpp"
 
 namespace mn {
@@ -90,12 +90,12 @@ int initialize(int argc, char **argv, QWidget *&window) {
 	if (!data) {
 		puts("Reading data from standard input");
 	}
-	physics::Object *theObjects = physics::loadData(data);
-	if (!theObjects) {
+	physics::Object *objects = physics::loadData(data);
+	if (!objects) {
 		return 1;
 	}
 
-	std::auto_ptr<gl::AbstractObjects> objects(new physics::Objects(theObjects));
+	gl::AbstractScene::ptr scene(new physics::Scene(objects));
 
 	QMainWindow *mainWindow = new MainWindow(config);
 
@@ -107,7 +107,8 @@ int initialize(int argc, char **argv, QWidget *&window) {
 	PlayerControlWidget *pcw = new PlayerControlWidget(dockPlayer);
 	dockPlayer->setWidget(pcw);
 
-	ui::GLPane *pane = new ui::GLPane(objects, config);
+	ui::GLPane *pane = new ui::GLPane(config);
+	pane->gl->setScene(scene);
 
 	mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
 	mainWindow->setCentralWidget(pane);

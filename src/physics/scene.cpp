@@ -1,5 +1,5 @@
 /*
- * src/physics/objects.cpp
+ * src/physics/scene.cpp
  * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or
@@ -20,13 +20,13 @@
 #endif
 
 #include "object.hpp"
-#include "objects.hpp"
+#include "scene.hpp"
 
 namespace mn {
 
 namespace physics {
 
-Objects::~Objects() {
+Scene::~Scene() {
 	Object *o = objects;
 	do {
 		Object *n = o->getNext();
@@ -35,10 +35,10 @@ Objects::~Objects() {
 	} while (o != objects);
 }
 
-void Objects::initializeGL() {
+void Scene::initializeGL() {
 }
 
-void Objects::drawScene(const gl::Widget &gl) {
+void Scene::drawScene(const gl::Widget &gl) {
 	Object *o = objects;
 	do {
 		o->draw(gl);
@@ -46,14 +46,14 @@ void Objects::drawScene(const gl::Widget &gl) {
 	} while (o != objects);
 }
 
-void Objects::updateState(unsigned ticks, float dt) {
+void Scene::updateState(unsigned ticks, float dt) {
 	for (; ticks; --ticks) {
 		updateStateOnce(dt);
 		updatePointAll();
 	}
 }
 
-void Objects::updateStateOnce(float dt) {
+void Scene::updateStateOnce(float dt) {
 	Object *o = objects;
 	do {
 		o->tick(dt);
@@ -61,7 +61,7 @@ void Objects::updateStateOnce(float dt) {
 	} while (o != objects);
 }
 
-void Objects::updatePointAll() {
+void Scene::updatePointAll() {
 	Object *o = objects;
 	do {
 		o->updatePoint();
