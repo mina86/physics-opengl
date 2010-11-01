@@ -16,38 +16,6 @@
 
 namespace mn {
 
-namespace physics {
-
-struct Window : public QWidget {
-	Window(QWidget *parent, Object *theObjects, gl::Configuration::ptr &config);
-
-private:
-	ui::GLPane *pane;
-};
-
-Window::Window(QWidget *parent, Object *theObjects, gl::Configuration::ptr &config) : QWidget(parent) {
-	PhysicsWidget *gl;
-	try {
-		gl = new PhysicsWidget(theObjects, config);
-	}
-	catch (...) {
-		theObjects->deleteAll();
-		throw;
-	}
-
-	pane = new ui::GLPane(gl);
-
-	QHBoxLayout *layout = new QHBoxLayout();
-	layout->addWidget(pane);
-	setLayout(layout);
-
-	connect(pane->gl, SIGNAL(needRepaint()), pane->gl, SLOT(updateGL()));
-
-	setWindowTitle(tr("Physics Demo"));
-}
-
-}
-
 namespace ui {
 
 int initialize(int argc, char **argv, QWidget *&window) {
@@ -127,9 +95,13 @@ int initialize(int argc, char **argv, QWidget *&window) {
 		return 1;
 	}
 
+	physics::PhysicsWidget *gl = new physics::PhysicsWidget(objects, config);
+	gl->connect(gl, SIGNAL(needRepaint()), gl, SLOT(updateGL()));
+
 	QMainWindow *mainWindow = new MainWindow(config);
-	mainWindow->setCentralWidget(new physics::Window(mainWindow, objects, config));
+	mainWindow->setCentralWidget(new ui::GLPane(gl, mainWindow));
 	window = mainWindow;
+
 	return 0;
 }
 
