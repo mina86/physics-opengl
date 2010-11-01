@@ -1,11 +1,14 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
+#include <memory>
+
 #include <QtOpenGL/QGLWidget>
 
 #include "vector.hpp"
 #include "config.hpp"
 #include "mconst.h"
+#include "abstract-objects.hpp"
 
 namespace mn {
 
@@ -13,11 +16,7 @@ namespace gl {
 
 struct Texture;
 
-}
-
-namespace ui {
-
-struct GLWidget : public QGLWidget {
+struct Widget : public QGLWidget {
 	typedef gl::Vector<float> Vector;
 	typedef Vector::value_type value_type;
 
@@ -32,6 +31,8 @@ struct GLWidget : public QGLWidget {
 	static int ticks_from_rad(float rad) {
 		return round(rad * MN_180_PI * ticks_per_angle);
 	}
+
+	Widget(Configuration &theConfig, QWidget *parent = NULL);
 
 	QSize minimumSizeHint() const;
 	QSize sizeHint() const;
@@ -68,16 +69,20 @@ struct GLWidget : public QGLWidget {
 		rotation(rotY + h, rotX + v);
 	}
 
+	void doRotate() const;
+	void doMove() const;
+	void doLookAt() const;
+
 	bool sphere(value_type size, const Vector &point,
 	            const value_type color[4] = NULL,
-	            const gl::Texture *texture = NULL) const;
+	            const Texture *texture = NULL) const;
 	bool sphere(value_type size, const Vector &point,
-	            const gl::Texture *texture = NULL) const {
+	            const Texture *texture = NULL) const {
 		return sphere(size, point, NULL, texture);
 	}
 	bool sphere(value_type size, const Vector &point,
 	            const value_type color[4],
-	            const gl::Texture *texture,
+	            const Texture *texture,
 	            const std::string &text, unsigned *list) const;
 	bool sphere(value_type size, const Vector &point,
 	            const value_type color[4],
@@ -85,7 +90,7 @@ struct GLWidget : public QGLWidget {
 		return sphere(size, point, color, NULL, text, list);
 	}
 	bool sphere(value_type size, const Vector &point,
-	            const gl::Texture *texture,
+	            const Texture *texture,
 	            const std::string &text, unsigned *list) const {
 		return sphere(size, point, NULL, texture, text, list);
 	}
@@ -101,13 +106,14 @@ struct GLWidget : public QGLWidget {
 
 	bool isInFront(const Vector &v) const;
 
-	void updateMatrix() const {
-		if (!matrixValid) {
-			doUpdateMatrix();
-		}
+	void setObjects(std::auto_ptr<AbstractObjects> theObjects) {
+		objects = theObjects;
+	}
+	AbstractObjects *getObjects() {
+		return objects.get();
 	}
 
-	const gl::Configuration::ptr config;
+	const Configuration config;
 
 public slots:
 	void setX(int x) { camera(x, getY(), getZ()); }
@@ -127,25 +133,24 @@ public slots:
 
 private slots:
 	void configChanged();
+	void updateState(unsigned ticks, float dt) {
+		if (objects.get()) {
+			objects->updateState(ticks, dt);
+		}
+	}
 
 signals:
 	void needRepaint();
-	void rotationChanged(int h, int v);
+	void hrotationChanged(int h);
+	void vrotationChanged(int v);
 	void cameraChanged(const Vector &camera);
 
 protected:
-	GLWidget(QWidget *parent, gl::Configuration &theConfig);
-
-	void doRotate() const;
-	void doMove() const;
-	void doLookAt() const;
-
 	void initializeGL();
 	void paintGL();
 	void resizeGL(int width, int height);
 
 	virtual void paintStars();
-	virtual void doPaint() = 0;
 
 	void keyPressEvent(QKeyEvent *event);
 	void keyReleaseEvent(QKeyEvent *event);
@@ -153,8 +158,10 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event);
 
 private:
-	GLWidget(const GLWidget &);
-	GLWidget &operator=(const GLWidget &);
+	Widget(const Widget &);
+	Widget &operator=(const Widget &);
+
+	std::auto_ptr<AbstractObjects> objects;
 
 	Vector cam;
 	value_type _aspect;
@@ -162,7 +169,11 @@ private:
 	inline value_type &M(unsigned col, unsigned row) const {
 		return matrix[col | (row << 2)];
 	}
-
+	void updateMatrix() const {
+		if (!matrixValid) {
+			doUpdateMatrix();
+		}
+	}
 	void doUpdateMatrix() const;
 
 	int rotX, rotY;

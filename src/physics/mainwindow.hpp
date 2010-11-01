@@ -14,9 +14,9 @@ class MainWindow : public QMainWindow
 
 public:
 	explicit MainWindow(QWidget *parent = 0);
-	MainWindow(mn::gl::Configuration::ptr &config);
+	MainWindow(mn::gl::Configuration &config);
 	~MainWindow();
-	mn::gl::Configuration::ptr config;
+	mn::gl::Configuration config;
 
 public slots:
 	void openSettingsDialog();

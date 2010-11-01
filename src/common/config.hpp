@@ -16,6 +16,14 @@ namespace mn {
 
 namespace gl {
 
+struct Configuration;
+
+/*
+ * Qt is so lame.  When you define a class inside another one it does
+ * not handle Q_OBJECT and inheriting from QObject correctly...
+ * That's why those classes are in their own namespace rather than
+ * inside the Configuration class.
+ */
 namespace cfg {
 
 struct Bool : public QObject {
@@ -101,46 +109,12 @@ private:
 	Q_OBJECT
 };
 
-}
-
-struct Configuration : public QObject {
-	typedef GLfloat value_type;
-
-	struct ptr {
-		ptr(Configuration &theConfig) : config(theConfig) { config.get(); }
-		ptr(Configuration *theConfig) : config(*theConfig) { config.get(); }
-		ptr() : config(*new Configuration()) { }
-		~ptr() {
-			config.put();
-		}
-
-		operator Configuration *()              { return &config; }
-		operator Configuration &()              { return  config; }
-		operator const Configuration *()  const { return &config; }
-		operator const Configuration &()  const { return  config; }
-		Configuration       &operator*()        { return  config; }
-		Configuration       *operator->()       { return &config; }
-		Configuration       *operator&()        { return &config; }
-		const Configuration &operator*()  const { return  config; }
-		const Configuration *operator->() const { return &config; }
-		const Configuration *operator&()  const { return &config; }
-
-	private:
-		Configuration &config;
-	};
-
-	void get() { ++references; }
-	void put() {
-		if (!--references) {
-			delete this;
-		}
-	}
-
+struct Data : public QObject {
 	cfg::Real mouseMovementFactor, mouseRotationFactor;
 	cfg::Real runFactor, creepFactor;
 	cfg::Real cutOffDistance2;
-	cfg::Bool showText, showTextures, lowQuality, showHelperAxis, showStars;
-
+	cfg::Bool showText, showTextures, lowQuality;
+	cfg::Bool showHelperAxis, showStars;
 	cfg::Quadric quad;
 
 signals:
@@ -150,13 +124,46 @@ private slots:
 	void somethingChanged();
 
 private:
-	Configuration();
-	Configuration(const Configuration &);
-	void operator=(const Configuration &);
+	Data();
+	Data(const Data &);
 
 	unsigned references;
 
 	Q_OBJECT
+
+	friend struct gl::Configuration;
+};
+
+}
+
+struct Configuration {
+	typedef GLfloat value_type;
+
+	Configuration(Configuration &config) : ptr(config.ptr) {
+		++ptr->references;
+	}
+	Configuration() : ptr(new cfg::Data()) { }
+	~Configuration() {
+		if (!--ptr->references) {
+			delete ptr;
+		}
+	}
+
+	operator cfg::Data *()              { return  ptr; }
+	operator cfg::Data &()              { return *ptr; }
+	operator const cfg::Data *()  const { return  ptr; }
+	operator const cfg::Data &()  const { return *ptr; }
+	cfg::Data       &operator*()        { return *ptr; }
+	cfg::Data       *operator->()       { return  ptr; }
+	cfg::Data       *operator&()        { return  ptr; }
+	const cfg::Data &operator*()  const { return *ptr; }
+	const cfg::Data *operator->() const { return  ptr; }
+	const cfg::Data *operator&()  const { return  ptr; }
+
+private:
+	Configuration(const Configuration &);
+
+	cfg::Data *ptr;
 };
 
 }

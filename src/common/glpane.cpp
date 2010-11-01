@@ -9,27 +9,32 @@ namespace mn {
 
 namespace ui {
 
-GLPane::GLPane(GLWidget *theGL, QWidget *parent)
-	: QWidget(parent), gl(theGL) {
+GLPane::GLPane(std::auto_ptr<gl::AbstractObjects> theObjects,
+               gl::Configuration theConfig) {
+	gl = new gl::Widget(theConfig);
+	gl->setObjects(theObjects);
+
 	vslider = new QSlider(Qt::Vertical);
-	vslider->setSingleStep(GLWidget::ticks_per_angle / 10);
-	vslider->setPageStep(30 * GLWidget::ticks_per_angle);
-	vslider->setRange(-GLWidget::vtick_limit, GLWidget::vtick_limit);
+	vslider->setSingleStep(gl::Widget::ticks_per_angle / 10);
+	vslider->setPageStep(30 * gl::Widget::ticks_per_angle);
+	vslider->setRange(-gl::Widget::vtick_limit, gl::Widget::vtick_limit);
 	vslider->setSliderPosition(0);
 	vslider->setTickPosition(QSlider::TicksBelow);
-	vslider->setTickInterval(30 * GLWidget::ticks_per_angle);
+	vslider->setTickInterval(30 * gl::Widget::ticks_per_angle);
 
 	hslider = new QSlider(Qt::Horizontal);
-	hslider->setSingleStep(GLWidget::ticks_per_angle / 10);
-	hslider->setPageStep(30 * GLWidget::ticks_per_angle);
-	hslider->setRange(-180 * GLWidget::ticks_per_angle,
-	                  180 * GLWidget::ticks_per_angle - 1);
+	hslider->setSingleStep(gl::Widget::ticks_per_angle / 10);
+	hslider->setPageStep(30 * gl::Widget::ticks_per_angle);
+	hslider->setRange(-180 * gl::Widget::ticks_per_angle,
+	                  180 * gl::Widget::ticks_per_angle - 1);
 	hslider->setSliderPosition(0);
 	hslider->setTickPosition(QSlider::TicksRight);
-	hslider->setTickInterval(30 * GLWidget::ticks_per_angle);
+	hslider->setTickInterval(30 * gl::Widget::ticks_per_angle);
 
-	connect(gl, SIGNAL(rotationChanged(int, int)),
-	        this, SLOT(rotationChanged(int, int)));
+	connect(gl, SIGNAL(vrotationChanged(int)),
+	        vslider, SLOT(setValue(int)));
+	connect(gl, SIGNAL(hrotationChanged(int)),
+	        hslider, SLOT(setValue(int)));
 	connect(vslider, SIGNAL(valueChanged(int)),
 	        gl, SLOT(vrotation(int)));
 	connect(hslider, SIGNAL(valueChanged(int)),
@@ -40,15 +45,6 @@ GLPane::GLPane(GLWidget *theGL, QWidget *parent)
 	layout->addWidget(vslider, 0, 1);
 	layout->addWidget(hslider, 1, 0);
 	setLayout(layout);
-}
-
-void GLPane::rotationChanged(int h, int v) {
-	if (h < 180 * GLWidget::ticks_per_angle) {
-		hslider->setSliderPosition(h);
-	} else {
-		hslider->setSliderPosition(h - 360 * GLWidget::ticks_per_angle);
-	}
-	vslider->setSliderPosition(v);
 }
 
 }

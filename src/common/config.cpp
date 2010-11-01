@@ -5,7 +5,9 @@ namespace mn {
 
 namespace gl {
 
-Configuration::Configuration()
+namespace cfg {
+
+Data::Data()
 	: mouseMovementFactor(0.01),
 	  mouseRotationFactor(10),
 	  runFactor(10.0),
@@ -36,11 +38,9 @@ Configuration::Configuration()
 	        this, SLOT(somethingChanged()));
 }
 
-void Configuration::somethingChanged() {
+void Data::somethingChanged() {
 	emit changed();
 }
-
-namespace cfg {
 
 void Bool::set(bool v) {
 	if (v != value) {

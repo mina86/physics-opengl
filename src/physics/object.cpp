@@ -33,7 +33,7 @@
 #include "../common/sintable.hpp"
 #include "../common/config.hpp"
 #include "../common/mconst.h"
-#include "widget.hpp"
+#include "../common/glwidget.hpp"
 
 
 namespace mn {
@@ -71,8 +71,8 @@ Object::~Object() {
 	}
 }
 
-void Object::draw(const PhysicsWidget &gl) {
-	PushMatrix _p;
+void Object::draw(const gl::Widget &gl) {
+	glPushMatrix();
 
 	glTranslatef(point.x, point.y, point.z);
 
@@ -95,17 +95,8 @@ void Object::draw(const PhysicsWidget &gl) {
 
 		gl.sphere(size, point, &texture, name, &textList);
 	// }
-}
 
-void Object::deleteAll() {
-	Object *o = getNext();
-	for (;;) {
-		Object *n = o->getNext();
-		delete o;
-		if (o == this)
-			return;
-		o = n;
-	}
+	glPopMatrix();
 }
 
 namespace {

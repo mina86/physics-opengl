@@ -11,9 +11,8 @@
 #include "../common/texture.hpp"
 #include "../common/playercontrolwidget.hpp"
 
-#include "widget.hpp"
 #include "data-loader.hpp"
-#include "object.hpp"
+#include "objects.hpp"
 #include "mainwindow.hpp"
 
 namespace mn {
@@ -21,7 +20,7 @@ namespace mn {
 namespace ui {
 
 int initialize(int argc, char **argv, QWidget *&window) {
-	gl::Configuration::ptr config;
+	gl::Configuration config;
 
 	static const struct option longopts[] = {
 		{ "very-low",    0, 0, '0' },
@@ -78,7 +77,6 @@ int initialize(int argc, char **argv, QWidget *&window) {
 	case  2: mn::gl::Texture::filename_suffix = ".hq.sgi"; break;
 	}
 
-	physics::Object *objects;
 	const char *data = optind == argc ? 0 : argv[optind], *dir;
 	if (!data) {
 		mn::gl::Texture::filename_prefix = "./data/";
@@ -92,24 +90,35 @@ int initialize(int argc, char **argv, QWidget *&window) {
 	if (!data) {
 		puts("Reading data from standard input");
 	}
-	objects = physics::loadData(data);
-	if (!objects) {
+	physics::Object *theObjects = physics::loadData(data);
+	if (!theObjects) {
 		return 1;
 	}
 
-	physics::PhysicsWidget *gl = new physics::PhysicsWidget(objects, config);
-	gl->connect(gl, SIGNAL(needRepaint()), gl, SLOT(updateGL()));
+	std::auto_ptr<gl::AbstractObjects> objects(new physics::Objects(theObjects));
 
 	QMainWindow *mainWindow = new MainWindow(config);
-	QDockWidget *dockPlayer = new QDockWidget(QObject::tr("Player controls"), mainWindow);
-	dockPlayer->setAllowedAreas(Qt::TopDockWidgetArea | Qt::BottomDockWidgetArea);
+
+	QDockWidget *dockPlayer =
+			new QDockWidget(QObject::tr("Player controls"), mainWindow);
+	dockPlayer->setAllowedAreas(Qt::TopDockWidgetArea |
+	                            Qt::BottomDockWidgetArea);
+
 	PlayerControlWidget *pcw = new PlayerControlWidget(dockPlayer);
 	dockPlayer->setWidget(pcw);
-	mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
-	mainWindow->setCentralWidget(new ui::GLPane(gl, mainWindow));
-	QObject::connect(pcw, SIGNAL(nextFramePlayed()), gl, SLOT(updateGL()));
-	window = mainWindow;
 
+	ui::GLPane *pane = new ui::GLPane(objects, config);
+
+	mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
+	mainWindow->setCentralWidget(pane);
+
+	QObject::connect(pcw, SIGNAL(nextFramePlayed()),
+	                 pane->gl, SLOT(updateGL()));
+	/* XXX This should go away... */
+	QObject::connect(pane->gl, SIGNAL(needRepaint()),
+	                 pane->gl, SLOT(updateGL()));
+
+	window = mainWindow;
 	return 0;
 }
 

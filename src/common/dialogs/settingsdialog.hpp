@@ -15,9 +15,9 @@ class SettingsDialog : public QDialog
 
 public:
 	explicit SettingsDialog(QWidget *parent = 0);
-	explicit SettingsDialog(QWidget *parent, mn::gl::Configuration::ptr &config);
+	explicit SettingsDialog(QWidget *parent, mn::gl::Configuration &config);
 	~SettingsDialog();
-	mn::gl::Configuration::ptr config;
+	mn::gl::Configuration config;
 	void show();
 
 public slots:

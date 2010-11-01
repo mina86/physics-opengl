@@ -10,27 +10,27 @@
 
 namespace mn {
 
-namespace ui {
+namespace gl {
 
-const GLWidget::value_type GLWidget::zeros[4] = { 0, 0, 0, 1 };
-const GLWidget::value_type GLWidget::ones[4] = { 1, 1, 1, 1 };
-const GLWidget::value_type GLWidget::specular[4] = { 0.75, 0.75, 0.75, 1 };
+const Widget::value_type Widget::zeros[4] = { 0, 0, 0, 1 };
+const Widget::value_type Widget::ones[4] = { 1, 1, 1, 1 };
+const Widget::value_type Widget::specular[4] = { 0.75, 0.75, 0.75, 1 };
 
 
 /********************************** Hints ***********************************/
 
-QSize GLWidget::minimumSizeHint() const {
+QSize Widget::minimumSizeHint() const {
 	return QSize(50, 50);
 }
 
-QSize GLWidget::sizeHint() const {
+QSize Widget::sizeHint() const {
 	return QSize(400, 400);
 }
 
 
 /**************************** Camera & Rotation *****************************/
 
-void GLWidget::camera(value_type x, value_type y, value_type z) {
+void Widget::camera(value_type x, value_type y, value_type z) {
 	cam.x = x;
 	cam.y = y;
 	cam.z = z;
@@ -44,7 +44,7 @@ void GLWidget::camera(value_type x, value_type y, value_type z) {
 	emit cameraChanged(cam);
 }
 
-void GLWidget::move(value_type x, value_type y, value_type z) {
+void Widget::move(value_type x, value_type y, value_type z) {
 	updateMatrix();
 	/* M(0, 1) is always zero, see doUpdateMatrix(). */
 	/*
@@ -56,7 +56,7 @@ void GLWidget::move(value_type x, value_type y, value_type z) {
 	       cam.z + x * M(0, 2) +               z * M(2, 2));
 }
 
-void GLWidget::rotation(int h, int v) {
+void Widget::rotation(int h, int v) {
 	if (v < -vtick_limit) {
 		v = -vtick_limit;
 	} else if (v > vtick_limit) {
@@ -70,29 +70,31 @@ void GLWidget::rotation(int h, int v) {
 		rotY = h;
 		matrixValid = false;
 		emit needRepaint();
-		emit rotationChanged(rotY >= 180 * ticks_per_angle
-		                   ? rotY - 360 * ticks_per_angle : rotY, rotX);
+		emit hrotationChanged(rotY >= 180 * ticks_per_angle
+		                    ? rotY - 360 * ticks_per_angle : rotY);
+		emit vrotationChanged(rotX);
 	}
 }
 
-static const GLWidget::value_type ID[16] = {
+static const Widget::value_type ID[16] = {
 	1.0, 0.0, 0.0, 0.0,
 	0.0, 1.0, 0.0, 0.0,
 	0.0, 0.0, 1.0, 0.0,
 	0.0, 0.0, 0.0, 1.0
 };
 
-void GLWidget::reset() {
+void Widget::reset() {
 	rotX = 0;
 	rotY = 0;
 	std::memcpy(matrix, ID, sizeof matrix);
 	matrixValid = true;
-	emit rotationChanged(0, 0);
 	/* camera() will emit needRepaint() */
 	camera(Vector());
+	emit hrotationChanged(0);
+	emit vrotationChanged(0);
 }
 
-void GLWidget::doUpdateMatrix() const {
+void Widget::doUpdateMatrix() const {
 	if (!rotX && !rotY) {
 		memcpy(matrix, ID, sizeof matrix);
 	} else {
@@ -121,7 +123,7 @@ void GLWidget::doUpdateMatrix() const {
 }
 
 
-bool GLWidget::isInFront(const Vector &vec) const {
+bool Widget::isInFront(const Vector &vec) const {
 	const value_type md1 = cam.x * M(0, 2) + cam.y * M(1, 2) + cam.z * M(2, 2);
 	const value_type md2 = vec.x * M(0, 2) + vec.y * M(1, 2) + vec.z * M(2, 2);
 	return md2 < md1;
@@ -130,38 +132,40 @@ bool GLWidget::isInFront(const Vector &vec) const {
 
 /********************************** OpenGL **********************************/
 
-GLWidget::GLWidget(QWidget *parent, gl::Configuration &theConfig)
-	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent),
-	  config(theConfig) {
+Widget::Widget(Configuration &theConfig, QWidget *parent)
+	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent), config(theConfig) {
 	reset();
 	connect(&config, SIGNAL(changed()), this, SLOT(configChanged()));
 }
 
-void GLWidget::configChanged() {
+void Widget::configChanged() {
 	emit needRepaint();
 }
 
-void GLWidget::doRotate() const {
+void Widget::doRotate() const {
 	updateMatrix();
 	glMultMatrixf(matrix);
 }
 
-void GLWidget::doMove() const {
+void Widget::doMove() const {
 	glTranslatef(-getX(), -getY(), -getZ());
 }
 
-void GLWidget::doLookAt() const {
+void Widget::doLookAt() const {
 	doRotate();
 	doMove();
 }
 
-void GLWidget::initializeGL() {
+void Widget::initializeGL() {
 	glClearColor(0.6, 0.6, 0.6, 1.0);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_MULTISAMPLE);
+	if (objects.get()) {
+		objects->initializeGL();
+	}
 }
 
-void GLWidget::resizeGL(int width, int height) {
+void Widget::resizeGL(int width, int height) {
 	glViewport(0, 0, width, height);
 
 	_aspect = (value_type)width / height;
@@ -171,7 +175,7 @@ void GLWidget::resizeGL(int width, int height) {
 	gluPerspective(45.0, _aspect, 0.01, 3000.0);
 }
 
-void GLWidget::paintGL() {
+void Widget::paintGL() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 
@@ -186,7 +190,9 @@ void GLWidget::paintGL() {
 	glEnable(GL_LIGHTING);
 	glEnable(GL_CULL_FACE);
 
-	doPaint();
+	if (objects.get()) {
+		objects->drawScene(*this);
+	}
 
 	glDisable(GL_LIGHTING);
 	glDisable(GL_CULL_FACE);
@@ -204,12 +210,12 @@ void GLWidget::paintGL() {
 	glEnd();
 }
 
-void GLWidget::paintStars() {
+void Widget::paintStars() {
 	if (!config->showStars) {
 		return;
 	}
 
-	GLuint id = gl::Texture::stars();
+	GLuint id = Texture::stars();
 	if (!id) {
 		return;
 	}
@@ -244,7 +250,7 @@ void GLWidget::paintStars() {
 
 /***************************** OpenGL Utilities *****************************/
 
-void GLWidget::_text(const std::string &text, value_type scale, unsigned *list,
+void Widget::_text(const std::string &text, value_type scale, unsigned *list,
                      const value_type color[4]) const {
 	if (config->showText && !text.empty()) {
 		if (list && *list) {
@@ -272,7 +278,7 @@ void GLWidget::_text(const std::string &text, value_type scale, unsigned *list,
 	}
 }
 
-void GLWidget::text(const std::string &text, value_type scale, unsigned *list,
+void Widget::text(const std::string &text, value_type scale, unsigned *list,
                     const value_type color[4]) const {
 	if (config->showText && !text.empty()) {
 		glPushMatrix();
@@ -281,9 +287,9 @@ void GLWidget::text(const std::string &text, value_type scale, unsigned *list,
 	}
 }
 
-bool GLWidget::sphere(value_type size, const Vector &point,
+bool Widget::sphere(value_type size, const Vector &point,
                       const value_type color[4],
-                      const gl::Texture *texture) const {
+                      const Texture *texture) const {
 	value_type factor = cam.distance2(point);
 	factor = factor > config->cutOffDistance2
 		? std::sqrt(config->cutOffDistance2 / factor)
@@ -355,9 +361,8 @@ bool GLWidget::sphere(value_type size, const Vector &point,
 	return factor < 0.99;
 }
 
-bool GLWidget::sphere(value_type size, const Vector &point,
-                      const value_type color[4],
-                      const gl::Texture *texture,
+bool Widget::sphere(value_type size, const Vector &point,
+                      const value_type color[4], const Texture *texture,
                       const std::string &text, unsigned *list) const {
 	if (!sphere(size, point, texture)) {
 		return false;
@@ -384,21 +389,21 @@ bool GLWidget::sphere(value_type size, const Vector &point,
 
 /********************************** Events **********************************/
 
-void GLWidget::keyPressEvent(QKeyEvent *event)
+void Widget::keyPressEvent(QKeyEvent *event)
 {
 	fprintf(stderr, "down %u\n", event->key());
 }
 
-void GLWidget::keyReleaseEvent(QKeyEvent *event)
+void Widget::keyReleaseEvent(QKeyEvent *event)
 {
 	fprintf(stderr, "up %u\n", event->key());
 }
 
-void GLWidget::mousePressEvent(QMouseEvent *event) {
+void Widget::mousePressEvent(QMouseEvent *event) {
 	lastPos = event->pos();
 }
 
-void GLWidget::mouseMoveEvent(QMouseEvent *event) {
+void Widget::mouseMoveEvent(QMouseEvent *event) {
 	if (!(event->buttons() & (Qt::LeftButton | Qt::RightButton))) {
 		return;
 	}

@@ -29,9 +29,13 @@
 
 namespace mn {
 
-namespace physics {
+namespace gl {
 
-struct PhysicsWidget;
+struct Widget;
+
+}
+
+namespace physics {
 
 struct Object {
 	typedef gl::Vector<double> Vector;
@@ -90,41 +94,17 @@ struct Object {
 	static Vector::value_type cutoffDistance2;
 	static bool lowQuality, drawNames, useTextures;
 
-	void draw(const PhysicsWidget &gl);
-	void drawAll(const PhysicsWidget &gl) {
-		Object *o = this;
-		do o->draw(gl); while ((o = o->next) != this);
-	}
-
+	void draw(const gl::Widget &gl);
 	void tick(Vector::value_type dt) {
 		if (!frozen) {
 			tick_(dt);
 		}
 	}
-	void tickAll(Vector::value_type dt) {
-		Object *o = this;
-		do o->tick(dt); while ((o = o->next) != this);
-	}
-
 	void updatePoint() {
 		if (!frozen) {
 			point = nextPoint;
 		}
 	}
-	void updatePointAll() {
-		Object *o = this;
-		do o->updatePoint(); while ((o = o->next) != this);
-	}
-
-	void ticksAll(unsigned count, Vector::value_type dt) {
-		tickAll(dt);
-		while (--count) {
-			updatePointAll();
-			tickAll(dt);
-		}
-	}
-
-	void deleteAll();
 
 	gl::Texture texture;
 	void colorFromTexture() {

@@ -8,7 +8,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 	ui->setupUi(this);
 }
 
-SettingsDialog::SettingsDialog(QWidget *parent, mn::gl::Configuration::ptr &config) :
+SettingsDialog::SettingsDialog(QWidget *parent, mn::gl::Configuration &config) :
 		QDialog(parent),
 		config(config),
 		ui(new Ui::SettingsDialog)

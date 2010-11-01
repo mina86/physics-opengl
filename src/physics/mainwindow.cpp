@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	prepare();
 }
 
-MainWindow::MainWindow(mn::gl::Configuration::ptr &config) :
+MainWindow::MainWindow(mn::gl::Configuration &config) :
 		QMainWindow(0),
 		config(config),
 		ui(new Ui::MainWindow)
