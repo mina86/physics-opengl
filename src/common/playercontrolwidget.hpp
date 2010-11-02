@@ -32,7 +32,7 @@ public slots:
 
 signals:
 	void fpsChanged(int);
-	void nextFramePlayed();
+	void newFrameNeeded(unsigned tickCount, double tickInterval);
 
 protected:
 	void changeEvent(QEvent *e);

@@ -116,6 +116,12 @@ struct Widget : public QGLWidget {
 	const Configuration config;
 
 public slots:
+	virtual void updateState(unsigned ticks, float dt) {
+		if (scene.get()) {
+			scene->updateState(ticks, dt);
+		}
+	}
+
 	void setX(int x) { camera(x, getY(), getZ()); }
 	void setY(int y) { camera(getX(), y, getZ()); }
 	void setZ(int z) { camera(getX(), getY(), z); }
@@ -133,11 +139,6 @@ public slots:
 
 private slots:
 	void configChanged();
-	void updateState(unsigned ticks, float dt) {
-		if (scene.get()) {
-			scene->updateState(ticks, dt);
-		}
-	}
 
 signals:
 	void needRepaint();

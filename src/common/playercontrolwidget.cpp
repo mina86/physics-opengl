@@ -105,7 +105,9 @@ void PlayerControlWidget::setFps(int newFps)
 
 void PlayerControlWidget::playNextFrame()
 {
-	emit nextFramePlayed();
+	double rate = fpsRate ? 1/fpsRate : 1.0;
+	double tickCount = (speed/precision)/rate;
+	emit newFrameNeeded(std::min((unsigned)1, (unsigned)round(tickCount)), precision);
 }
 
 void PlayerControlWidget::debugprint()
