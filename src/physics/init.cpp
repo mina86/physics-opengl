@@ -113,9 +113,9 @@ int initialize(int argc, char **argv, QWidget *&window) {
 	mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
 	mainWindow->setCentralWidget(pane);
 
-	QObject::connect(pcw, SIGNAL(newFrameNeeded(uint,double)),
+	QObject::connect(pcw, SIGNAL(newFrameNeeded(uint,float)),
 					 pane->gl, SLOT(updateState(uint,float)));
-	QObject::connect(pcw, SIGNAL(newFrameNeeded(uint,double)),
+	QObject::connect(pcw, SIGNAL(newFrameNeeded(uint,float)),
 	                 pane->gl, SLOT(updateGL()));
 	/* XXX This should go away... */
 	QObject::connect(pane->gl, SIGNAL(needRepaint()),
