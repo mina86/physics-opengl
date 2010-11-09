@@ -5,9 +5,10 @@
 
 #include <QtOpenGL/QGLWidget>
 
+#include "../lib/mconst.h"
+
 #include "vector.hpp"
 #include "config.hpp"
-#include "mconst.h"
 #include "abstract-scene.hpp"
 
 namespace mn {

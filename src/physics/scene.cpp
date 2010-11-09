@@ -15,12 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _GNU_SOURCE
-#  define _GNU_SOURCE 1
-#endif
+#include "scene.hpp"
 
 #include "object.hpp"
-#include "scene.hpp"
 
 namespace mn {
 
@@ -28,11 +25,13 @@ namespace physics {
 
 Scene::~Scene() {
 	Object *o = objects;
-	do {
-		Object *n = o->getNext();
-		delete o;
-		o = n;
-	} while (o != objects);
+	if (o) {
+		do {
+			Object *n = o->getNext();
+			delete o;
+			o = n;
+		} while (o != objects);
+	}
 }
 
 void Scene::initializeGL() {
@@ -40,33 +39,55 @@ void Scene::initializeGL() {
 
 void Scene::drawScene(const gl::Widget &gl) {
 	Object *o = objects;
-	do {
-		o->draw(gl);
-		o = o->getNext();
-	} while (o != objects);
+	if (o) {
+		do {
+			o->draw(gl);
+			o = o->getNext();
+		} while (o != objects);
+	}
 }
 
 void Scene::updateState(unsigned ticks, float dt) {
-	for (; ticks; --ticks) {
-		updateStateOnce(dt);
-		updatePointAll();
+	if (objects) {
+		for (; ticks; --ticks) {
+			updateStateOnce(dt);
+			updatePointAll();
+		}
 	}
 }
 
 void Scene::updateStateOnce(float dt) {
 	Object *o = objects;
-	do {
-		o->tick(dt);
-		o = o->getNext();
-	} while (o != objects);
+	if (o) {
+		do {
+			o->tick(dt);
+			o = o->getNext();
+		} while (o != objects);
+	}
 }
 
 void Scene::updatePointAll() {
 	Object *o = objects;
-	do {
-		o->updatePoint();
-		o = o->getNext();
-	} while (o != objects);
+	if (o) {
+		do {
+			o->updatePoint();
+			o = o->getNext();
+		} while (o != objects);
+	}
+}
+
+void Scene::save(std::ostream &out) throw(std::ios_base::failure) {
+	Object *o = objects;
+	if (o) {
+		do {
+			o->save(out);
+			o = o->getNext();
+		} while (o != objects);
+
+		if (!out) {
+			throw std::ios_base::failure("error saving file");
+		}
+	}
 }
 
 }

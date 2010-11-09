@@ -2,7 +2,8 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
-#include "../common/config.hpp"
+
+#include "../gl/config.hpp"
 
 namespace Ui {
 	class MainWindow;

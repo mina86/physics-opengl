@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <Qt>
-#include "../config.hpp"
+#include "../../gl/config.hpp"
 
 namespace Ui {
 	class SettingsDialog;

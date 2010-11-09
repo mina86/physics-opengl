@@ -1,5 +1,5 @@
 /*
- * src/common/sintable.cpp
+ * src/gl/color.hpp
  * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or
@@ -15,24 +15,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "sintable.hpp"
-
-#include <cmath>
-
-#include "mconst.h"
+#ifndef H_COLOR_HPP
+#define H_COLOR_HPP
 
 namespace mn {
 
-#if SINTABLE_OPT_SPACE
-float sinTable[91];
-#else
-float sinTable[360];
+namespace gl {
+
+
+struct Color {
+	float r, g, b;
+};
+
+
+inline Color color() {
+	Color c;
+	c.r = c.g = c.b = 1;
+	return c;
+}
+
+inline Color color(float r, float g, float b) {
+	Color c;
+	c.r = r;
+	c.g = g;
+	c.b = b;
+	return c;
+}
+
+inline Color color(unsigned long color) {
+	Color c;
+	c.r = ((color >> 16) & 255) / 255.0f;
+	c.g = ((color >>  8) & 255) / 255.0f;
+	c.b = ( color        & 255) / 255.0f;
+	return c;
+}
+
+
+}
+
+}
+
 #endif
-
-void initSinTable(void) {
-	for (unsigned i = 0; i < sizeof sinTable / sizeof *sinTable; ++i) {
-		sinTable[i] = std::sin(i * MN_PI_180);
-	}
-}
-
-}

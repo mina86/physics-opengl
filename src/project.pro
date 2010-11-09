@@ -1,5 +1,5 @@
 TEMPLATE = app
-DEPENDPATH += common $$TARGET
+DEPENDPATH += gl ui lib $$TARGET
 
 QT += opengl
 DESTDIR = ../dist

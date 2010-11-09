@@ -21,11 +21,11 @@
 #include <math.h>
 
 #include <string>
+#include <iostream>
 
-#include "../common/color.hpp"
-#include "../common/vector.hpp"
-#include "../common/texture.hpp"
-
+#include "../gl/color.hpp"
+#include "../gl/vector.hpp"
+#include "../gl/texture.hpp"
 
 namespace mn {
 
@@ -129,6 +129,8 @@ struct Object {
 	}
 
 	static const Vector::value_type G;
+
+	void save(std::ostream &out) throw(std::ios_base::failure);
 
 private:
 	Vector point, nextPoint, velocity;

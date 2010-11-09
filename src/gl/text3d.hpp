@@ -1,5 +1,5 @@
 /*
- * src/common/text3d.hpp
+ * src/gl/text3d.hpp
  * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or

@@ -1,5 +1,5 @@
 /*
- * src/common/sintable.hpp
+ * src/lib/sintable.cpp
  * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or
@@ -15,38 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef H_SINTABLE_HPP
-#define H_SINTABLE_HPP
+#include "sintable.hpp"
+
+#include <cmath>
+
+#include "mconst.h"
 
 namespace mn {
 
+namespace lib {
+
 #if SINTABLE_OPT_SPACE
-extern float sinTable[91];
+float sinTable[91];
 #else
-extern float sinTable[360];
+float sinTable[360];
 #endif
 
-void initSinTable(void);
-
-inline float sin(int arg) {
-#if SINTABLE_OPT_SPACE
-	unsigned foo = arg / 90;
-	arg %= 90;
-	switch (foo % 4) {
-	case 0: /*   0 -  89 */ return  sinTable[   arg];
-	case 1: /*  90 - 179 */ return  sinTable[90-arg];
-	case 2: /* 180 - 269 */ return -sinTable[   arg];
-	case 3: /* 270 - 359 */ return -sinTable[90-arg];
+void initSinTable(void) {
+	for (unsigned i = 0; i < sizeof sinTable / sizeof *sinTable; ++i) {
+		sinTable[i] = std::sin(i * MN_PI_180);
 	}
-#else
-	return sinTable[arg % 360];
-#endif
-}
-
-inline float cos(int arg) {
-	return sin(arg + 90);
 }
 
 }
 
-#endif
+}

@@ -1,6 +1,6 @@
 /*
- * src/physics/lexer.hpp
- * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * src/lib/lexer.hpp
+ * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,16 +18,16 @@
 #ifndef H_LEXER_HPP
 #define H_LEXER_HPP
 
-#include <stdio.h>
-
 #include <string>
 #include <stdexcept>
+#include <iostream>
+#include <map>
 
 #include <QLocale>
 
 namespace mn {
 
-namespace physics {
+namespace lib {
 
 struct Lexer {
 	struct Position {
@@ -46,59 +46,51 @@ struct Lexer {
 			: begin(position), end(position) { }
 	};
 
-	/**
-	 * Named tokens.  Other tokens correspond directly to character
-	 * codes.
-	 */
-	enum NamedTokens {
-		T_ERROR = -2, T_EOF = -1, /* errors and such */
-		T_VELOCITY = 256, T_SIZE, T_MASS, T_LIGHT, T_TEXTURE,
-		T_COLOR, T_AUTO, T_FROZEN, /* keywords */
-		T_REAL, T_STRING /* tokens with parameters */
+	struct error : public std::runtime_error {
+		error(const struct Location &theLocation, const std::string &message)
+			: std::runtime_error(message), location(theLocation) { }
+		error(const struct Position &begin, const struct Position &end,
+		      const std::string &message)
+			: std::runtime_error(message), location(begin, end) { }
+		error(const struct Position &position, const std::string &message)
+			: std::runtime_error(message), location(position) { }
+
+		const struct Location location;
+
+		static std::string msg(const std::string &msg1,
+		                       const std::string &msg2);
+		static std::string msg(const char *msg1, const std::string &msg2);
+		static std::string msg(const char *msg1, const char *msg2);
+		static std::string msg(const std::string &msg1, const char *msg2);
+	};
+
+	enum {
+		T_EOF,
+		/* each character is returned as is */
+		T_REAL = 256, T_STRING,
+		T_FIRST_KEYWOARD,
+	};
+
+	typedef std::map<std::string, int> Keywords;
+
+	struct Value {
+		float real;
+		std::string string;
 	};
 
 	/** Returns a user readable name of a token. */
-	static const char *tokenName(int token);
-
-	union Value {
-		float real;
-		char *string;
-	};
+	static const char *tokenName(unsigned token, const Value &value);
 
 	/**
 	 * Creates lexer reading from a file.  \a theFilename specifies
 	 * file name of a file to open.
 	 *
-	 * \param theFilename file name.
-	 * \throw error if file could not be opened.
+	 * \param theKeywoards list of keywoards.  Argument is cleared.
+	 * \param in           the in stream, will be destroyed when
 	 */
-	explicit Lexer(const char *theFilename);
-
-	/**
-	 * Creates lexer reading from a file.  \a theFilename specifies
-	 * file name of a file to open.
-	 *
-	 * \param theFilename file name.
-	 * \throw error if file could not be opened.
-	 */
-	explicit Lexer(const std::string &theFilename)
-		: filename(theFilename), stream(fopen(theFilename.c_str(), "r")),
-		  closeStream(true) { }
-
-	/** Creates lexer reading from standard input.  */
-	Lexer() : filename(stdin_filename), stream(stdin), closeStream(false) {
-		current.line = current.column = 1;
-		previous = current;
+	Lexer(std::istream &in, const Keywords *theKeywords = NULL)
+		: stream(in), locale("C"), keywords(theKeywords) {
 	}
-
-	/** Closes stream if needed. */
-	~Lexer() {
-		if (closeStream && stream) {
-			fclose(stream);
-		}
-	}
-
-	bool operator!() const { return !stream; }
 
 	/**
 	 * Returns next token from stream.
@@ -107,47 +99,45 @@ struct Lexer {
 	 *        token.
 	 * \return read token.
 	 */
-	int nextToken(Value &value, Location &location);
-
-	/** Returns file name. */
-	const std::string &getFileName() const { return filename; }
+	unsigned nextToken(Value &value, Location &location);
 
 	/** Returns current position in stream. */
 	const Position &getPosition() const { return current; }
 
-private:
-	/** Name of a standard input stream. */
-	static const std::string stdin_filename;
+	const Keywords *getKeywords() const { return keywords; }
+	void setKeywords(const Keywords *theKeywords) {
+		keywords = theKeywords;
+	}
 
+private:
 	/**
 	 * Copying not allowed.
 	 * \param lexer object to copy.
 	 */
+	Lexer();
 	Lexer(const Lexer &);
 	void operator=(const Lexer &);
 
-	/** Name of the file we are reading from. */
-	std::string filename;
 	/** Stream to read data from. */
-	FILE *stream;
-	/** Whether stream should be closed by destructor. */
-	bool closeStream;
+	std::istream &stream;
 	/** Current position in stream. */
 	Position current;
 	/** A position in stream before last character was read. */
 	Position previous;
 	/** Locale class used to parse input. */
 	QLocale locale;
+	/** List of keywords. */
+	const Keywords *keywords;
 
 	/** Returns next character from file and updates location. */
-	int getchar();
+	unsigned getchar();
 	/**
 	 * "Ungets" character from file and updates location.
 	 * \param ch character to unget.
 	 */
-	void ungetchar(int ch);
+	void ungetchar(unsigned ch);
+	unsigned getdigits(std::string &str, unsigned ch);
 };
-
 
 }
 

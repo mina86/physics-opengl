@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "config.hpp"
+#include "../gl/config.hpp"
 
 struct QSlider;
 

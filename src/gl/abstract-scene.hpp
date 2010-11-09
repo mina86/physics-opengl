@@ -1,5 +1,5 @@
 /*
- * src/physics/scene.hpp
+ * src/gl/abstract-scene.hpp
  * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or
@@ -15,35 +15,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef H_OBJECTS_HPP
-#define H_OBJECTS_HPP
+#ifndef H_ABSTRACT_SCENE_HPP
+#define H_ABSTRACT_SCENE_HPP
 
-#include "../gl/abstract-scene.hpp"
+#include <memory>
+#include <iostream>
+
+#include "../lib/lexer.hpp"
 
 namespace mn {
 
-namespace physics {
+namespace gl {
 
-struct Object;
+struct Widget;
 
-struct Scene : public gl::AbstractScene {
-	Scene(Object *theObjects) : objects(theObjects) { }
-	~Scene();
+struct AbstractScene {
+	typedef std::auto_ptr<AbstractScene> ptr;
 
-	void initializeGL();
-	void drawScene(const gl::Widget &gl);
-	void updateState(unsigned ticks, float dt);
-	void save(std::ostream &out) throw(std::ios_base::failure);
+	virtual ~AbstractScene() { }
+	virtual void initializeGL() = 0;
+	virtual void drawScene(const Widget &gl) = 0;
+	virtual void updateState(unsigned ticks, float dt) = 0;
 
-private:
-	Scene();
-	Scene(const Scene &);
-	void operator=(const Scene &);
-
-	void updateStateOnce(float dt);
-	void updatePointAll();
-
-	Object *objects;
+	virtual void save(std::ostream &out) throw(std::ios_base::failure) = 0;
+	static  ptr  load(std::istream &in)
+		throw(std::ios_base::failure, lib::Lexer::error);
+	static const char extension[];
 };
 
 }

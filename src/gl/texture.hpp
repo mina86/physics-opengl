@@ -1,6 +1,6 @@
 /*
- * src/common/texture.hpp
- * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * src/gl/texture.hpp
+ * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,6 +17,8 @@
  */
 #ifndef H_TEXTURE_HPP
 #define H_TEXTURE_HPP
+
+#include <string>
 
 #ifdef __APPLE__
 #  include <OpenGL/OpenGL.h>
@@ -46,10 +48,7 @@ struct Texture {
 	}
 
 	~Texture() {
-		delete[] data;
-		if (id) {
-			glDeleteTextures(1, &id);
-		}
+		free();
 	}
 
 	GLint getInternalFormat() const          { return internalFormat; }
@@ -67,15 +66,8 @@ struct Texture {
 	static const char *filename_prefix;
 	static const char *filename_suffix;
 
-	void load(const char *filename);
-	void free() {
-		delete[] data;
-		if (id) {
-			glDeleteTextures(1, &id);
-		}
-		data = 0;
-		id = 0;
-	}
+	void load(const std::string &filename) throw();
+	void free();
 
 	GLuint get() const {
 		if (!id) makeTexture();

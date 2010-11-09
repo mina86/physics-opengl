@@ -1,5 +1,5 @@
 /*
- * src/common/vector.hpp
+ * src/gl/vector.hpp
  * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or

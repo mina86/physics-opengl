@@ -1,6 +1,6 @@
 /*
- * src/common/texture.cpp
- * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * src/gl/texture.cpp
+ * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -50,7 +50,9 @@ void Texture::assign(unsigned theWidth, unsigned theHeight,
 }
 
 void Texture::makeTexture() const {
-	if (!data) return;
+	if (!data) {
+		return;
+	}
 	if (!id) {
 		glGenTextures(1, &id);
 	}
@@ -209,10 +211,10 @@ void RGBImageReader::getRow(uint8_t *buf, int y, int z) {
 
 }
 
-void Texture::load(const char *filename_) {
+void Texture::load(const std::string &_filename) throw() {
 	char filename[1024];
 	snprintf(filename, sizeof filename, "%s%s%s",
-	         filename_prefix, filename_, filename_suffix);
+	         filename_prefix, _filename.c_str(), filename_suffix);
 
 	RGBImageReader image(filename);
 	if (!image.file) return;
@@ -257,6 +259,15 @@ void Texture::load(const char *filename_) {
 	type = GL_UNSIGNED_BYTE;
 
 	assign(xsize, ysize, d);
+}
+
+void Texture::free() {
+	delete[] data;
+	if (id) {
+		glDeleteTextures(1, &id);
+	}
+	data = NULL;
+	id = 0;
 }
 
 unsigned Texture::starsQuality = 2;

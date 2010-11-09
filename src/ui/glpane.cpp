@@ -1,9 +1,10 @@
+#include "glpane.hpp"
+
 #include <QGridLayout>
 #include <QSlider>
 
-#include "glpane.hpp"
-#include "glwidget.hpp"
-#include "config.hpp"
+#include "../gl/glwidget.hpp"
+#include "../gl/config.hpp"
 
 namespace mn {
 

@@ -1,12 +1,14 @@
+#include "glwidget.hpp"
+
 #include <cstring>
 
 #include <Qt/QtGui>
 
-#include "glwidget.hpp"
+#include "../lib/mconst.h"
+#include "../lib/sintable.hpp"
+
 #include "text3d.hpp"
 #include "texture.hpp"
-#include "mconst.h"
-#include "sintable.hpp"
 
 namespace mn {
 
@@ -229,17 +231,17 @@ void Widget::paintStars() {
 	const float texMul = 1 / 120.0f;
 
 	for (unsigned i = 0; i < 180; i += stacks_deg) {
-		const float cos1 = mn::cos(i);
-		const float sin1 = mn::sin(i);
-		const float cos2 = mn::cos(i + stacks_deg);
-		const float sin2 = mn::sin(i + stacks_deg);
+		const float cos1 = lib::cos(i);
+		const float sin1 = lib::sin(i);
+		const float cos2 = lib::cos(i + stacks_deg);
+		const float sin2 = lib::sin(i + stacks_deg);
 
 		glBegin(GL_QUAD_STRIP);
 		for (unsigned j = 0; j <= 360; j += slices_deg) {
 			glTexCoord2f(j * texMul, i * texMul);
-			glVertex3f(sin1 * mn::sin(j), sin1 * mn::cos(j), cos1);
+			glVertex3f(sin1 * lib::sin(j), sin1 * lib::cos(j), cos1);
 			glTexCoord2f(j * texMul, (i + stacks_deg) * texMul);
-			glVertex3f(sin2 * mn::sin(j), sin2 * mn::cos(j), cos2);
+			glVertex3f(sin2 * lib::sin(j), sin2 * lib::cos(j), cos2);
 		}
 		glEnd();
 	}

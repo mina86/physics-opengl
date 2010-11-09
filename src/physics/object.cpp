@@ -1,6 +1,6 @@
 /*
  * src/physics/object.cpp
- * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -24,17 +24,16 @@
 #  include <GL/glut.h>
 #endif
 
-#include <stdio.h>
-
 #include <cmath>
 #include <vector>
 #include <queue>
 
-#include "../common/sintable.hpp"
-#include "../common/config.hpp"
-#include "../common/mconst.h"
-#include "../common/glwidget.hpp"
+#include "../lib/mconst.h"
+#include "../lib/sintable.hpp"
 
+#include "../gl/config.hpp"
+#include "../gl/glwidget.hpp"
+#include "../gl/vector-print.hpp"
 
 namespace mn {
 
@@ -139,6 +138,21 @@ void Object::tick_(Vector::value_type dt) {
 	nextPoint = point + velocity * dt;
 }
 
+void Object::save(std::ostream &out) throw(std::ios_base::failure) {
+	out << '"' << name << "\"\t@ " << point;
+	if (frozen) {
+		out << " frozen";
+	} else {
+		out << " vel " << velocity;
+	}
+	out << " mass " << mass << " size " << size << " color "
+		<< materialColor[0] << ' ' << materialColor[1] << ' '
+		<< materialColor[2];
+	if (light) {
+		out << " light";
+	}
+	out << '\n';
+}
 
 }
 

@@ -1,5 +1,5 @@
 /*
- * src/physics/scene.hpp
+ * src/gl/vector-print.hpp
  * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
  *
  * This program is free software: you can redistribute it and/or
@@ -15,36 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef H_OBJECTS_HPP
-#define H_OBJECTS_HPP
+#ifndef H_VECTOR_PRINT_HPP
+#define H_VECTOR_PRINT_HPP
 
-#include "../gl/abstract-scene.hpp"
+#include <iostream>
+
+#include "vector.hpp"
 
 namespace mn {
 
-namespace physics {
+namespace gl {
 
-struct Object;
-
-struct Scene : public gl::AbstractScene {
-	Scene(Object *theObjects) : objects(theObjects) { }
-	~Scene();
-
-	void initializeGL();
-	void drawScene(const gl::Widget &gl);
-	void updateState(unsigned ticks, float dt);
-	void save(std::ostream &out) throw(std::ios_base::failure);
-
-private:
-	Scene();
-	Scene(const Scene &);
-	void operator=(const Scene &);
-
-	void updateStateOnce(float dt);
-	void updatePointAll();
-
-	Object *objects;
-};
+template<class T>
+std::ostream &operator<<(std::ostream &out, const Vector<T> &v) {
+	return out << v.x << ' ' << v.y << ' ' << v.z;
+}
 
 }
 

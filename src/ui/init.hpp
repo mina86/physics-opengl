@@ -1,13 +1,15 @@
 #ifndef H_MAIN_HPP
 #define H_MAIN_HPP
 
+#include "../gl/config.hpp"
+
 struct QWidget;
 
 namespace mn {
 
 namespace ui {
 
-extern int initialize(int argc, char **argv, QWidget *&window);
+extern QWidget *createMainWindow(gl::Configuration config);
 
 }
 
