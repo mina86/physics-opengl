@@ -16,7 +16,7 @@ namespace mn {
 namespace ui {
 
 QWidget *createMainWindow(gl::Configuration config) {
-	QMainWindow *mainWindow = new MainWindow(config);
+	MainWindow *mainWindow = new MainWindow(config);
 
 	QDockWidget *dockPlayer =
 			new QDockWidget(QObject::tr("Player controls"), mainWindow);
@@ -29,7 +29,7 @@ QWidget *createMainWindow(gl::Configuration config) {
 	ui::GLPane *pane = new ui::GLPane(config);
 
 	mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
-	mainWindow->setCentralWidget(pane);
+	mainWindow->setPane(pane);
 
 	QObject::connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
 	                 pane->gl, SLOT(updateState(uint, float)));
