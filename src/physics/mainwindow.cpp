@@ -1,34 +1,67 @@
+/*
+ * src/physics/mainwindow.cpp
+ * Copyright 2010 by Michal Nazarewicz <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
+ *
+ * This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include "mainwindow.hpp"
-#include "ui_mainwindow.h"
+#include "scene.hpp"
+
 #include "../ui/dialogs/settingsdialog.hpp"
+#include "../ui/glpane.hpp"
+#include "../ui/playercontrolwidget.hpp"
+#include "../ui/init.hpp"
+
 #include "../gl/abstract-scene.hpp"
+#include "../gl/glwidget.hpp"
 #include "../gl/glwidget.hpp"
 
 #include <fstream>
 
+#include <QtGui>
 #include <QFileDialog>
 #include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent) :
-		QMainWindow(parent),
-		ui(new Ui::MainWindow)
-{
-	ui->setupUi(this);
-	initActions();
-}
+MainWindow::MainWindow(mn::gl::Configuration theConfig, QWidget *parent)
+	: QMainWindow(parent), config(theConfig),
+	  pane(new mn::ui::GLPane(theConfig)) {
 
-MainWindow::MainWindow(mn::gl::Configuration &config) :
-		QMainWindow(0),
-		config(config),
-		ui(new Ui::MainWindow)
-{
-	ui->setupUi(this);
-	initActions();
-}
+	ui.setupUi(this);
 
-MainWindow::~MainWindow()
-{
-	delete ui;
+	setCentralWidget(pane);
+
+	QDockWidget *dockPlayer = new QDockWidget(tr("Player controls"), this);
+	dockPlayer->setAllowedAreas(Qt::TopDockWidgetArea |
+	                            Qt::BottomDockWidgetArea);
+
+	PlayerControlWidget *pcw = new PlayerControlWidget(dockPlayer);
+	dockPlayer->setWidget(pcw);
+
+	addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
+
+	initActions();
+
+	connect(pane->gl, SIGNAL(sceneChanged()),
+	        this, SLOT(onWidgetSceneChanged()));
+	connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
+	        pane->gl, SLOT(updateState(uint, float)));
+	connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
+	        pane->gl, SLOT(updateGL()));
+	/* XXX This should go away... */
+	connect(pane->gl, SIGNAL(needRepaint()),
+	        pane->gl, SLOT(updateGL()));
 }
 
 void MainWindow::changeEvent(QEvent *e)
@@ -36,7 +69,7 @@ void MainWindow::changeEvent(QEvent *e)
 	QMainWindow::changeEvent(e);
 	switch (e->type()) {
 	case QEvent::LanguageChange:
-		ui->retranslateUi(this);
+		ui.retranslateUi(this);
 		break;
 	default:
 		break;
@@ -49,23 +82,36 @@ void MainWindow::openSettingsDialog()
 	settingsDialog->show();
 }
 
+static bool fileDialog(QWidget *parent, bool save, QString &filename) {
+	QStringList filters;
+	filters << QWidget::tr("Scene files (*.%1)").arg(mn::gl::AbstractScene::extension)
+			<< QWidget::tr("Any file (*)");
+
+	QFileDialog dialog(parent);
+	dialog.setAcceptMode(save ? QFileDialog::AcceptSave
+	                          : QFileDialog::AcceptOpen);
+	if (save) {
+		dialog.setConfirmOverwrite(true);
+	}
+	dialog.setDefaultSuffix(mn::gl::AbstractScene::extension);
+	dialog.setFileMode(save ? QFileDialog::AnyFile
+	                        : QFileDialog::ExistingFile);
+	dialog.setNameFilters(filters);
+	dialog.setWindowTitle(save ? QWidget::tr("Save Scene")
+	                           : QWidget::tr("Load Scene"));
+
+	if (dialog.exec() == QDialog::Rejected) {
+		return false;
+	}
+
+	filename = dialog.selectedFiles().front();
+	return true;
+}
+
 void MainWindow::load()
 {
-	QStringList filters;
-	filters << tr("Scene files (*.%1)").arg(mn::gl::AbstractScene::extension)
-			<< tr("Any file (*)");
-
-	QFileDialog dialog(this);
-	dialog.setAcceptMode(QFileDialog::AcceptOpen);
-	dialog.setDefaultSuffix(mn::gl::AbstractScene::extension);
-	dialog.setFileMode(QFileDialog::ExistingFile);
-	dialog.setNameFilters(filters);
-	dialog.setWindowTitle(tr("Load Scene"));
-	if (dialog.exec() == QDialog::Rejected)
-		return;
-
-	QString fileName = dialog.selectedFiles().front();
-	if (fileName.isEmpty()) {
+	QString fileName;
+	if (!fileDialog(this, false, fileName)) {
 		return;
 	}
 
@@ -96,22 +142,8 @@ void MainWindow::save()
 		return;
 	}
 
-	QStringList filters;
-	filters << tr("Scene files (*.%1)").arg(mn::gl::AbstractScene::extension)
-			<< tr("Any file (*)");
-
-	QFileDialog dialog(this);
-	dialog.setAcceptMode(QFileDialog::AcceptSave);
-	dialog.setConfirmOverwrite(true);
-	dialog.setDefaultSuffix(mn::gl::AbstractScene::extension);
-	dialog.setFileMode(QFileDialog::AnyFile);
-	dialog.setNameFilters(filters);
-	dialog.setWindowTitle(tr("Save Scene"));
-	if (dialog.exec() == QDialog::Rejected)
-		return;
-
-	QString fileName = dialog.selectedFiles().front();
-	if (fileName.isEmpty()) {
+	QString fileName;
+	if (!fileDialog(this, true, fileName)) {
 		return;
 	}
 
@@ -127,7 +159,7 @@ void MainWindow::save()
 
 void MainWindow::initActions()
 {
-	fileMenu = ui->menubar->addMenu(tr("&File", "menu"));
+	fileMenu = ui.menubar->addMenu(tr("&File", "menu"));
 
 	quitAction = new QAction(tr("&Quit", "quit app"), this);
 	quitAction->setShortcut(Qt::CTRL + Qt::Key_Q);
@@ -162,5 +194,17 @@ void MainWindow::initActions()
 
 void MainWindow::onWidgetSceneChanged()
 {
-	saveAction->setEnabled(pane && pane->gl && pane->gl->getScene());
+	saveAction->setEnabled(pane->gl->getScene());
+}
+
+namespace mn {
+
+namespace ui {
+
+QWidget *createMainWindow(gl::Configuration config) {
+	return new MainWindow(config);
+}
+
+}
+
 }
