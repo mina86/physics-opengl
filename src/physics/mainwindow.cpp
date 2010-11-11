@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 		ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	prepare();
+	initActions();
 }
 
 MainWindow::MainWindow(mn::gl::Configuration &config) :
@@ -24,7 +24,6 @@ MainWindow::MainWindow(mn::gl::Configuration &config) :
 {
 	ui->setupUi(this);
 	initActions();
-	prepare();
 }
 
 MainWindow::~MainWindow()
@@ -44,11 +43,6 @@ void MainWindow::changeEvent(QEvent *e)
 	}
 }
 
-void MainWindow::prepare()
-{
-	connect(ui->action_Settings, SIGNAL(activated()), this, SLOT(openSettingsDialog()));
-}
-
 void MainWindow::openSettingsDialog()
 {
 	SettingsDialog *settingsDialog = new SettingsDialog(this, config);
@@ -57,7 +51,20 @@ void MainWindow::openSettingsDialog()
 
 void MainWindow::load()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, tr("Load Scene"), "", tr("Scene Files (*.%1)").arg(mn::gl::AbstractScene::extension));
+	QStringList filters;
+	filters << tr("Scene files (*.%1)").arg(mn::gl::AbstractScene::extension)
+			<< tr("Any file (*)");
+
+	QFileDialog dialog(this);
+	dialog.setAcceptMode(QFileDialog::AcceptOpen);
+	dialog.setDefaultSuffix(mn::gl::AbstractScene::extension);
+	dialog.setFileMode(QFileDialog::ExistingFile);
+	dialog.setNameFilters(filters);
+	dialog.setWindowTitle(tr("Load Scene"));
+	if (dialog.exec() == QDialog::Rejected)
+		return;
+
+	QString fileName = dialog.selectedFiles().front();
 	if (fileName.isEmpty()) {
 		return;
 	}
@@ -89,7 +96,21 @@ void MainWindow::save()
 		return;
 	}
 
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Scene"), "", tr("Scene Files (*.%1)").arg(mn::gl::AbstractScene::extension));
+	QStringList filters;
+	filters << tr("Scene files (*.%1)").arg(mn::gl::AbstractScene::extension)
+			<< tr("Any file (*)");
+
+	QFileDialog dialog(this);
+	dialog.setAcceptMode(QFileDialog::AcceptSave);
+	dialog.setConfirmOverwrite(true);
+	dialog.setDefaultSuffix(mn::gl::AbstractScene::extension);
+	dialog.setFileMode(QFileDialog::AnyFile);
+	dialog.setNameFilters(filters);
+	dialog.setWindowTitle(tr("Save Scene"));
+	if (dialog.exec() == QDialog::Rejected)
+		return;
+
+	QString fileName = dialog.selectedFiles().front();
 	if (fileName.isEmpty()) {
 		return;
 	}
@@ -106,24 +127,26 @@ void MainWindow::save()
 
 void MainWindow::initActions()
 {
-	QMenu *fileMenu = ui->menubar->addMenu(tr("&File", "menu"));
+	fileMenu = ui->menubar->addMenu(tr("&File", "menu"));
 
-	QAction *exitAction = new QAction(tr("E&xit", "exit app"), this);
-	connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+	quitAction = new QAction(tr("&Quit", "quit app"), this);
+	quitAction->setShortcut(Qt::CTRL + Qt::Key_Q);
+	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
 
-	QAction *saveAction = new QAction(this);
+	saveAction = new QAction(this);
 	saveAction->setText(tr("&Save", "action to save file"));
 	saveAction->setToolTip("Save scene file");
 	saveAction->setShortcut(QKeySequence::Save);
+	saveAction->setEnabled(false);
 	connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
-	QAction *loadAction = new QAction(this);
+	loadAction = new QAction(this);
 	loadAction->setText(tr("&Load", "action to load file"));
 	loadAction->setToolTip("Open scene file");
 	loadAction->setShortcut(QKeySequence::Open);
 	connect(loadAction, SIGNAL(triggered()), this, SLOT(load()));
 
-	QAction *settingsAction = new QAction(tr("Settings", "menu"), this);
+	settingsAction = new QAction(tr("Settings", "menu"), this);
 	settingsAction->setToolTip(tr("Change settings of simulation"));
 	connect(settingsAction, SIGNAL(triggered()), this, SLOT(openSettingsDialog()));
 
@@ -132,5 +155,12 @@ void MainWindow::initActions()
 	fileMenu->addAction(loadAction);
 	fileMenu->addAction(saveAction);
 	fileMenu->addSeparator();
-	fileMenu->addAction(exitAction);
+	fileMenu->addAction(quitAction);
+
+	onWidgetSceneChanged();
+}
+
+void MainWindow::onWidgetSceneChanged()
+{
+	saveAction->setEnabled(pane && pane->gl && pane->gl->getScene());
 }

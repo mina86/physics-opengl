@@ -127,6 +127,7 @@ struct Widget : public QGLWidget {
 
 	void setScene(AbstractScene::ptr theScene) {
 		scene = theScene;
+		emit sceneChanged();
 	}
 	AbstractScene *getScene() {
 		return scene.get();
@@ -160,6 +161,7 @@ private slots:
 	void configChanged();
 
 signals:
+	void sceneChanged();
 	void needRepaint();
 	void hrotationChanged(int h);
 	void vrotationChanged(int v);
