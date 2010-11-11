@@ -1,6 +1,6 @@
 /*
- * src/physics/mainwindow.cpp
- * Copyright 2010 by Michal Nazarewicz <mina86@mina86.com>
+ * src/ui/mainwindow.cpp
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
  *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
@@ -17,16 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mainwindow.hpp"
-#include "scene.hpp"
-
-#include "../ui/dialogs/settingsdialog.hpp"
-#include "../ui/glpane.hpp"
-#include "../ui/playercontrolwidget.hpp"
-#include "../ui/init.hpp"
 
 #include "../gl/abstract-scene.hpp"
 #include "../gl/glwidget.hpp"
 #include "../gl/glwidget.hpp"
+
+#include "dialogs/settingsdialog.hpp"
+#include "playercontrolwidget.hpp"
 
 #include <fstream>
 
@@ -34,9 +31,11 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-MainWindow::MainWindow(mn::gl::Configuration theConfig, QWidget *parent)
+namespace ui {
+
+MainWindow::MainWindow(gl::Configuration theConfig, QWidget *parent)
 	: QMainWindow(parent), config(theConfig),
-	  pane(new mn::ui::GLPane(theConfig)) {
+	  pane(new GLPane(theConfig)) {
 
 	ui.setupUi(this);
 
@@ -84,7 +83,7 @@ void MainWindow::openSettingsDialog()
 
 static bool fileDialog(QWidget *parent, bool save, QString &filename) {
 	QStringList filters;
-	filters << QWidget::tr("Scene files (*.%1)").arg(mn::gl::AbstractScene::extension)
+	filters << QWidget::tr("Scene files (*.%1)").arg(gl::AbstractScene::extension)
 			<< QWidget::tr("Any file (*)");
 
 	QFileDialog dialog(parent);
@@ -93,7 +92,7 @@ static bool fileDialog(QWidget *parent, bool save, QString &filename) {
 	if (save) {
 		dialog.setConfirmOverwrite(true);
 	}
-	dialog.setDefaultSuffix(mn::gl::AbstractScene::extension);
+	dialog.setDefaultSuffix(gl::AbstractScene::extension);
 	dialog.setFileMode(save ? QFileDialog::AnyFile
 	                        : QFileDialog::ExistingFile);
 	dialog.setNameFilters(filters);
@@ -122,10 +121,10 @@ void MainWindow::load()
 		return;
 	}
 
-	mn::gl::AbstractScene::ptr scene;
+	gl::AbstractScene::ptr scene;
 	try {
-		scene = mn::gl::AbstractScene::load(fileStream);
-	} catch (const mn::lib::Lexer::error &e) {
+		scene = gl::AbstractScene::load(fileStream);
+	} catch (const lib::Lexer::error &e) {
 		QMessageBox::critical(this, tr("Error reading file"),
 		                      tr("Parser returned error:\n%1:%2:%3:\n\t%4").arg(fileName).arg(e.location.begin.line).arg(e.location.begin.column).arg(e.what()));
 		return;
@@ -136,7 +135,7 @@ void MainWindow::load()
 
 void MainWindow::save()
 {
-	mn::gl::AbstractScene *sc = pane->gl->getScene();
+	gl::AbstractScene *sc = pane->gl->getScene();
 	if (!sc) {
 		QMessageBox::warning(this, tr("No scene to save!"), tr("There's no scene loaded, so there's nothing to save."), QMessageBox::Cancel);
 		return;
@@ -195,16 +194,6 @@ void MainWindow::initActions()
 void MainWindow::onWidgetSceneChanged()
 {
 	saveAction->setEnabled(pane->gl->getScene());
-}
-
-namespace mn {
-
-namespace ui {
-
-QWidget *createMainWindow(gl::Configuration config) {
-	return new MainWindow(config);
-}
-
 }
 
 }

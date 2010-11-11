@@ -1,7 +1,7 @@
 /*
  * src/gl/glwidget.hpp
- * Copyright 2010 by Michal Nazarewicz <mina86@mina86.com>
- *               and Maciej Swietochowski
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -28,8 +28,6 @@
 #include "vector.hpp"
 #include "config.hpp"
 #include "abstract-scene.hpp"
-
-namespace mn {
 
 namespace gl {
 
@@ -206,8 +204,6 @@ private:
 
 	Q_OBJECT
 };
-
-}
 
 }
 

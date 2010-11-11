@@ -1,6 +1,7 @@
 /*
  * src/gl/color.hpp
- * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,15 +19,11 @@
 #ifndef H_COLOR_HPP
 #define H_COLOR_HPP
 
-namespace mn {
-
 namespace gl {
-
 
 struct Color {
 	float r, g, b;
 };
-
 
 inline Color color() {
 	Color c;
@@ -48,9 +45,6 @@ inline Color color(unsigned long color) {
 	c.g = ((color >>  8) & 255) / 255.0f;
 	c.b = ( color        & 255) / 255.0f;
 	return c;
-}
-
-
 }
 
 }

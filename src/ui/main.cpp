@@ -1,5 +1,3 @@
-#include "init.hpp"
-
 #include <stdio.h>
 #include <unistd.h>
 #include <getopt.h>
@@ -13,14 +11,16 @@
 #include "../gl/text3d.hpp"
 #include "../gl/texture.hpp"
 
+#include "mainwindow.hpp"
+
 int main(int argc, char **argv) {
-	mn::lib::initSinTable();
+	lib::initSinTable();
 
 	QApplication app(argc, argv);
 	int quality = 3, opt;
 	QWidget *window;
 
-	mn::gl::Configuration config;
+	gl::Configuration config;
 
 	static const struct option longopts[] = {
 		{ "very-low",    0, 0, '0' },
@@ -65,12 +65,12 @@ int main(int argc, char **argv) {
 
 	switch (quality) {
 	case -1:
-		mn::gl::Texture::useNearest = true;
+		gl::Texture::useNearest = true;
 		quality = 0;
 		/* FALL THROUGH */
-	case  0: mn::gl::Texture::filename_suffix = ".lq.sgi"; break;
-	case  1: mn::gl::Texture::filename_suffix = ".mq.sgi"; break;
-	case  2: mn::gl::Texture::filename_suffix = ".hq.sgi"; break;
+	case  0: gl::Texture::filename_suffix = ".lq.sgi"; break;
+	case  1: gl::Texture::filename_suffix = ".mq.sgi"; break;
+	case  2: gl::Texture::filename_suffix = ".hq.sgi"; break;
 	}
 
 	try {
@@ -81,8 +81,12 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	window = mn::ui::createMainWindow(config);
+	window = new ui::MainWindow(config);
 	window->show();
 
-	return app.exec();
+	int ret = app.exec();
+
+	delete window;
+
+	return ret;
 }

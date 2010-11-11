@@ -1,7 +1,7 @@
 /*
  * src/gl/glwidget.cpp
- * Copyright 2010 by Michal Nazarewicz <mina86@mina86.com>
- *               and Maciej Swietochowski
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -27,8 +27,6 @@
 
 #include "text3d.hpp"
 #include "texture.hpp"
-
-namespace mn {
 
 namespace gl {
 
@@ -452,8 +450,6 @@ void Widget::mouseMoveEvent(QMouseEvent *event) {
 	}
 
 	lastPos = event->pos();
-}
-
 }
 
 }

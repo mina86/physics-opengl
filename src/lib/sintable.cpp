@@ -1,6 +1,7 @@
 /*
  * src/lib/sintable.cpp
- * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -21,8 +22,6 @@
 
 #include "mconst.h"
 
-namespace mn {
-
 namespace lib {
 
 #if SINTABLE_OPT_SPACE
@@ -35,8 +34,6 @@ void initSinTable(void) {
 	for (unsigned i = 0; i < sizeof sinTable / sizeof *sinTable; ++i) {
 		sinTable[i] = std::sin(i * MN_PI_180);
 	}
-}
-
 }
 
 }

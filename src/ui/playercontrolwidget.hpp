@@ -1,22 +1,35 @@
-#ifndef PLAYERCONTROLWIDGET_HPP
-#define PLAYERCONTROLWIDGET_HPP
+/*
+ * src/ui/playercontrolwidget.hpp
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
+ *
+ * This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#ifndef H_PLAYERCONTROLWIDGET_HPP
+#define H_PLAYERCONTROLWIDGET_HPP
 
 #define FLOATCOMPAREEPSILON 0.0001
 
 #include <QWidget>
 #include <QTimer>
 
-namespace Ui {
-	class PlayerControlWidget;
-}
+#include "ui_playercontrolwidget.h"
 
-class PlayerControlWidget : public QWidget
-{
-	Q_OBJECT
+namespace ui {
 
-public:
+struct PlayerControlWidget : public QWidget {
 	explicit PlayerControlWidget(QWidget *parent = 0);
-	~PlayerControlWidget();
 
 public slots:
 	void play();
@@ -51,7 +64,11 @@ protected slots:
 	void playNextFrame();
 
 private:
-	Ui::PlayerControlWidget *ui;
+	Ui::PlayerControlWidget ui;
+
+	Q_OBJECT
 };
 
-#endif // PLAYERCONTROLWIDGET_HPP
+}
+
+#endif

@@ -1,6 +1,7 @@
 /*
  * src/gl/vector.hpp
- * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,8 +20,6 @@
 #define H_VECTOR_HPP
 
 #include <cmath>
-
-namespace mn {
 
 namespace gl {
 
@@ -85,8 +84,6 @@ template<class T>
 inline Vector<T> operator*(T r, Vector<T> a) { return a *= r; }
 template<class T>
 inline Vector<T> operator/(Vector<T> a, T r) { return a /= r; }
-
-}
 
 }
 

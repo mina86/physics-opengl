@@ -25,8 +25,6 @@
 
 struct QSlider;
 
-namespace mn {
-
 namespace gl {
 
 struct Widget;
@@ -47,8 +45,6 @@ private:
 
 	Q_OBJECT
 };
-
-}
 
 }
 

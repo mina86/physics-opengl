@@ -1,6 +1,7 @@
 /*
  * src/lib/lexer.cpp
- * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -20,8 +21,6 @@
 #include <ctype.h>
 
 #include <fstream>
-
-namespace mn {
 
 namespace lib {
 
@@ -240,8 +239,6 @@ std::string Lexer::error::msg(const char *msg1, const std::string &msg2) {
 
 std::string Lexer::error::msg(const char *msg1, const char *msg2) {
 	return message(msg1, strlen(msg1), msg2, strlen(msg2));
-}
-
 }
 
 }

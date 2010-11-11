@@ -1,6 +1,7 @@
 /*
  * src/physics/scene.cpp
- * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,8 +19,6 @@
 #include "scene.hpp"
 
 #include "object.hpp"
-
-namespace mn {
 
 namespace physics {
 
@@ -78,8 +77,6 @@ void Scene::save(std::ostream &out) throw(std::ios_base::failure) {
 	if (!out) {
 		throw std::ios_base::failure("error saving file");
 	}
-}
-
 }
 
 }

@@ -1,6 +1,7 @@
 /*
  * src/gl/texture.cpp
- * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,8 +24,6 @@
 #include <time.h>
 
 #include <fstream>
-
-namespace mn {
 
 namespace gl {
 
@@ -315,8 +314,6 @@ GLuint Texture::stars() {
 		state = FAILED;
 	}
 	return id;
-}
-
 }
 
 }

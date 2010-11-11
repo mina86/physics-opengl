@@ -1,6 +1,7 @@
 /*
  * src/physics/object.cpp
- * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -34,8 +35,6 @@
 #include "../gl/config.hpp"
 #include "../gl/glwidget.hpp"
 #include "../gl/vector-print.hpp"
-
-namespace mn {
 
 namespace physics {
 
@@ -152,8 +151,6 @@ void Object::save(std::ostream &out) throw(std::ios_base::failure) {
 		out << " light";
 	}
 	out << '\n';
-}
-
 }
 
 }

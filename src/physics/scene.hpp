@@ -1,6 +1,7 @@
 /*
  * src/physics/scene.hpp
- * Copyright 2010 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,8 +20,6 @@
 #define H_OBJECTS_HPP
 
 #include "../gl/abstract-scene.hpp"
-
-namespace mn {
 
 namespace physics {
 
@@ -45,8 +44,6 @@ private:
 
 	Object *objects;
 };
-
-}
 
 }
 

@@ -1,6 +1,6 @@
 /*
- * src/physics/mainwindow.hpp
- * Copyright 2010 by Michal Nazarewicz <mina86@mina86.com>
+ * src/ui/mainwindow.hpp
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
  *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
@@ -21,22 +21,19 @@
 
 #include <QMainWindow>
 
-#include "../ui/glpane.hpp"
-
 #include "../gl/config.hpp"
 #include "../gl/glwidget.hpp"
 
 #include "ui_mainwindow.h"
+#include "glpane.hpp"
 
-class MainWindow : public QMainWindow
-{
-	Q_OBJECT
+namespace ui {
 
-public:
-	MainWindow(mn::gl::Configuration theConfig, QWidget *parent = 0);
+struct MainWindow : public QMainWindow {
+	MainWindow(gl::Configuration theConfig, QWidget *parent = 0);
 
-	mn::gl::Configuration config;
-	mn::ui::GLPane *const pane;
+	gl::Configuration config;
+	GLPane *const pane;
 
 public slots:
 	void openSettingsDialog();
@@ -62,6 +59,10 @@ private:
 	QAction *loadAction;
 	QAction *quitAction;
 	QAction *settingsAction;
+
+	Q_OBJECT
 };
+
+}
 
 #endif

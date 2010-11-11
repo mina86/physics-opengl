@@ -24,8 +24,6 @@
 #include "../gl/glwidget.hpp"
 #include "../gl/config.hpp"
 
-namespace mn {
-
 namespace ui {
 
 GLPane::GLPane(gl::Configuration theConfig, QWidget *parent)
@@ -65,8 +63,6 @@ GLPane::GLPane(gl::Configuration theConfig, QWidget *parent)
 
 GLPane::~GLPane() {
 	delete gl;
-}
-
 }
 
 }

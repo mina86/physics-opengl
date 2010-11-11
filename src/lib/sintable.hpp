@@ -1,6 +1,7 @@
 /*
  * src/lib/sintable.hpp
- * Copyright 2009 by Michal Nazarewicz (mina86/AT/mina86/DOT/com)
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,8 +18,6 @@
  */
 #ifndef H_SINTABLE_HPP
 #define H_SINTABLE_HPP
-
-namespace mn {
 
 namespace lib {
 
@@ -47,8 +46,6 @@ inline float sin(int arg) {
 
 inline float cos(int arg) {
 	return sin(arg + 90);
-}
-
 }
 
 }
