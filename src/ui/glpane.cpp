@@ -1,3 +1,21 @@
+/*
+ * src/ui/glpane.cpp
+ * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
+ *               and Maciej Swietochowski <m@swietochowski.eu>
+ *
+ * This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 #include "glpane.hpp"
 
 #include <QGridLayout>
@@ -11,9 +29,7 @@ namespace mn {
 namespace ui {
 
 GLPane::GLPane(gl::Configuration theConfig, QWidget *parent)
-	: QWidget(parent) {
-	gl = new gl::Widget(theConfig);
-
+	: QWidget(parent), gl(new gl::Widget(theConfig)) {
 	vslider = new QSlider(Qt::Vertical);
 	vslider->setSingleStep(gl::Widget::ticks_per_angle / 10);
 	vslider->setPageStep(30 * gl::Widget::ticks_per_angle);
@@ -45,6 +61,10 @@ GLPane::GLPane(gl::Configuration theConfig, QWidget *parent)
 	layout->addWidget(vslider, 0, 1);
 	layout->addWidget(hslider, 1, 0);
 	setLayout(layout);
+}
+
+GLPane::~GLPane() {
+	delete gl;
 }
 
 }
