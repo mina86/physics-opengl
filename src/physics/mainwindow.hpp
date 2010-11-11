@@ -26,6 +26,8 @@ public slots:
 		pane = thePane;
 		setCentralWidget(pane);
 	}
+	void load();
+	void save();
 
 protected:
 	void changeEvent(QEvent *e);
@@ -35,6 +37,7 @@ protected:
 
 private:
 	Ui::MainWindow *ui;
+	void initActions();
 };
 
 #endif // MAINWINDOW_HPP

@@ -1,7 +1,7 @@
 TEMPLATE = app
 DEPENDPATH += gl ui lib $$TARGET
 
-QT += opengl
+QT += opengl gui
 DESTDIR = ../dist
 #MOC_DIR = ../objs
 OBJECTS_DIR = ../objs
