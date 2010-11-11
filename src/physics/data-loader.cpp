@@ -51,7 +51,7 @@ static void autoVelocity(physics::Object &object, const std::string &name) {
 	object.setVelocity(object.getVelocity() * sqrt(V2));
 }
 
-AbstractScene::ptr load(std::istream &in)
+AbstractScene::ptr AbstractScene::load(std::istream &in)
 	throw(std::ios_base::failure, lib::Lexer::error) {
 	static lib::Lexer::Keywords keywords;
 
@@ -121,7 +121,9 @@ AbstractScene::ptr load(std::istream &in)
 				state = S_FACTOR;
 				break;
 			}
-			ACCEPT(T_STRING);
+			if (token != T_STRING) {
+				goto error;
+			}
 			goto s_cont_string;
 
 		case S_VELOCITY_DONE:

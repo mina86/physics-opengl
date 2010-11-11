@@ -39,54 +39,44 @@ void Scene::initializeGL() {
 
 void Scene::drawScene(const gl::Widget &gl) {
 	Object *o = objects;
-	if (o) {
-		do {
-			o->draw(gl);
-			o = o->getNext();
-		} while (o != objects);
-	}
+	do {
+		o->draw(gl);
+		o = o->getNext();
+	} while (o != objects);
 }
 
 void Scene::updateState(unsigned ticks, float dt) {
-	if (objects) {
-		for (; ticks; --ticks) {
-			updateStateOnce(dt);
-			updatePointAll();
-		}
+	for (; ticks; --ticks) {
+		updateStateOnce(dt);
+		updatePointAll();
 	}
 }
 
 void Scene::updateStateOnce(float dt) {
 	Object *o = objects;
-	if (o) {
-		do {
-			o->tick(dt);
-			o = o->getNext();
-		} while (o != objects);
-	}
+	do {
+		o->tick(dt);
+		o = o->getNext();
+	} while (o != objects);
 }
 
 void Scene::updatePointAll() {
 	Object *o = objects;
-	if (o) {
-		do {
-			o->updatePoint();
-			o = o->getNext();
-		} while (o != objects);
-	}
+	do {
+		o->updatePoint();
+		o = o->getNext();
+	} while (o != objects);
 }
 
 void Scene::save(std::ostream &out) throw(std::ios_base::failure) {
 	Object *o = objects;
-	if (o) {
-		do {
-			o->save(out);
-			o = o->getNext();
-		} while (o != objects);
+	do {
+		o->save(out);
+		o = o->getNext();
+	} while (o != objects);
 
-		if (!out) {
-			throw std::ios_base::failure("error saving file");
-		}
+	if (!out) {
+		throw std::ios_base::failure("error saving file");
 	}
 }
 

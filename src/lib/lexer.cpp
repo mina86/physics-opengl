@@ -162,7 +162,7 @@ unsigned Lexer::nextToken(Value &value, Location &location) {
 		}
 
 		str += '.';
-		getdigits(str, ch);
+		ch = getdigits(str, ch);
 	}
 
 	/* Exp */
@@ -178,7 +178,7 @@ unsigned Lexer::nextToken(Value &value, Location &location) {
 		if (isdigit(ch)) {
 			str += 'e';
 			str += (char)sgn;
-			getdigits(str, ch);
+			ch = getdigits(str, ch);
 		}
 	}
 

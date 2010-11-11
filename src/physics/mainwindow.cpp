@@ -58,24 +58,49 @@ void MainWindow::openSettingsDialog()
 void MainWindow::load()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Load Scene"), "", tr("Scene Files (*.%1)").arg(mn::gl::AbstractScene::extension));
-	std::ifstream fileStream;
-	fileStream.open(fileName.toStdString().c_str());
-	QMessageBox::warning(this, tr("Not implemented"), tr("Not implemented yet"));
-	//pane->gl->setScene(mn::gl::AbstractScene::load(fileStream));
+	if (fileName.isEmpty()) {
+		return;
+	}
+
+	std::ifstream fileStream(fileName.toStdString().c_str());
+	if (!fileStream) {
+		QMessageBox::critical(this, tr("Error reading file"),
+		                      tr("Unable to open file %1").arg(fileName));
+		return;
+	}
+
+	mn::gl::AbstractScene::ptr scene;
+	try {
+		scene = mn::gl::AbstractScene::load(fileStream);
+	} catch (const mn::lib::Lexer::error &e) {
+		QMessageBox::critical(this, tr("Error reading file"),
+		                      tr("Parser returned error:\n%1:%2:%3:\n\t%4").arg(fileName).arg(e.location.begin.line).arg(e.location.begin.column).arg(e.what()));
+		return;
+	}
+
+	pane->gl->setScene(scene);
 }
 
 void MainWindow::save()
 {
 	mn::gl::AbstractScene *sc = pane->gl->getScene();
-	if (!sc)
-	{
+	if (!sc) {
 		QMessageBox::warning(this, tr("No scene to save!"), tr("There's no scene loaded, so there's nothing to save."), QMessageBox::Cancel);
 		return;
 	}
 
 	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Scene"), "", tr("Scene Files (*.%1)").arg(mn::gl::AbstractScene::extension));
-	std::ofstream fileStream;
-	fileStream.open(fileName.toStdString().c_str());
+	if (fileName.isEmpty()) {
+		return;
+	}
+
+	std::ofstream fileStream(fileName.toStdString().c_str());
+	if (!fileStream) {
+		QMessageBox::critical(this, tr("Error reading file"),
+		                      tr("Unable to open file %1").arg(fileName));
+		return;
+	}
+
 	sc->save(fileStream);
 }
 
