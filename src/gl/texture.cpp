@@ -21,7 +21,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include <fstream>
 
@@ -289,7 +288,6 @@ GLuint Texture::stars() {
 
 		unsigned char *data = new unsigned char[size2];
 		memset(data, 0, size2);
-		srand(time(0));
 
 		unsigned count = 2 * size;
 		do {

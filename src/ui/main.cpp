@@ -6,6 +6,7 @@
 #include <QDesktopWidget>
 
 #include "../lib/sintable.hpp"
+#include "../lib/rand.hpp"
 
 #include "../gl/config.hpp"
 #include "../gl/text3d.hpp"
@@ -15,6 +16,7 @@
 
 int main(int argc, char **argv) {
 	lib::initSinTable();
+	lib::initRand();
 
 	QApplication app(argc, argv);
 	int quality = 3, opt;
