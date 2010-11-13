@@ -22,7 +22,7 @@
 
 namespace graph {
 
-void Graph::set(unsigned theN, edge_type *theEdges, Node *theNodes) {
+void Graph::set(unsigned theN, edge_type *theEdges, node_type *theNodes) {
 	if (!theN) {
 		delete nodes_vec;
 		delete edges_vec;
@@ -35,9 +35,9 @@ void Graph::set(unsigned theN, edge_type *theEdges, Node *theNodes) {
 	bool cleared = false;
 	if (theN != count) {
 		edge_type *e = new edge_type[edges(theN)];
-		Nodes *n;
+		node_type *n;
 		try {
-			count = new Nodes[theN];
+			count = new node_type[theN];
 		} catch (...) {
 			delete[] e;
 			throw;
@@ -52,40 +52,16 @@ void Graph::set(unsigned theN, edge_type *theEdges, Node *theNodes) {
 	}
 
 	if (theNodes) {
-		std::copy(theNodes, theNodes + theN, nodes_vec);
+		overwriteNodes(theNodes);
 	} else if (!cleared) {
-		std::fill(nodes_vec, nodes_vec + theN, Node());
+		std::fill(nodes_vec, nodes_vec + theN, node_type());
 	}
 
 	if (theEdges) {
-		std::copy(theEdges, theEdges + edges(theN), edges_vec);
+		overwriteEdges(theEdges);
 	} else if (!cleared) {
 		std::fill(edges_vec, edges_vec + edges(theN), edge_type());
 	}
-}
-
-edge_type Edges::e(unsigned from, unsigned to) const {
-	if (from >= n || to >= n || from == to) {
-		return edge_type();
-	}
-
-	if (from < to) {
-		std::swap(from, to);
-	}
-
-	return edges_vec[size(from) + to];
-}
-
-void Edges::e(unsigned from, unsigned to, const edge_type &v) {
-	if (from >= n || to >= n || from == to) {
-		return;
-	}
-
-	if (from < to) {
-		std::swap(from, to);
-	}
-
-	edges_vec[size(from) + to] = v;
 }
 
 }

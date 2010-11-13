@@ -16,12 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef H_GRAPH_HPP
+#define H_GRAPH_HPP
+
+#include <cstring>
+
+#include "../gl/vector.hpp"
+
 namespace graph {
 
-struct Node;
-
 struct Groph {
-	typedef bool edge_type;
+	typedef bool              edge_type;
+	typedef gl::Vector<float> node_type;
 
 	Graph() : count(), nodes_vec(), edges_vec() { }
 	explicit Edges(unsigned theN) : count(), nodes_vec(), edges_vec() {
@@ -35,9 +41,19 @@ struct Groph {
 		delete edges_vec;
 	}
 
-	void set(unsigned theN, Node *theNodes = 0, edge_type *theEdges = 0);
+	void set(unsigned theN, node_type *theNodes = 0, edge_type *theEdges = 0);
 	void set(const Edges &e) { set(e.n, e.edges, e.nodes); }
 	Edges &operator=(const Edges &e) { set(e); return *this; }
+
+	void overwriteNodes(const node_type *theNodes) {
+		std::memcpy(nodes_vec, theNodes, nodes() * sizeof *theNodes);
+	}
+	void overwriteEdges(const edge_type *theEdges) {
+		std::memcpy(edges_vec, theEdges, edges() * sizeof *theEdges);
+	}
+
+	void swapNodes(node_type *&theNodes) { std::swap(nodes_vec, theNodes); }
+	void swapEdges(edge_type *&theEdges) { std::swap(edges_vec, theEdges); }
 
 	void swap(Edges &e) {
 		std::swap(n, e.n);
@@ -49,15 +65,15 @@ struct Groph {
 	unsigned nodes() const { return n; }
 	bool     empty() const { return n == 0; }
 
-	/*
-	 * If x is invalid (>= nodes()) NULL is returned, no exception is
-	 * thrown.
-	 */
-	Node *n(unsigned x) {
-		return x >= nodes() ? 0 : nodes_vec[x];
+	/* No checking of v is done.  Beware! */
+	node_type &n(unsigned v) {
+		return nodes_vec[v];
 	}
-	const Node *n(unsigned x) const {
-		return x >= nodes() ? 0 : nodes_vec[x];
+	const node_type &n(unsigned v) const {
+		return nodes_vec[v];
+	}
+	void n(unsigned v, const node_type &val) {
+		nodes_vec[v] = val;
 	}
 
 	typedef edge_type       *nodes_iterator;
@@ -69,12 +85,26 @@ struct Groph {
 	nodes_const_iterator nodes_end()   const { return nodes_vec + nodes(); }
 
 	/*
-	 * Note that e(x, y) == e(y, x) and e(x, x) == edge_type().
-	 * Moreover, those methods do not throw exceptions or anything if
-	 * invalid node numbers (>= nodes()) are given.
+	 * Note that e(u, v) == e(v, u) and e(v, v) == edge_type().
+	 * Invalid indexes are likely to cause troubles, se make
+	 * sure u < edges() and v < edges().
 	 */
-	const edge_type &e(unsigned from, unsigned to) const;
-	void e(unsigned from, unsigned to, const edge_type &v) const;
+	edge_type e(unsigned u, unsigned v) const {
+		if (u == v) {
+			return edge_type();
+		} else if (from < to) {
+			std::swap(from, to);
+		}
+		return edges_vec[size(u) + v];
+	}
+	void e(unsigned u, unsigned v, const edge_type &val) {
+		if (u != v) {
+			if (u < v) {
+				std::swap(u, v);
+			}
+			edges_vec[size(u) + v] = val;
+		}
+	}
 
 	/*
 	 * To traverse all the edges knowing which nodes they lead from
@@ -100,7 +130,7 @@ struct Groph {
 
 private:
 	unsigned count;
-	Nodes *nodes_vec;
+	node_type *nodes_vec;
 	edge_type *edges_vec;
 
 	static unsigned edges(unsigned n) {
@@ -117,3 +147,5 @@ void swap(graph::Graph &e1, graph::Graph &e2) {
 }
 
 }
+
+#endif
