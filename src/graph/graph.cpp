@@ -18,50 +18,76 @@
  */
 #include "graph.hpp"
 
+#include <cstring>
+
+#include <algorithm>
+#include <stdexcept>
+
 #include "node.hpp"
 
 namespace graph {
 
-void Graph::set(unsigned theN, edge_type *theEdges, node_type *theNodes) {
+void Graph::init(unsigned theN) {
 	if (!theN) {
+		throw std::invalid_argument("empty graph");
+	}
+
+	count = theN;
+
+	nodes_vec = new node_type[nodes()];
+	try {
+		edges_vec = new edge_type[edges()];
+	}
+	catch (...) {
 		delete nodes_vec;
-		delete edges_vec;
-		count = 0;
-		nodes_vec = 0;
-		edges_vec = 0;
-		return;
-	}
-
-	bool cleared = false;
-	if (theN != count) {
-		edge_type *e = new edge_type[edges(theN)];
-		node_type *n;
-		try {
-			count = new node_type[theN];
-		} catch (...) {
-			delete[] e;
-			throw;
-		}
-
-		delete nodes_vec;
-		delete edges_vec;
-		count = theN;
-		nodes_vec = n;
-		edges_vec = e;
-		cleared = true;
-	}
-
-	if (theNodes) {
-		overwriteNodes(theNodes);
-	} else if (!cleared) {
-		std::fill(nodes_vec, nodes_vec + theN, node_type());
-	}
-
-	if (theEdges) {
-		overwriteEdges(theEdges);
-	} else if (!cleared) {
-		std::fill(edges_vec, edges_vec + edges(theN), edge_type());
+		throw;
 	}
 }
 
+void Graph::check_size(const Graph &g) throw(std::invalid_argument) {
+	if (g.count != count) {
+		throw std::invalid_argument("graphs' size mismatch");
+	}
+}
+
+void Graph::set(const Graph &g) throw(std::invalid_argument) {
+	check_size(g);
+	setNodes(g.nodes_vec);
+	setEdges(g.edges_vec);
+}
+void Graph::setNodes(const Graph &g) throw(std::invalid_argument) {
+	check_size(g);
+	setNodes(g.nodes_vec);
+}
+void Graph::setEdges(const Graph &g) throw(std::invalid_argument) {
+	check_size(g);
+	setNodes(g.edges_vec);
+}
+
+void Graph::swap(Graph &g) throw(std::invalid_argument) {
+	check_size(g);
+	swapNodes(g.nodes_vec);
+	swapEdges(g.edges_vec);
+}
+void Graph::swapNodes(Graph &g) throw(std::invalid_argument) {
+	check_size(g);
+	swapNodes(g.nodes_vec);
+}
+void Graph::swapEdges(Graph &g) throw(std::invalid_argument) {
+	check_size(g);
+	swapNodes(g.edges_vec);
+}
+
+void Graph::setNodes(const node_type *theNodes) {
+	std::memcpy(nodes_vec, theNodes, nodes() * sizeof *theNodes);
+}
+void Graph::setEdges(const edge_type *theEdges) {
+	std::memcpy(edges_vec, theEdges, edges() * sizeof *theEdges);
+}
+
+void Graph::swapNodes(node_type *&theNodes) {
+	std::swap(nodes_vec, theNodes);
+}
+void Graph::swapEdges(edge_type *&theEdges) {
+	std::swap(edges_vec, theEdges);
 }

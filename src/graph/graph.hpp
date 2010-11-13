@@ -19,51 +19,55 @@
 #ifndef H_GRAPH_HPP
 #define H_GRAPH_HPP
 
-#include <cstring>
-
 #include "../gl/vector.hpp"
 
 namespace graph {
 
-struct Groph {
+namespace std {
+
+class invalid_argument;
+class bad_alloc;
+
+}
+
+struct Graph {
 	typedef bool              edge_type;
 	typedef gl::Vector<float> node_type;
 
-	Graph() : count(), nodes_vec(), edges_vec() { }
-	explicit Edges(unsigned theN) : count(), nodes_vec(), edges_vec() {
-		set(theN);
+	explicit Graph(unsigned theN)
+		throw(std::invalid_argument, std::bad_alloc) {
+		init(theN);
 	}
-	Edges(const Edges &e) : count(), nodes_vec(), edges_vec() {
-		set(e.n, e.nodes_vec, e.edges_vec);
+	Graph(const Graph &g) {
+		init(g.count);
+		set(g);
 	}
-	~Edges() {
+	~Graph() {
 		delete nodes_vec;
 		delete edges_vec;
 	}
 
-	void set(unsigned theN, node_type *theNodes = 0, edge_type *theEdges = 0);
-	void set(const Edges &e) { set(e.n, e.edges, e.nodes); }
-	Edges &operator=(const Edges &e) { set(e); return *this; }
-
-	void overwriteNodes(const node_type *theNodes) {
-		std::memcpy(nodes_vec, theNodes, nodes() * sizeof *theNodes);
+	Graph &operator=(const Graph &g)  throw(std::invalid_argument) {
+		set(g);
+		return *this;
 	}
-	void overwriteEdges(const edge_type *theEdges) {
-		std::memcpy(edges_vec, theEdges, edges() * sizeof *theEdges);
-	}
+	void set(const Graph &g) throw(std::invalid_argument);
+	void setNodes(const Graph &g) throw(std::invalid_argument);
+	void setEdges(const Graph &g) throw(std::invalid_argument);
 
-	void swapNodes(node_type *&theNodes) { std::swap(nodes_vec, theNodes); }
-	void swapEdges(edge_type *&theEdges) { std::swap(edges_vec, theEdges); }
+	void swap(Graph &g) throw(std::invalid_argument);
+	void swapNodes(Graph &g) throw(std::invalid_argument);
+	void swapEdges(Graph &g) throw(std::invalid_argument);
 
-	void swap(Edges &e) {
-		std::swap(n, e.n);
-		std::swap(nodes_vec, e.nodes_vec);
-		std::swap(edges_vec, e.edges_vec);
-	}
+	void setNodes(const node_type *theNodes);
+	void setEdges(const edge_type *theEdges);
 
-	unsigned edges() const { return edges(n); }
-	unsigned nodes() const { return n; }
-	bool     empty() const { return n == 0; }
+	void swapNodes(node_type *&theNodes);
+	void swapEdges(edge_type *&theEdges);
+
+	unsigned edges() const { return count * (count - 1) / 2; }
+	unsigned nodes() const { return count; }
+	bool     empty() const { return count == 0; }
 
 	/* No checking of v is done.  Beware! */
 	node_type &n(unsigned v) {
@@ -129,21 +133,21 @@ struct Groph {
 	edges_const_iterator edges_end()   const { return edges_vec + edges(); }
 
 private:
+	Graph();
+	void init(unsigned theN) throw(std::invalid_argument, std::bad_alloc);
+	void check_size(const Graph &g) throw(std::invalid_argument);
+
 	unsigned count;
 	node_type *nodes_vec;
 	edge_type *edges_vec;
-
-	static unsigned edges(unsigned n) {
-		return n * (n - 1) / 2;
-	}
 };
 
 }
 
 namespace std {
 
-void swap(graph::Graph &e1, graph::Graph &e2) {
-	e1.swap(e2);
+void swap(graph::Graph &g1, graph::Graph &g2) {
+	g1.swap(g2);
 }
 
 }
