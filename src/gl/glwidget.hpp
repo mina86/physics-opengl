@@ -43,10 +43,10 @@ struct Widget : public QGLWidget {
 	static const int vtick_limit = ticks_per_angle * 90 - 1;
 
 	static value_type rad_from_ticks(int ticks) {
-		return ticks * MN_PI_180 / ticks_per_angle;
+		return ticks * M_PI_180 / ticks_per_angle;
 	}
 	static int ticks_from_rad(float rad) {
-		return round(rad * MN_180_PI * ticks_per_angle);
+		return round(rad * M_180_PI * ticks_per_angle);
 	}
 
 	Widget(Configuration &theConfig, QWidget *parent = NULL);

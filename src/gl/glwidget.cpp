@@ -116,8 +116,8 @@ void Widget::doUpdateMatrix() const {
 	if (!rotX && !rotY) {
 		memcpy(matrix, ID, sizeof matrix);
 	} else {
-		const value_type _rotX = rotX * MN_PI_180 / ticks_per_angle;
-		const value_type _rotY = rotY * MN_PI_180 / ticks_per_angle;
+		const value_type _rotX = rotX * M_PI_180 / ticks_per_angle;
+		const value_type _rotY = rotY * M_PI_180 / ticks_per_angle;
 		const value_type cx =  std::cos(_rotX), sx =  std::sin(_rotX);
 		const value_type cy = -std::cos(_rotY), sy =  std::sin(_rotY);
 
