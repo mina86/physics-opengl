@@ -32,7 +32,7 @@
 #include "../lib/mconst.h"
 #include "../lib/sintable.hpp"
 
-#include "../gl/config.hpp"
+#include "../gl/glconfig.hpp"
 #include "../gl/glwidget.hpp"
 #include "../gl/vector-print.hpp"
 

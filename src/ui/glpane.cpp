@@ -22,11 +22,11 @@
 #include <QSlider>
 
 #include "../gl/glwidget.hpp"
-#include "../gl/config.hpp"
+#include "../gl/glconfig.hpp"
 
 namespace ui {
 
-GLPane::GLPane(gl::Configuration theConfig, QWidget *parent)
+GLPane::GLPane(gl::Config theConfig, QWidget *parent)
 	: QWidget(parent), gl(new gl::Widget(theConfig)) {
 	vslider = new QSlider(Qt::Vertical);
 	vslider->setSingleStep(gl::Widget::ticks_per_angle / 10);

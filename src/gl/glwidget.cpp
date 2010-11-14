@@ -150,7 +150,7 @@ bool Widget::isInFront(const Vector &vec) const {
 
 /********************************** OpenGL **********************************/
 
-Widget::Widget(Configuration &theConfig, QWidget *parent)
+Widget::Widget(Config &theConfig, QWidget *parent)
 	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent), config(theConfig) {
 	reset();
 	connect(&config, SIGNAL(changed()), this, SLOT(configChanged()));

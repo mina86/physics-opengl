@@ -24,8 +24,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent) {
 	ui.setupUi(this);
 }
 
-SettingsDialog::SettingsDialog(QWidget *parent,
-                               gl::Configuration &config)
+SettingsDialog::SettingsDialog(QWidget *parent, gl::Config &config)
 	: QDialog(parent), config(config) {
 	ui.setupUi(this);
 }

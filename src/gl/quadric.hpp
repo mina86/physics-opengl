@@ -1,5 +1,5 @@
 /*
- * src/ui/mainwindow.hpp
+ * src/gl/quadric.hpp
  * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
  *               and Maciej Swietochowski <m@swietochowski.eu>
  *
@@ -16,51 +16,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef H_MAINWINDOW_HPP
-#define H_MAINWINDOW_HPP
+#ifndef H_QUADRIC_HPP
+#define H_QUADRIC_HPP
 
-#include <QMainWindow>
+#include <new>
 
-#include "../gl/glconfig.hpp"
-#include "../gl/glwidget.hpp"
+#ifdef __APPLE__
+#  include <OpenGL/OpenGL.h>
+#  include <GLUT/glut.h>
+#else
+#  include <GL/glut.h>
+#endif
 
-#include "ui_mainwindow.h"
-#include "glpane.hpp"
+namespace gl {
 
-namespace ui {
+struct Quadric {
+	Quadric() throw(std::bad_alloc) : quad(gluNewQuadric()){
+		if (!quad) {
+			throw std::bad_alloc();
+		}
+	}
 
-struct MainWindow : public QMainWindow {
-	MainWindow(gl::Config theConfig, QWidget *parent = 0);
+	~Quadric() {
+		gluDeleteQuadric(quad);
+	}
 
-	gl::Config config;
-	GLPane *const pane;
+	void setDrawStyle(GLenum drawStyle) {
+		gluQuadricDrawStyle(quad, drawStyle);
+	}
 
-public slots:
-	void openSettingsDialog();
-	void load();
-	void save();
-
-protected:
-	void changeEvent(QEvent *e);
-	void prepare();
-
-protected slots:
-	void onWidgetSceneChanged();
+	operator GLUquadric *() const { return quad; }
 
 private:
-	MainWindow();
-	MainWindow(const MainWindow &);
+	Quadric(Quadric &);
+	void operator=(Quadric &);
 
-	Ui::MainWindow ui;
-	void initActions();
-
-	QMenu *fileMenu;
-	QAction *saveAction;
-	QAction *loadAction;
-	QAction *quitAction;
-	QAction *settingsAction;
-
-	Q_OBJECT
+	GLUquadric *quad;
 };
 
 }

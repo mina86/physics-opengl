@@ -1,5 +1,5 @@
 /*
- * src/ui/mainwindow.hpp
+ * src/gl/glconfig.hpp
  * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
  *               and Maciej Swietochowski <m@swietochowski.eu>
  *
@@ -16,52 +16,50 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef H_MAINWINDOW_HPP
-#define H_MAINWINDOW_HPP
+#ifndef H_GLCONFIG_HPP
+#define H_GLCONFIG_HPP
 
-#include <QMainWindow>
+#include "../ui/abstract-config.hpp"
 
-#include "../gl/glconfig.hpp"
-#include "../gl/glwidget.hpp"
+#include "quadric.hpp"
 
-#include "ui_mainwindow.h"
-#include "glpane.hpp"
+#define MAX_DISTANCE 1500.0
 
-namespace ui {
+namespace gl {
 
-struct MainWindow : public QMainWindow {
-	MainWindow(gl::Config theConfig, QWidget *parent = 0);
+namespace cfg {
 
-	gl::Config config;
-	GLPane *const pane;
+struct Data;
 
-public slots:
-	void openSettingsDialog();
-	void load();
-	void save();
+}
 
-protected:
-	void changeEvent(QEvent *e);
-	void prepare();
+typedef ui::Config<cfg::Data> Config;
 
-protected slots:
-	void onWidgetSceneChanged();
+namespace cfg {
+
+struct Data : public ui::cfg::Data {
+	ui::cfg::Real mouseMovementFactor, mouseRotationFactor;
+	ui::cfg::Real runFactor, creepFactor;
+	ui::cfg::Real cutOffDistance2;
+	ui::cfg::Bool showText, showTextures, lowQuality;
+	ui::cfg::Bool showHelperAxis, showStars;
+	ui::cfg::List drawStyle;
+	gl::Quadric quad;
+
+	virtual struct iterator items() const;
+
+private slots:
+	void drawStyleChanged(long v);
 
 private:
-	MainWindow();
-	MainWindow(const MainWindow &);
+	Data();
 
-	Ui::MainWindow ui;
-	void initActions();
-
-	QMenu *fileMenu;
-	QAction *saveAction;
-	QAction *loadAction;
-	QAction *quitAction;
-	QAction *settingsAction;
+	friend struct ui::Config<cfg::Data>;
 
 	Q_OBJECT
 };
+
+}
 
 }
 

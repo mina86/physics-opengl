@@ -22,7 +22,7 @@
 #include <QDialog>
 #include <Qt>
 
-#include "../../gl/config.hpp"
+#include "../../gl/glconfig.hpp"
 
 #include "ui_settingsdialog.h"
 
@@ -30,8 +30,8 @@ namespace ui {
 
 struct SettingsDialog : public QDialog {
 	explicit SettingsDialog(QWidget *parent = 0);
-	explicit SettingsDialog(QWidget *parent, gl::Configuration &config);
-	gl::Configuration config;
+	explicit SettingsDialog(QWidget *parent, gl::Config &config);
+	gl::Config config;
 	void show();
 
 public slots:

@@ -8,7 +8,7 @@
 #include "../lib/sintable.hpp"
 #include "../lib/rand.hpp"
 
-#include "../gl/config.hpp"
+#include "../gl/glconfig.hpp"
 #include "../gl/text3d.hpp"
 #include "../gl/texture.hpp"
 
@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 	int quality = 3, opt;
 	QWidget *window;
 
-	gl::Configuration config;
+	gl::Config config;
 
 	static const struct option longopts[] = {
 		{ "very-low",    0, 0, '0' },

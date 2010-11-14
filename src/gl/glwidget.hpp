@@ -26,7 +26,7 @@
 #include "../lib/mconst.h"
 
 #include "vector.hpp"
-#include "config.hpp"
+#include "glconfig.hpp"
 #include "abstract-scene.hpp"
 
 namespace gl {
@@ -49,7 +49,7 @@ struct Widget : public QGLWidget {
 		return round(rad * M_180_PI * ticks_per_angle);
 	}
 
-	Widget(Configuration &theConfig, QWidget *parent = NULL);
+	Widget(Config &theConfig, QWidget *parent = NULL);
 
 	QSize minimumSizeHint() const;
 	QSize sizeHint() const;
@@ -131,7 +131,7 @@ struct Widget : public QGLWidget {
 		return scene.get();
 	}
 
-	const Configuration config;
+	const Config config;
 
 public slots:
 	virtual void updateState(unsigned ticks, float dt) {

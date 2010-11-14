@@ -21,7 +21,7 @@
 
 #include <QWidget>
 
-#include "../gl/config.hpp"
+#include "../gl/glconfig.hpp"
 
 struct QSlider;
 
@@ -35,7 +35,7 @@ struct AbstractScene;
 namespace ui {
 
 struct GLPane : public QWidget {
-	GLPane(gl::Configuration theConfig, QWidget *parent = NULL);
+	GLPane(gl::Config theConfig, QWidget *parent = NULL);
 	~GLPane();
 
 	gl::Widget *const gl;

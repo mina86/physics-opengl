@@ -33,7 +33,7 @@
 
 namespace ui {
 
-MainWindow::MainWindow(gl::Configuration theConfig, QWidget *parent)
+MainWindow::MainWindow(gl::Config theConfig, QWidget *parent)
 	: QMainWindow(parent), config(theConfig),
 	  pane(new GLPane(theConfig)) {
 
