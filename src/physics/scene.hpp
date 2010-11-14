@@ -36,8 +36,6 @@ struct Scene : public gl::AbstractScene {
 
 private:
 	Scene();
-	Scene(const Scene &);
-	void operator=(const Scene &);
 
 	void updateStateOnce(float dt);
 	void updatePointAll();

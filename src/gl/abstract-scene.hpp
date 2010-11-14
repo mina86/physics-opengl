@@ -31,6 +31,8 @@ struct Widget;
 struct AbstractScene {
 	typedef std::auto_ptr<AbstractScene> ptr;
 
+	AbstractScene() { }
+
 	virtual ~AbstractScene() { }
 	virtual void initializeGL() = 0;
 	virtual void drawScene(const Widget &gl) = 0;
@@ -40,6 +42,10 @@ struct AbstractScene {
 	static  ptr  load(std::istream &in)
 		throw(std::ios_base::failure, lib::Lexer::error);
 	static const char extension[];
+
+private:
+	AbstractScene(const AbstractScene &);
+	void operator=(const AbstractScene &);
 };
 
 }
