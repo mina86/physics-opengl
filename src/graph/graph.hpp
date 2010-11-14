@@ -21,14 +21,9 @@
 
 #include "../gl/vector.hpp"
 
+#include <stdexcept>
+
 namespace graph {
-
-namespace std {
-
-class invalid_argument;
-class bad_alloc;
-
-}
 
 struct Graph {
 	typedef bool              edge_type;
@@ -65,7 +60,7 @@ struct Graph {
 	void swapNodes(node_type *&theNodes);
 	void swapEdges(edge_type *&theEdges);
 
-	unsigned edges() const { return count * (count - 1) / 2; }
+	unsigned edges() const { return edges(count); }
 	unsigned nodes() const { return count; }
 	bool     empty() const { return count == 0; }
 
@@ -80,13 +75,13 @@ struct Graph {
 		nodes_vec[v] = val;
 	}
 
-	typedef edge_type       *nodes_iterator;
-	typedef const edge_type *const_nodes_iterator;
+	typedef node_type       *nodes_iterator;
+	typedef const node_type *const_nodes_iterator;
 
 	nodes_iterator       nodes_begin()       { return nodes_vec; }
 	nodes_iterator       nodes_end()         { return nodes_vec + nodes(); }
-	nodes_const_iterator nodes_begin() const { return nodes_vec; }
-	nodes_const_iterator nodes_end()   const { return nodes_vec + nodes(); }
+	const_nodes_iterator nodes_begin() const { return nodes_vec; }
+	const_nodes_iterator nodes_end()   const { return nodes_vec + nodes(); }
 
 	/*
 	 * Note that e(u, v) == e(v, u) and e(v, v) == edge_type().
@@ -96,17 +91,17 @@ struct Graph {
 	edge_type e(unsigned u, unsigned v) const {
 		if (u == v) {
 			return edge_type();
-		} else if (from < to) {
-			std::swap(from, to);
+		} else if (u < v) {
+			std::swap(u, v);
 		}
-		return edges_vec[size(u) + v];
+		return edges_vec[edges(u) + v];
 	}
 	void e(unsigned u, unsigned v, const edge_type &val) {
 		if (u != v) {
 			if (u < v) {
 				std::swap(u, v);
 			}
-			edges_vec[size(u) + v] = val;
+			edges_vec[edges(u) + v] = val;
 		}
 	}
 
@@ -129,8 +124,8 @@ struct Graph {
 
 	edges_iterator       edges_begin()       { return edges_vec; }
 	edges_iterator       edges_end()         { return edges_vec + edges(); }
-	edges_const_iterator edges_begin() const { return edges_vec; }
-	edges_const_iterator edges_end()   const { return edges_vec + edges(); }
+	const_edges_iterator edges_begin() const { return edges_vec; }
+	const_edges_iterator edges_end()   const { return edges_vec + edges(); }
 
 private:
 	Graph();
@@ -140,13 +135,17 @@ private:
 	unsigned count;
 	node_type *nodes_vec;
 	edge_type *edges_vec;
+
+	static inline unsigned edges(unsigned n) {
+		return n * (n - 1) / 2;
+	}
 };
 
 }
 
 namespace std {
 
-void swap(graph::Graph &g1, graph::Graph &g2) {
+static inline void swap(graph::Graph &g1, graph::Graph &g2) {
 	g1.swap(g2);
 }
 

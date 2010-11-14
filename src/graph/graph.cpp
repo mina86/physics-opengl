@@ -23,11 +23,9 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "node.hpp"
-
 namespace graph {
 
-void Graph::init(unsigned theN) {
+void Graph::init(unsigned theN) throw(std::invalid_argument, std::bad_alloc) {
 	if (!theN) {
 		throw std::invalid_argument("empty graph");
 	}
@@ -61,7 +59,7 @@ void Graph::setNodes(const Graph &g) throw(std::invalid_argument) {
 }
 void Graph::setEdges(const Graph &g) throw(std::invalid_argument) {
 	check_size(g);
-	setNodes(g.edges_vec);
+	setEdges(g.edges_vec);
 }
 
 void Graph::swap(Graph &g) throw(std::invalid_argument) {
@@ -75,7 +73,7 @@ void Graph::swapNodes(Graph &g) throw(std::invalid_argument) {
 }
 void Graph::swapEdges(Graph &g) throw(std::invalid_argument) {
 	check_size(g);
-	swapNodes(g.edges_vec);
+	swapEdges(g.edges_vec);
 }
 
 void Graph::setNodes(const node_type *theNodes) {
@@ -90,4 +88,6 @@ void Graph::swapNodes(node_type *&theNodes) {
 }
 void Graph::swapEdges(edge_type *&theEdges) {
 	std::swap(edges_vec, theEdges);
+}
+
 }
