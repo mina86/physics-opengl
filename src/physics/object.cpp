@@ -74,7 +74,7 @@ void Object::draw(const gl::Widget &gl) {
 
 	glPushMatrix();
 
-	glTranslatef(point.x, point.y, point.z);
+	glTranslatef(point.x(), point.y(), point.z());
 
 	if (light >= 0) {
 		glEnable(GL_LIGHT0 + light);

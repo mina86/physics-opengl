@@ -151,17 +151,17 @@ AbstractScene::ptr AbstractScene::load(std::istream &in)
 
 			case 'x':
 				ACCEPT(T_REAL);
-				object->getPosition().x = value.real * distFactor;
+				object->getPosition().x() = value.real * distFactor;
 				break;
 
 			case 'y':
 				ACCEPT(T_REAL);
-				object->getPosition().y =value.real * distFactor;
+				object->getPosition().y() =value.real * distFactor;
 				break;
 
 			case 'z':
 				ACCEPT(T_REAL);
-				object->getPosition().z = value.real * distFactor;
+				object->getPosition().z() = value.real * distFactor;
 				break;
 
 			case T_FROZEN:

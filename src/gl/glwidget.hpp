@@ -55,9 +55,9 @@ struct Widget : public QGLWidget {
 	QSize sizeHint() const;
 
 	const Vector &camera() const { return cam; }
-	value_type getX() const { return cam.x; }
-	value_type getY() const { return cam.y; }
-	value_type getZ() const { return cam.z; }
+	value_type getX() const { return cam.x(); }
+	value_type getY() const { return cam.y(); }
+	value_type getZ() const { return cam.z(); }
 
 	int hrotation() const { return rotY; }
 	int vrotation() const { return rotY; }
@@ -78,7 +78,7 @@ struct Widget : public QGLWidget {
 	value_type aspect() const { return _aspect; }
 
 	void camera(value_type x, value_type y, value_type z);
-	void camera(const Vector &v) { camera(v.x, v.y, v.z); }
+	void camera(const Vector &v);
 	void move(value_type x, value_type y, value_type z);
 
 	void rotation(int h, int v);

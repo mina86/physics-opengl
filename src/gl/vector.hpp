@@ -27,37 +27,51 @@ template<class T = float>
 struct Vector {
 	typedef T value_type;
 
-	T x, y, z;
+	T  x() const { return vector[0]; }
+	T &x()       { return vector[0]; }
+	T  y() const { return vector[1]; }
+	T &y()       { return vector[1]; }
+	T  z() const { return vector[2]; }
+	T &z()       { return vector[2]; }
+	const T *v() const { return vector; }
+	T *v() { return vector; }
 
-	Vector(T theX = 0, T theY = 0, T theZ = 0)
-		: x(theX), y(theY), z(theZ) { }
+	Vector(T theX = 0, T theY = 0, T theZ = 0) {
+		vector[0] = theX;
+		vector[1] = theY;
+		vector[2] = theZ;
+	}
 	template<class T2>
-	Vector(const Vector<T2> &v) : x(v.x), y(v.y), z(v.z) { }
+	Vector(const Vector<T2> &vec) {
+		vector[0] = vec.x();
+		vector[1] = vec.y();
+		vector[2] = vec.z();
+	}
 
 	T length   () const { return std::sqrt(length2()); }
-	T length2  () const { return x*x + y*y + z*z; }
-	T distance (const Vector &v) const { return (*this - v).length (); }
-	T distance2(const Vector &v) const { return (*this - v).length2(); }
-	void normalize () { *this *= 1 / length(); }
+	T length2  () const { return x()*x() + y()*y() + z()*z(); }
+	T distance (const Vector &vec) const { return (*this - vec).length (); }
+	T distance2(const Vector &vec) const { return (*this - vec).length2(); }
+	void normalize() { *this /= length(); }
 
-	Vector &operator+=(const Vector &v) {
-		x += v.x;
-		y += v.y;
-		z += v.z;
+	Vector &operator+=(const Vector &vec) {
+		x() += vec.x();
+		y() += vec.y();
+		z() += vec.z();
 		return *this;
 	}
 
-	Vector &operator-=(const Vector &v) {
-		x -= v.x;
-		y -= v.y;
-		z -= v.z;
+	Vector &operator-=(const Vector &vec) {
+		x() -= vec.x();
+		y() -= vec.y();
+		z() -= vec.z();
 		return *this;
 	}
 
 	Vector &operator*=(T r) {
-		x *= r;
-		y *= r;
-		z *= r;
+		x() *= r;
+		y() *= r;
+		z() *= r;
 		return *this;
 	}
 
@@ -65,13 +79,16 @@ struct Vector {
 		return *this *= 1 / r;
 	}
 
-	Vector  operator- () const {
-		return Vector(-x, -y, -z);
+	Vector  operator-() const {
+		return Vector(-x(), -y(), -z());
 	}
 
-	Vector  operator+ () const {
+	Vector  operator+() const {
 		return *this;
 	}
+
+private:
+	T vector[3];
 };
 
 template<class T>

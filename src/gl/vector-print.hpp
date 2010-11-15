@@ -27,7 +27,7 @@ namespace gl {
 
 template<class T>
 std::ostream &operator<<(std::ostream &out, const Vector<T> &v) {
-	return out << v.x << ' ' << v.y << ' ' << v.z;
+	return out << v.x() << ' ' << v.y() << ' ' << v.z();
 }
 
 }

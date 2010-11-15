@@ -49,9 +49,21 @@ QSize Widget::sizeHint() const {
 /**************************** Camera & Rotation *****************************/
 
 void Widget::camera(value_type x, value_type y, value_type z) {
-	cam.x = x;
-	cam.y = y;
-	cam.z = z;
+	cam.x() = x;
+	cam.y() = y;
+	cam.z() = z;
+
+	const value_type length = cam.length();
+	if (length > MAX_DISTANCE) {
+		cam *= MAX_DISTANCE / length;
+	}
+
+	emit needRepaint();
+	emit cameraChanged(cam);
+}
+
+void Widget::camera(const Vector &v) {
+	cam = v;
 
 	const value_type length = cam.length();
 	if (length > MAX_DISTANCE) {
@@ -69,9 +81,9 @@ void Widget::move(value_type x, value_type y, value_type z) {
 	 * Also, let top-down movement change only y.  And finally, let
 	 * left-right and forward-backward movement affect only x and z.
 	 */
-	camera(cam.x + x * M(0, 0) +               z * M(2, 0),
-	       cam.y +               y * M(1, 1)              ,
-	       cam.z + x * M(0, 2) +               z * M(2, 2));
+	camera(cam.x() + x * M(0, 0) +             z * M(2, 0),
+	       cam.y() +               y * M(1, 1)            ,
+	       cam.z() + x * M(0, 2) +             z * M(2, 2));
 }
 
 void Widget::rotation(int h, int v) {
@@ -142,8 +154,10 @@ void Widget::doUpdateMatrix() const {
 
 
 bool Widget::isInFront(const Vector &vec) const {
-	const value_type md1 = cam.x * M(0, 2) + cam.y * M(1, 2) + cam.z * M(2, 2);
-	const value_type md2 = vec.x * M(0, 2) + vec.y * M(1, 2) + vec.z * M(2, 2);
+	const value_type md1 =
+		cam.x() * M(0, 2) + cam.y() * M(1, 2) + cam.z() * M(2, 2);
+	const value_type md2 =
+		vec.x() * M(0, 2) + vec.y() * M(1, 2) + vec.z() * M(2, 2);
 	return md2 < md1;
 }
 
@@ -360,7 +374,7 @@ bool Widget::sphere(value_type size, const Vector &point,
 		doRotate();
 
 		glLoadIdentity();
-		glTranslatef(-point.x, -point.y, -point.z);
+		glTranslatef(-point.x(), -point.y(), -point.z());
 
 		glBegin(GL_LINES);
 		glColor3f(1, 0, 0);
@@ -371,7 +385,7 @@ bool Widget::sphere(value_type size, const Vector &point,
 		// glVertex3f(0, 0, -size -2.0); glVertex3f(0, 0, size + 2.0);
 
 		Vector t = top() * (size * (value_type)1.5);
-		glVertex3f(-t.x , -t.y, -t.z); glVertex3f(t.x, t.y, t.z);
+		glVertex3f(-t.x() , -t.y(), -t.z()); glVertex3fv(t.v());
 
 		glEnd();
 
@@ -398,7 +412,7 @@ bool Widget::sphere(value_type size, const Vector &point,
 		Vector v(top());
 		v *= 0.3;
 		v += point;
-		glTranslatef(-point.x, -point.y, -point.z);
+		glTranslatef(-point.x(), -point.y(), -point.z());
 
 		_text(text, 0.1, list, color);
 
