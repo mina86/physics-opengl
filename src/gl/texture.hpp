@@ -28,8 +28,6 @@
 #  include <GL/glut.h>
 #endif
 
-#include "color.hpp"
-
 namespace gl {
 
 struct Texture {
@@ -79,7 +77,7 @@ struct Texture {
 		return ret;
 	}
 
-	const Color &getAverageColor() const { return average; }
+	const float *getAverageColor() const { return average; }
 
 	operator bool () const { return data || id; }
 	bool operator!() const { return !data && !id; }
@@ -100,7 +98,7 @@ private:
 	unsigned width, height;
 	mutable GLuint id;
 	mutable unsigned char *data;
-	Color average;
+	float average[4];
 };
 
 }

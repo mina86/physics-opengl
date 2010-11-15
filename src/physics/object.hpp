@@ -21,10 +21,11 @@
 
 #include <math.h>
 
+#include <cstring>
+
 #include <string>
 #include <iostream>
 
-#include "../gl/color.hpp"
 #include "../gl/vector.hpp"
 #include "../gl/texture.hpp"
 
@@ -50,18 +51,18 @@ struct Object {
 		point = nextPoint = thePoint;
 	}
 	void setPosition(Vector::value_type x, Vector::value_type y, Vector::value_type z) {
-		point.x = nextPoint.x = x;
-		point.y = nextPoint.y = y;
-		point.z = nextPoint.z = z;
+		point.x() = nextPoint.x() = x;
+		point.y() = nextPoint.y() = y;
+		point.z() = nextPoint.z() = z;
 	}
 
 	Vector &getVelocity() { return velocity; }
 	const Vector &getVelocity() const { return velocity; }
 	void setVelocity(const Vector &theVelocity) { velocity = theVelocity; }
 	void setVelocity(Vector::value_type x, Vector::value_type y, Vector::value_type z) {
-		velocity.x = x;
-		velocity.y = y;
-		velocity.z = z;
+		velocity.x() = x;
+		velocity.y() = y;
+		velocity.z() = z;
 	}
 
 	bool isFrozen() const { return frozen; }
@@ -73,25 +74,20 @@ struct Object {
 	Vector::value_type getSize() const { return size; }
 	void setSize(Vector::value_type theSize) { size = theSize; }
 
-	void setColor(const gl::Color &theColor) {
-		materialColor[0] = theColor.r;
-		materialColor[1] = theColor.g;
-		materialColor[2] = theColor.b;
-		materialColor[3] = 1;
+	void setColor(const float *theColor) {
+		materialColor[0] = theColor[0];
+		materialColor[1] = theColor[1];
+		materialColor[2] = theColor[2];
 	}
 
 	void setColor(float r, float g, float b) {
 		materialColor[0] = r;
 		materialColor[1] = g;
 		materialColor[2] = b;
-		materialColor[3] = 1;
 	}
 
 	int getLight() const { return light; }
 	void setLight(int theLight) { light = theLight; }
-
-	static Vector::value_type cutoffDistance2;
-	static bool lowQuality, drawNames, useTextures;
 
 	void draw(const gl::Widget &gl);
 	void tick(Vector::value_type dt) {
@@ -108,10 +104,8 @@ struct Object {
 	gl::Texture texture;
 	void colorFromTexture() {
 		if (texture) {
-			const gl::Color &avg = texture.getAverageColor();
-			materialColor[0] = avg.r;
-			materialColor[1] = avg.g;
-			materialColor[2] = avg.b;
+			std::memcpy(materialColor, texture.getAverageColor(),
+			            3 * sizeof *materialColor);
 		}
 	}
 
