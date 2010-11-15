@@ -268,6 +268,13 @@ void Widget::paintStars() {
 
 /***************************** OpenGL Utilities *****************************/
 
+static void setColor(const float *color) {
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, Widget::specular);
+	glMaterialfv(GL_FRONT, GL_EMISSION, Widget::zeros);
+	glMaterialf(GL_FRONT, GL_SHININESS, 12);
+}
+
 void Widget::_text(const std::string &text, value_type scale, unsigned *list,
                      const value_type color[4]) const {
 	if (config->showText && !text.empty()) {
@@ -325,10 +332,7 @@ bool Widget::sphere(value_type size, const Vector &point,
 	}
 
 	if (color) {
-		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-		glMaterialfv(GL_FRONT, GL_EMISSION, zeros);
-		glMaterialf(GL_FRONT, GL_SHININESS, 12);
+		setColor(color);
 	}
 
 	const bool gotTexture = config->showTextures && texture && texture->get();
