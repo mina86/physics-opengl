@@ -40,10 +40,6 @@ namespace physics {
 
 const Object::Vector::value_type Object::G = 6.67428-1;
 
-static const GLfloat materialSpecular[] = { 0.75, 0.75, 0.75, 1 };
-static const GLfloat zeros           [] = { 0, 0, 0, 1 };
-static const GLfloat ones            [] = { 1, 1, 1, 1 };
-
 namespace {
 
 struct PushMatrix {
@@ -76,19 +72,20 @@ void Object::draw(const gl::Widget &gl) {
 
 	if (light >= 0) {
 		glEnable(GL_LIGHT0 + light);
-		glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, ones);
-		glLightfv(GL_LIGHT0 + light, GL_POSITION, zeros);
+		glLightfv(GL_LIGHT0 + light, GL_DIFFUSE, gl::Widget::ones);
+		glLightfv(GL_LIGHT0 + light, GL_POSITION, gl::Widget::zeros);
 	}
 
 	// if (gl.isInFront(point)) {
 		bool gotTexture = gl.config->showTextures && *texture;
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE,
-		             gotTexture ? ones : materialColor);
+		             gotTexture ? gl::Widget::ones : materialColor);
 		glMaterialfv(GL_FRONT, GL_SPECULAR,
-		             light >= 0 ? zeros : materialSpecular);
+		             light >= 0 ? gl::Widget::zeros : gl::Widget::specular);
 		glMaterialfv(GL_FRONT, GL_EMISSION,
 		             light <  0
-		             ? zeros : (gotTexture ? ones : materialColor));
+		             ? gl::Widget::zeros
+		             : (gotTexture ? gl::Widget::ones : materialColor));
 		glMaterialf(GL_FRONT, GL_SHININESS, light >= 0 ? 0 : 12);
 
 		gl.sphere(size, point, &texture, name, &textList);
