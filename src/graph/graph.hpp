@@ -33,13 +33,14 @@ struct Graph {
 		throw(std::invalid_argument, std::bad_alloc) {
 		init(theN);
 	}
-	Graph(const Graph &g) {
+	Graph(const Graph &g)
+		throw(std::invalid_argument, std::bad_alloc) {
 		init(g.count);
 		set(g);
 	}
 	~Graph() {
-		delete nodes_vec;
-		delete edges_vec;
+		delete[] nodes_vec;
+		delete[] edges_vec;
 	}
 
 	Graph &operator=(const Graph &g)  throw(std::invalid_argument) {
