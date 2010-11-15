@@ -74,14 +74,22 @@ void Texture::calculatAverage() {
 		return;
 	}
 
+	/* 
+	 * If the texture is no larger then 2**24 pixels, a 32-bit integer
+	 * can be used to calculate the average colour thus removing the
+	 * need for a rather slow (at least as compared to integer
+	 * arithmetic) floating point arithmetic.
+	 */
+
 	if (format == GL_LUMINANCE) {
-		float avg = 0;
+		unsigned long sum = 0;
 		for (unsigned char *it=data, *end=it+width*height; it!=end; ++it) {
-			avg += *it;
+			sum += *it;
 		}
-		average[0] = average[1] = average[2] = avg / 255 / (width * height);
+		average[0] = average[1] = average[2] =
+			sum * (1.0 / 255.0) / (width * height);
 	} else {
-		float r = 0, g = 0, b = 0;
+		unsigned long r = 0, g = 0, b = 0;
 		for (unsigned char *it=data, *end=it+width*height*3; it!=end; ) {
 			r += *it++;
 			g += *it++;
@@ -92,8 +100,6 @@ void Texture::calculatAverage() {
 		average[1] = g * mul;
 		average[2] = b * mul;
 	}
-
-	average[3] = 1.0;
 }
 
 namespace {

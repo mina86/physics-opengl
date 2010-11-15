@@ -98,7 +98,7 @@ private:
 	unsigned width, height;
 	mutable GLuint id;
 	mutable unsigned char *data;
-	float average[4];
+	float average[3];
 };
 
 }
