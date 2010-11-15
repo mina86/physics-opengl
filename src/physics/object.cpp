@@ -66,6 +66,12 @@ Object::~Object() {
 }
 
 void Object::draw(const gl::Widget &gl) {
+	const bool visible = true /* gl.isInFront(point) */;
+
+	if (!visible && light < 0) {
+		return;
+	}
+
 	glPushMatrix();
 
 	glTranslatef(point.x, point.y, point.z);
@@ -76,7 +82,7 @@ void Object::draw(const gl::Widget &gl) {
 		glLightfv(GL_LIGHT0 + light, GL_POSITION, gl::Widget::zeros);
 	}
 
-	// if (gl.isInFront(point)) {
+	if (visible) {
 		bool gotTexture = gl.config->showTextures && *texture;
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE,
 		             gotTexture ? gl::Widget::ones : materialColor);
@@ -89,7 +95,7 @@ void Object::draw(const gl::Widget &gl) {
 		glMaterialf(GL_FRONT, GL_SHININESS, light >= 0 ? 0 : 12);
 
 		gl.sphere(size, point, &texture, name, &textList);
-	// }
+	}
 
 	glPopMatrix();
 }
