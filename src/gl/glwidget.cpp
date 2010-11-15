@@ -276,7 +276,7 @@ static void setColor(const float *color) {
 }
 
 void Widget::_text(const std::string &text, value_type scale, unsigned *list,
-                     const value_type color[4]) const {
+                   const value_type color[4]) const {
 	if (config->showText && !text.empty()) {
 		if (list && *list) {
 			glCallList(*list);
@@ -304,7 +304,7 @@ void Widget::_text(const std::string &text, value_type scale, unsigned *list,
 }
 
 void Widget::text(const std::string &text, value_type scale, unsigned *list,
-                    const value_type color[4]) const {
+                  const value_type color[4]) const {
 	if (config->showText && !text.empty()) {
 		glPushMatrix();
 		_text(text, scale, list, color);
@@ -313,8 +313,8 @@ void Widget::text(const std::string &text, value_type scale, unsigned *list,
 }
 
 bool Widget::sphere(value_type size, const Vector &point,
-                      const value_type color[4],
-                      const Texture *texture) const {
+                    const value_type color[4],
+                    const Texture *texture) const {
 	value_type factor = cam.distance2(point);
 	factor = factor > config->cutOffDistance2
 		? std::sqrt(config->cutOffDistance2 / factor)
