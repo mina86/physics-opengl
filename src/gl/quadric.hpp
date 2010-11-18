@@ -31,7 +31,7 @@
 namespace gl {
 
 struct Quadric {
-	Quadric() throw(std::bad_alloc) : quad(gluNewQuadric()){
+	Quadric() throw(std::bad_alloc) : quad(gluNewQuadric()) {
 		if (!quad) {
 			throw std::bad_alloc();
 		}
