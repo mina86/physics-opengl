@@ -29,9 +29,9 @@ gl::Vector<float> &addRandNormal(gl::Vector<float> &v, float sigma);
 
 static inline gl::Vector<float>
 &randNormal(gl::Vector<float> &v, float sigma) {
-	v.x = 0.0;
-	v.y = 0.0;
-	v.z = 0.0;
+	v.x() = 0.0;
+	v.y() = 0.0;
+	v.z() = 0.0;
 	return randNormal(v, sigma);
 }
 

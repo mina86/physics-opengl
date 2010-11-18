@@ -26,9 +26,9 @@
 namespace graph {
 
 gl::Vector<float> &randCartesian(gl::Vector<float> &v, float max) {
-	v.x = lib::rndp(2.0 * max) - max;
-	v.y = lib::rndp(2.0 * max) - max;
-	v.z = lib::rndp(2.0 * max) - max;
+	v.x() = lib::rndp(2.0 * max) - max;
+	v.y() = lib::rndp(2.0 * max) - max;
+	v.z() = lib::rndp(2.0 * max) - max;
 	return v;
 }
 
@@ -37,9 +37,9 @@ gl::Vector<float> &randSpheric(gl::Vector<float> &v, float max) {
 	float a = lib::rnd(M_PI);
 	float b = lib::rndp(2.0 * M_PI);
 	float s = std::sin(a);
-	v.x = r * s * std::cos(b);
-	v.y = r * s * std::sin(b);
-	v.z = r * std::cos(a);
+	v.x() = r * s * std::cos(b);
+	v.y() = r * s * std::sin(b);
+	v.z() = r * std::cos(a);
 	return v;
 }
 
@@ -71,16 +71,16 @@ gl::Vector<float> &addRandNormal(gl::Vector<float> &v, float sigma) {
 		b = a * r2;
 
 		if (first) {
-			v.x += a;
-			v.y += b;
+			v.x() += a;
+			v.y() += b;
 			if (remembered) {
-				v.z = memory;
+				v.z() = memory;
 				remembered = false;
 				break;
 			}
 			first = false;
 		} else {
-			v.z += a;
+			v.z() += a;
 			remembered = true;
 			memory = b;
 			break;
