@@ -28,6 +28,17 @@
 #include "text3d.hpp"
 #include "texture.hpp"
 
+template<class T>
+static inline T min(T a, T b) {
+	return a < b ? a : b;
+}
+
+template<class T>
+static inline T max(T a, T b) {
+	return a < b ? b : a;
+}
+
+
 namespace gl {
 
 const Widget::value_type Widget::zeros[4] = { 0, 0, 0, 1 };
@@ -336,10 +347,10 @@ bool Widget::sphere(value_type size, const Vector &point,
 
 	unsigned slices = 60 * factor;
 	if (size > 1) {
-		slices *= 2;
+		slices <<= 1;
 	}
 	if (config->lowQuality) {
-		slices /= 3;
+		slices >>= 2;
 	}
 	if (slices < 6) {
 		slices = 6;
@@ -422,6 +433,72 @@ bool Widget::sphere(value_type size, const Vector &point,
 	return true;
 }
 
+void Widget::connection(value_type size, Vector r,
+                        const value_type color1[3],
+                        const value_type color2[3]) const {
+	value_type l = r.length();
+
+	/* Don't draw anything if the points are too near */
+	/* XXX hardcoded */
+	if (l < 1.0) {
+		return;
+	}
+
+	/* Make sure colors are given */
+	color1 = color1 ? color1 : ones;
+	color2 = color2 ? color2 : color1;
+
+	/* If drawing style is anything else then fill, just draw a single
+	 * line. */
+	if (config->drawStyle) {
+		glBegin(GL_LINES);
+		glColor3fv(color1);
+		glVertex3fv(zeros);
+		glColor3fv(color2);
+		glVertex3fv(r.v());
+		glEnd();
+		return;
+	}
+
+	/* Find two vectors on a plane orthogonal to r */
+	Vector a, b;
+	r /= l;
+	if (fabs(r.x() - 1.0) < 0.0001) {
+		a.set(0.0, 1.0, 0.0);
+		b.set(0.0, 0.0, 1.0);
+	} else {
+		/* no square root calculation, yep! */
+		float xm1 = r.x() - 1.0;
+		a.set(r.z(), r.y() * r.z() / xm1, 1.0 + r.z() * r.z() / xm1);
+		/* this probably could be calculated in a better way */
+		b = r * a;
+	}
+	a *= size;
+	b *= size;
+
+	/* Calculate slices count */
+	unsigned slices = 30;
+	if (config->lowQuality) {
+		slices >>= 2;
+	}
+	if (slices < 6) {
+		slices = 6;
+	}
+
+	/* Let's get going ... */
+	glBegin(GL_QUAD_STRIP);
+	for (unsigned i = 0; i <= slices; ++i) {
+		Vector v = lib::sin(360 * i / slices) * a +
+			lib::cos(360 * i / slices) * b;
+
+		glColor3fv(color1);
+		glVertex3fv(v.v());
+
+		glColor3fv(color2);
+		glVertex3fv((r + v).v());
+	}
+	glEnd();
+}
 
 /********************************** Events **********************************/
 

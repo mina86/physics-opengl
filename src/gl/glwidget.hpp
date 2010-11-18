@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GLWIDGET_H
-#define GLWIDGET_H
+#ifndef H_GLWIDGET_HPP
+#define H_GLWIDGET_HPP
 
 #include <memory>
 
@@ -116,10 +116,16 @@ struct Widget : public QGLWidget {
 		return sphere(size, point, NULL, NULL, text, list);
 	}
 
-	void text(const std::string &text, value_type scale, unsigned *list = NULL,
+	void text(const std::string &text, value_type scale,
+	          unsigned *list = NULL,
 	          const value_type color[4] = NULL) const;
-	void _text(const std::string &text, value_type scale, unsigned *list = NULL,
+	void _text(const std::string &text, value_type scale,
+	           unsigned *list = NULL,
 	           const value_type color[4] = NULL) const;
+
+	void connection(value_type size, Vector r,
+	                const value_type color1[3] = NULL,
+	                const value_type color2[3] = NULL) const;
 
 	bool isInFront(const Vector &v) const;
 
