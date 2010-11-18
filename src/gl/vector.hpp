@@ -48,6 +48,12 @@ struct Vector {
 		vector[2] = vec.z();
 	}
 
+	void set(T theX, T theY, T theZ) {
+		vector[0] = theX;
+		vector[1] = theY;
+		vector[2] = theZ;
+	}
+
 	T length   () const { return std::sqrt(length2()); }
 	T length2  () const { return x()*x() + y()*y() + z()*z(); }
 	T distance (const Vector &vec) const { return (*this - vec).length (); }
@@ -66,6 +72,10 @@ struct Vector {
 		y() -= vec.y();
 		z() -= vec.z();
 		return *this;
+	}
+
+	Vector &operator*=(const Vector &vec) {
+		return *this = *this * vec;
 	}
 
 	Vector &operator*=(T r) {
@@ -101,6 +111,15 @@ template<class T>
 inline Vector<T> operator*(T r, Vector<T> a) { return a *= r; }
 template<class T>
 inline Vector<T> operator/(Vector<T> a, T r) { return a /= r; }
+
+template<class T>
+inline Vector<T> operator*(const Vector<T> &a, const Vector<T> &b) {
+	return Vector<T>(
+		a.y() * b.z() - a.z() * b.y(),
+		a.z() * b.x() - a.x() * b.z(),
+		a.x() * b.y() - a.y() * b.x()
+	);
+}
 
 }
 
