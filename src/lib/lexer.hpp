@@ -65,8 +65,13 @@ struct Lexer {
 
 	enum {
 		T_EOF,
-		/* each character is returned as is */
-		T_REAL = 256, T_STRING,
+		/* Each character is returned as is. */
+		/* Integers and reals are returned only if appropriet flag is
+		 * set. */
+		T_INTEGER = 256,
+		T_REAL,
+		T_STRING,
+		/* This is the value first keywoard should have. */
 		T_FIRST_KEYWOARD,
 	};
 
@@ -74,6 +79,7 @@ struct Lexer {
 
 	struct Value {
 		float real;
+		int integer;
 		std::string string;
 	};
 
@@ -88,7 +94,8 @@ struct Lexer {
 	 * \param in           the in stream, will be destroyed when
 	 */
 	Lexer(std::istream &in, const Keywords *theKeywords = NULL)
-		: stream(in), locale("C"), keywords(theKeywords) {
+		: stream(in), locale("C"), keywords(theKeywords),
+		  integerOK(false), realOK(true) {
 	}
 
 	/**
@@ -107,6 +114,11 @@ struct Lexer {
 	void setKeywords(const Keywords *theKeywords) {
 		keywords = theKeywords;
 	}
+
+	void acceptInteger(bool v) { integerOK = v; }
+	bool acceptInteger() const { return integerOK; }
+	void acceptReal(bool v) { realOK = v; }
+	bool acceptReal() const { return realOK; }
 
 private:
 	/**
@@ -127,6 +139,10 @@ private:
 	QLocale locale;
 	/** List of keywords. */
 	const Keywords *keywords;
+	/** Whether to return integers. */
+	bool integerOK;
+	/** Whether to return real numbers. */
+	bool realOK;
 
 	/** Returns next character from file and updates location. */
 	unsigned getchar();

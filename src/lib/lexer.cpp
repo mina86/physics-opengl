@@ -110,7 +110,8 @@ unsigned Lexer::nextToken(Value &value, Location &location) {
 	}
 
 	/* Not a number */
-	if (!isdigit(ch) && ch != '.' && ch != '-' && ch != '+') {
+	if (!acceptReal() && !acceptInteger() &&
+	    !isdigit(ch) && ch != '.' && ch != '-' && ch != '+') {
 		location.end = current;
 		return ch;
 	}
@@ -185,6 +186,19 @@ unsigned Lexer::nextToken(Value &value, Location &location) {
 got_number:
 	ungetchar(ch);
 	location.end = current;
+
+	if (acceptInteger()) {
+		bool ok;
+		value.integer = locale.toInt(str.c_str(), &ok, 10);
+		if (ok) {
+			return T_INTEGER;
+		}
+	}
+
+	if (!acceptReal()) {
+		throw error(location,
+		            error::msg(str, "real number where one is not accepted"));
+	}
 	value.real = locale.toFloat(str.c_str());
 	return T_REAL;
 }
