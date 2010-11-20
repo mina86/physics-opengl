@@ -202,9 +202,6 @@ void Widget::initializeGL() {
 	glClearColor(0.6, 0.6, 0.6, 1.0);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_MULTISAMPLE);
-	if (scene.get()) {
-		scene->initializeGL();
-	}
 }
 
 void Widget::resizeGL(int width, int height) {
@@ -223,6 +220,11 @@ void Widget::paintGL() {
 
 	/* Stars and move and rotate camera */
 	glLoadIdentity();
+
+	if (scene.get()) {
+		scene->initializeGL(*this);
+	}
+
 	doRotate();
 	paintStars();
 	doMove();
