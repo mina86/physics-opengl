@@ -29,7 +29,6 @@ struct Scene : public gl::AbstractScene {
 	Scene(Object *theObjects) : objects(theObjects) { }
 	~Scene();
 
-	void initializeGL();
 	void drawScene(const gl::Widget &gl);
 	void updateState(unsigned ticks, float dt);
 	void save(std::ostream &out) throw(std::ios_base::failure);

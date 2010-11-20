@@ -33,9 +33,6 @@ Scene::~Scene() {
 	}
 }
 
-void Scene::initializeGL() {
-}
-
 void Scene::drawScene(const gl::Widget &gl) {
 	Object *o = objects;
 	do {

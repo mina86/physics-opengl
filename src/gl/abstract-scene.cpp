@@ -1,5 +1,5 @@
 /*
- * src/gl/abstract-scene.hpp
+ * src/gl/abstract-scene.cpp
  * Copyright 2010 by Michal Nazarewicz    <mina86@mina86.com>
  *               and Maciej Swietochowski <m@swietochowski.eu>
  *
@@ -16,40 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef H_ABSTRACT_SCENE_HPP
-#define H_ABSTRACT_SCENE_HPP
-
-#include <memory>
-#include <iostream>
-
-#include "../lib/lexer.hpp"
+#include "abstract-scene.hpp"
 
 namespace gl {
 
-struct Widget;
-
-struct AbstractScene {
-	typedef std::auto_ptr<AbstractScene> ptr;
-
-	virtual ~AbstractScene();
-
-	virtual void initializeGL(const gl::Widget &gl);
-	virtual void drawScene(const Widget &gl) = 0;
-	virtual void updateState(unsigned ticks, float dt) = 0;
-
-	virtual void save(std::ostream &out) throw(std::ios_base::failure) = 0;
-	static  ptr  load(std::istream &in)
-		throw(std::ios_base::failure, lib::Lexer::error);
-	static const char extension[];
-
-protected:
-	AbstractScene() { }
-
-private:
-	AbstractScene(const AbstractScene &);
-	void operator=(const AbstractScene &);
-};
-
+AbstractScene::~AbstractScene() {
 }
 
-#endif
+void AbstractScene::initializeGL(const gl::Widget &) {
+}
+
+}
