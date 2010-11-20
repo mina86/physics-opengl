@@ -479,31 +479,44 @@ void Widget::connection(value_type size, Vector r,
 		/* this probably could be calculated in a better way */
 		b = r * a;
 	}
-	a *= size;
-	b *= size;
 
 	/* Calculate slices count */
 	unsigned slices = 30;
+	unsigned steps  = l * 10;
 	if (config->lowQuality) {
 		slices >>= 2;
+		steps  >>= 2;
 	}
 	if (slices < 6) {
 		slices = 6;
 	}
+	if (steps < 1) {
+		steps = 1;
+	}
 
 	/* Let's get going ... */
-	glBegin(GL_QUAD_STRIP);
-	for (unsigned i = 0; i <= slices; ++i) {
-		Vector v = lib::sin(360 * i / slices) * a +
-			lib::cos(360 * i / slices) * b;
+	float step = l / steps;
+	for (unsigned i = 0; i < steps; ++i) {
+		Vector from = r * (i * step), to = r * ((i + 1) * step);
 
-		glColor3fv(color1);
-		glVertex3fv(v.v());
+		glBegin(GL_QUAD_STRIP);
+		for (unsigned j = 0; j <= slices; ++j) {
+			Vector v =
+				lib::sin(360 * j / slices) * a +
+				lib::cos(360 * j / slices) * b;
 
-		glColor3fv(color2);
-		glVertex3fv((r + v).v());
+			glNormal3fv(v.v());
+
+			glColor3fv(color1);
+			glVertex3f(from.x() + v.x() * size, from.y() + v.y() * size,
+			           from.z() + v.z() * size);
+
+			glColor3fv(color2);
+			glVertex3f(to.x() + v.x() * size, to.y() + v.y() * size,
+			           to.z() + v.z() * size);
+		}
+		glEnd();
 	}
-	glEnd();
 }
 
 /********************************** Events **********************************/
