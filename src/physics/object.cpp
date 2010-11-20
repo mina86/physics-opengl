@@ -66,7 +66,7 @@ Object::~Object() {
 }
 
 void Object::draw(const gl::Widget &gl) {
-	const bool visible = true /* gl.isInFront(point) */;
+	const bool visible = gl.isInFront(point);
 
 	if (!visible && light < 0) {
 		return;

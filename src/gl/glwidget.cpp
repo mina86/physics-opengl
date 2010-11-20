@@ -163,12 +163,11 @@ void Widget::doUpdateMatrix() const {
 	matrixValid = true;
 }
 
-
 bool Widget::isInFront(const Vector &vec) const {
 	const value_type md1 =
-		cam.x() * M(0, 2) + cam.y() * M(1, 2) + cam.z() * M(2, 2);
+		cam.x() * M(2, 0) + cam.y() * M(2, 1) + cam.z() * M(2, 2);
 	const value_type md2 =
-		vec.x() * M(0, 2) + vec.y() * M(1, 2) + vec.z() * M(2, 2);
+		vec.x() * M(2, 0) + vec.y() * M(2, 1) + vec.z() * M(2, 2);
 	return md2 < md1;
 }
 
