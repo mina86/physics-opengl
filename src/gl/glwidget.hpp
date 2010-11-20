@@ -129,10 +129,7 @@ struct Widget : public QGLWidget {
 
 	bool isInFront(const Vector &v) const;
 
-	void setScene(AbstractScene::ptr theScene) {
-		scene = theScene;
-		emit sceneChanged();
-	}
+	void setScene(AbstractScene::ptr theScene);
 	AbstractScene *getScene() {
 		return scene.get();
 	}

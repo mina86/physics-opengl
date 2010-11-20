@@ -46,7 +46,7 @@ const Widget::value_type Widget::ones[4] = { 1, 1, 1, 1 };
 const Widget::value_type Widget::specular[4] = { 0.75, 0.75, 0.75, 1 };
 
 
-/********************************** Hints ***********************************/
+/********************************** Misc ************************************/
 
 QSize Widget::minimumSizeHint() const {
 	return QSize(50, 50);
@@ -56,6 +56,11 @@ QSize Widget::sizeHint() const {
 	return QSize(400, 400);
 }
 
+void Widget::setScene(AbstractScene::ptr theScene) {
+	scene = theScene;
+	emit sceneChanged();
+	emit needRepaint();
+}
 
 /**************************** Camera & Rotation *****************************/
 
