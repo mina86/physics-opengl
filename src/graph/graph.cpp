@@ -40,6 +40,8 @@ void Graph::init(unsigned theN) throw(std::invalid_argument, std::bad_alloc) {
 		delete nodes_vec;
 		throw;
 	}
+
+	std::fill_n(edges_vec, edges(), edge_type());
 }
 
 void Graph::check_size(const Graph &g) throw(std::invalid_argument) {
