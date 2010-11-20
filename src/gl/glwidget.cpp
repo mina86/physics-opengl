@@ -411,7 +411,7 @@ bool Widget::sphere(value_type size, const Vector &point,
 bool Widget::sphere(value_type size, const Vector &point,
                       const value_type color[4], const Texture *texture,
                       const std::string &text, unsigned *list) const {
-	if (!sphere(size, point, texture)) {
+	if (!sphere(size, point, color, texture)) {
 		return false;
 	}
 
