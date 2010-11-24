@@ -25,7 +25,6 @@
 #include "../lib/mconst.h"
 #include "../lib/sintable.hpp"
 
-#include "text3d.hpp"
 #include "texture.hpp"
 
 template<class T>
@@ -306,41 +305,14 @@ static void setColor(const float *color) {
 	glMaterialf(GL_FRONT, GL_SHININESS, 12);
 }
 
-void Widget::_text(const std::string &text, value_type scale, unsigned *list,
-                   const value_type color[4]) const {
-	if (config->showText && !text.empty()) {
-		if (list && *list) {
-			glCallList(*list);
-			return;
-		}
-
-		if (list) {
-			*list = glGenLists(1);
-			if (*list) {
-				glNewList(*list, GL_COMPILE_AND_EXECUTE);
-			}
-		}
-
-		glScalef(scale, scale, scale);
-		if (color) {
-			glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-		}
-		glMaterialfv(GL_FRONT, GL_EMISSION, zeros);
-		t3d::draw3D(text, 0, 0, 0.5);
-
-		if (list && *list) {
-			glEndList();
-		}
-	}
+void Widget::_text(const std::string &, value_type,
+                   const value_type[4]) const {
+	/* XXX TODO: implement text */
 }
 
-void Widget::text(const std::string &text, value_type scale, unsigned *list,
-                  const value_type color[4]) const {
-	if (config->showText && !text.empty()) {
-		glPushMatrix();
-		_text(text, scale, list, color);
-		glPopMatrix();
-	}
+void Widget::text(const std::string &, value_type,
+                  const value_type[4]) const {
+	/* XXX TODO: implement text */
 }
 
 bool Widget::sphere(value_type size, const Vector &point,
@@ -416,27 +388,9 @@ bool Widget::sphere(value_type size, const Vector &point,
 
 bool Widget::sphere(value_type size, const Vector &point,
                       const value_type color[4], const Texture *texture,
-                      const std::string &text, unsigned *list) const {
-	if (!sphere(size, point, color, texture)) {
-		return false;
-	}
-
-	if (config->showText && text.empty()) {
-		glPushMatrix();
-
-		glLoadIdentity();
-
-		Vector v(top());
-		v *= 0.3;
-		v += point;
-		glTranslatef(-point.x(), -point.y(), -point.z());
-
-		_text(text, 0.1, list, color);
-
-		glPopMatrix();
-	}
-
-	return true;
+                      const std::string &) const {
+	return sphere(size, point, color, texture);
+	/* XXX TODO: implement text */
 }
 
 void Widget::connection(value_type size, Vector r,

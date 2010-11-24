@@ -50,18 +50,11 @@ struct PushMatrix {
 }
 
 Object::Object(const std::string &theName, Object *previous)
-	: mass(1), size(1), name(theName), light(-1), frozen(false),
-	  textList(0), next(this) {
+	: mass(1), size(1), name(theName), light(-1), frozen(false), next(this) {
 	setColor(1, 1, 1);
 	if (previous) {
 		next = previous->next;
 		previous->next = this;
-	}
-}
-
-Object::~Object() {
-	if (textList) {
-		glDeleteLists(textList, 1);
 	}
 }
 
@@ -94,7 +87,7 @@ void Object::draw(const gl::Widget &gl) {
 		             : (gotTexture ? gl::Widget::ones : materialColor));
 		glMaterialf(GL_FRONT, GL_SHININESS, light >= 0 ? 0 : 12);
 
-		gl.sphere(size, point, &texture, name, &textList);
+		gl.sphere(size, point, &texture, name);
 	}
 
 	glPopMatrix();

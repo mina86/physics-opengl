@@ -9,7 +9,6 @@
 #include "../lib/rand.hpp"
 
 #include "../gl/glconfig.hpp"
-#include "../gl/text3d.hpp"
 #include "../gl/texture.hpp"
 
 #include "mainwindow.hpp"
@@ -73,14 +72,6 @@ int main(int argc, char **argv) {
 	case  0: gl::Texture::filename_suffix = ".lq.sgi"; break;
 	case  1: gl::Texture::filename_suffix = ".mq.sgi"; break;
 	case  2: gl::Texture::filename_suffix = ".hq.sgi"; break;
-	}
-
-	try {
-		t3d::init("data/charset");
-	}
-	catch (const t3d::load_exception &e) {
-		fprintf(stderr, "Error initialising 3D text: %s\n", e.what());
-		return 1;
 	}
 
 	window = new ui::MainWindow(config);

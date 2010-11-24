@@ -31,7 +31,6 @@ struct Scene : public gl::AbstractScene, public Graph {
 	struct Node {
 		std::string name;
 		float color[4];
-		unsigned textList;
 	};
 
 	typedef std::pair<Graph::node_type &, Node &> node_type;

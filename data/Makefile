@@ -2,7 +2,7 @@ CONVERT			?= convert
 DATA_DIR		?= .
 JPG_TEXTURES	:= $(wildcard *.jpg)
 TEXTURES_		 = $(addprefix $(DATA_DIR)/,$(basename $(JPG_TEXTURES)))
-SRC_FILES		:= $(wildcard *.sol) $(wildcard *.psy) README charset
+SRC_FILES		:= $(wildcard *.sol) $(wildcard *.psy) README
 
 
 all: textures files

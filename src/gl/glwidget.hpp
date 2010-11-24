@@ -98,29 +98,24 @@ struct Widget : public QGLWidget {
 		return sphere(size, point, NULL, texture);
 	}
 	bool sphere(value_type size, const Vector &point,
-	            const value_type color[4],
-	            const Texture *texture,
-	            const std::string &text, unsigned *list) const;
+	            const value_type color[4], const Texture *texture,
+	            const std::string &text) const;
 	bool sphere(value_type size, const Vector &point,
-	            const value_type color[4],
-	            const std::string &text, unsigned *list) const {
-		return sphere(size, point, color, NULL, text, list);
+	            const value_type color[4], const std::string &text) const {
+		return sphere(size, point, color, NULL, text);
 	}
 	bool sphere(value_type size, const Vector &point,
-	            const Texture *texture,
-	            const std::string &text, unsigned *list) const {
-		return sphere(size, point, NULL, texture, text, list);
+	            const Texture *texture, const std::string &text) const {
+		return sphere(size, point, NULL, texture, text);
 	}
 	bool sphere(value_type size, const Vector &point,
-	            const std::string &text, unsigned *list) const {
-		return sphere(size, point, NULL, NULL, text, list);
+	            const std::string &text) const {
+		return sphere(size, point, NULL, NULL, text);
 	}
 
 	void text(const std::string &text, value_type scale,
-	          unsigned *list = NULL,
 	          const value_type color[4] = NULL) const;
 	void _text(const std::string &text, value_type scale,
-	           unsigned *list = NULL,
 	           const value_type color[4] = NULL) const;
 
 	void connection(value_type size, Vector r,

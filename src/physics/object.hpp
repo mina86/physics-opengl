@@ -41,7 +41,6 @@ struct Object {
 	typedef gl::Vector<double> Vector;
 
 	Object(const std::string &theName, Object *previous);
-	~Object();
 
 	const std::string &getName() const { return name; }
 
@@ -133,7 +132,6 @@ private:
 	bool frozen;
 
 	float materialColor[4];
-	unsigned int textList;
 
 	Object *next;
 

@@ -37,7 +37,6 @@ Scene::Scene(unsigned theN) throw(std::invalid_argument, std::bad_alloc)
 		sprintf(buffer, "#%u", i);
 		node->name.assign(buffer);
 		std::fill_n(node->color, 4, (float)1);
-		node->textList = 0;
 	}
 }
 
@@ -90,8 +89,7 @@ void Scene::drawScene(const gl::Widget &gl) {
 		glTranslatef(node1.first.x(), node1.first.y(), node1.first.z());
 
 		if (visible) {
-			gl.sphere(1.0, node1.first, node1.second.color,
-			          node1.second.name, &node1.second.textList);
+			gl.sphere(1.0, node1.first, node1.second.color, node1.second.name);
 		}
 
 		for (unsigned to = 0; to < from; ++to, ++eit) {
