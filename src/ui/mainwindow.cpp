@@ -210,7 +210,7 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 	onWidgetSceneChanged();
 
 	graph::DummySolver *solver = new graph::DummySolver(this);
-	solver->scene = dynamic_cast<graph::Scene *>(pane->gl->getScene());
+	solver->scene = pane->gl->getScene<graph::Scene>();
 	solver->createPlayerWidget(this)->show();
 	connect(solver, SIGNAL(oneStepMade()), pane->gl, SLOT(updateGL()));
 }

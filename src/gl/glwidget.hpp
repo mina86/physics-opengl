@@ -128,6 +128,10 @@ struct Widget : public QGLWidget {
 	AbstractScene *getScene() {
 		return scene.get();
 	}
+	template<class Scene>
+	Scene *getScene() {
+		return dynamic_cast<Scene *>(getScene());
+	}
 
 	const Config config;
 
