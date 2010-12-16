@@ -27,6 +27,7 @@
 #include <string>
 #include <map>
 #include <set>
+#include <limits>
 
 #include "../lib/lexer.hpp"
 
@@ -45,23 +46,23 @@ const char AbstractScene::extension[] = "grp";
  * color	: "color" NUMBER NUMBER NUMBER
  */
 
-struct Node {
-	std::string name;
-	gl::Vector<float> pos;
-	float rgb[3];
-
+struct Node : public graph::Scene::Node {
 	Node() {
-		color(1.0, 1.0, 1.0);
+		setPosition(std::numeric_limits<float>::quiet_NaN(),
+		            std::numeric_limits<float>::quiet_NaN(),
+		            std::numeric_limits<float>::quiet_NaN());
+		setColor(1.0, 1.0, 1.0);
+		color[3] = 0.0;
 	}
 
-	void position(float x, float y, float z) {
-		pos.set(x, y, z);
+	void setPosition(float x, float y, float z) {
+		loadedPosition.set(x, y, z);
 	}
 
-	void color(float r, float g, float b) {
-		rgb[0] = r;
-		rgb[1] = g;
-		rgb[2] = b;
+	void setColor(float r, float g, float b) {
+		color[0] = r;
+		color[1] = g;
+		color[2] = b;
 	}
 };
 
@@ -161,9 +162,9 @@ AbstractScene::ptr AbstractScene::load(std::istream &in)
 				lexer.acceptReal(false);
 
 				if (prevToken == '@') {
-					nodes.back().position(a, b, c);
+					nodes.back().setPosition(a, b, c);
 				} else {
-					nodes.back().color(a, b, c);
+					nodes.back().setColor(a, b, c);
 				}
 
 				NEXT();
@@ -210,9 +211,12 @@ AbstractScene::ptr AbstractScene::load(std::istream &in)
 		graph::Scene::nodes_iterator out = scene->nodes_begin();
 
 		for (; in != end; ++in, ++out) {
-			(*out).first = in->pos;
-			(*out).second.name = in->name;
-			memcpy((*out).second.color, in->rgb, sizeof in->rgb);
+			if (isnan(in->loadedPosition.x())) {
+				(*out).first.zero();
+			} else {
+				(*out).first = in->loadedPosition;
+			}
+			(*out).second = *in;
 		}
 	}
 

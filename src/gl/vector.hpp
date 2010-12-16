@@ -36,10 +36,11 @@ struct Vector {
 	const T *v() const { return vector; }
 	T *v() { return vector; }
 
-	Vector(T theX = 0, T theY = 0, T theZ = 0) {
-		vector[0] = theX;
-		vector[1] = theY;
-		vector[2] = theZ;
+	Vector() {
+		/* Default constructor does not initialise */
+	}
+	Vector(T theX, T theY, T theZ) {
+		set(theX, theY, theZ);
 	}
 	template<class T2>
 	Vector(const Vector<T2> &vec) {
@@ -52,6 +53,10 @@ struct Vector {
 		vector[0] = theX;
 		vector[1] = theY;
 		vector[2] = theZ;
+	}
+
+	void zero() {
+		set(0.0, 0.0, 0.0);
 	}
 
 	T length   () const { return std::sqrt(length2()); }

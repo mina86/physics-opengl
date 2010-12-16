@@ -31,6 +31,10 @@ struct Scene : public gl::AbstractScene, public Graph {
 	struct Node {
 		std::string name;
 		float color[4];
+		/* This is the position that has been loaded from file (or
+		 * generated or whatever).  If isnan(loadedPosetion.x()) it
+		 * means that no position was spocified in the loaded file. */
+		gl::Vector<float> loadedPosition;
 	};
 
 	typedef std::pair<Graph::node_type &, Node &> node_type;
