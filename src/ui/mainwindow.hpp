@@ -33,7 +33,7 @@ struct MainWindow : public QMainWindow {
 	MainWindow(gl::Config theConfig, QWidget *parent = 0);
 
 	gl::Config config;
-	GLPane *const pane;
+	GLPane * pane;
 
 public slots:
 	void openSettingsDialog();
@@ -44,8 +44,11 @@ protected:
 	void changeEvent(QEvent *e);
 	void prepare();
 
+	bool isFileLoaded;
+
 protected slots:
 	void onWidgetSceneChanged();
+	void loadScene(gl::AbstractScene::ptr scene);
 
 private:
 	MainWindow();

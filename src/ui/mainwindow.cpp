@@ -35,32 +35,11 @@ namespace ui {
 
 MainWindow::MainWindow(gl::Config theConfig, QWidget *parent)
 	: QMainWindow(parent), config(theConfig),
-	  pane(new GLPane(theConfig)) {
+	  pane(NULL), isFileLoaded(false) {
 
 	ui.setupUi(this);
 
-	setCentralWidget(pane);
-
-	QDockWidget *dockPlayer = new QDockWidget(tr("Player controls"), this);
-	dockPlayer->setAllowedAreas(Qt::TopDockWidgetArea |
-	                            Qt::BottomDockWidgetArea);
-
-	PlayerControlWidget *pcw = new PlayerControlWidget(dockPlayer);
-	dockPlayer->setWidget(pcw);
-
-	addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
-
 	initActions();
-
-	connect(pane->gl, SIGNAL(sceneChanged()),
-	        this, SLOT(onWidgetSceneChanged()));
-	connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
-	        pane->gl, SLOT(updateState(uint, float)));
-	connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
-	        pane->gl, SLOT(updateGL()));
-	/* XXX This should go away... */
-	connect(pane->gl, SIGNAL(needRepaint()),
-	        pane->gl, SLOT(updateGL()));
 }
 
 void MainWindow::changeEvent(QEvent *e)
@@ -130,7 +109,13 @@ void MainWindow::load()
 		return;
 	}
 
-	pane->gl->setScene(scene);
+	if (!isFileLoaded) {
+		loadScene(scene);
+	} else {
+		MainWindow *anotherWindow = new MainWindow(config);
+		anotherWindow->loadScene(scene);
+		anotherWindow->show();
+	}
 }
 
 void MainWindow::save()
@@ -187,13 +172,41 @@ void MainWindow::initActions()
 	fileMenu->addAction(saveAction);
 	fileMenu->addSeparator();
 	fileMenu->addAction(quitAction);
-
-	onWidgetSceneChanged();
 }
 
 void MainWindow::onWidgetSceneChanged()
 {
 	saveAction->setEnabled(pane->gl->getScene());
+}
+
+void MainWindow::loadScene(gl::AbstractScene::ptr scene)
+{
+	pane = new GLPane(config);
+
+	QDockWidget *dockPlayer = new QDockWidget(tr("Player controls"), this);
+	dockPlayer->setAllowedAreas(Qt::TopDockWidgetArea |
+	                            Qt::BottomDockWidgetArea);
+
+	PlayerControlWidget *pcw = new PlayerControlWidget(dockPlayer);
+	dockPlayer->setWidget(pcw);
+
+	addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
+
+	connect(pane->gl, SIGNAL(sceneChanged()),
+	        this, SLOT(onWidgetSceneChanged()));
+	connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
+	        pane->gl, SLOT(updateState(uint, float)));
+	connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
+	        pane->gl, SLOT(updateGL()));
+	/* XXX This should go away... */
+	connect(pane->gl, SIGNAL(needRepaint()),
+	        pane->gl, SLOT(updateGL()));
+
+	setCentralWidget(pane);
+	pane->gl->setScene(scene);
+	isFileLoaded = true;
+
+	onWidgetSceneChanged();
 }
 
 }
