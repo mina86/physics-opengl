@@ -20,10 +20,11 @@
 
 #include "../gl/abstract-scene.hpp"
 #include "../gl/glwidget.hpp"
-#include "../gl/glwidget.hpp"
+#include "../graph/scene.hpp"
 
 #include "dialogs/settingsdialog.hpp"
 #include "playercontrolwidget.hpp"
+#include "../graph/solver/dummysolver.hpp"
 
 #include <fstream>
 
@@ -183,22 +184,22 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 {
 	pane = new GLPane(config);
 
-	QDockWidget *dockPlayer = new QDockWidget(tr("Player controls"), this);
-	dockPlayer->setAllowedAreas(Qt::TopDockWidgetArea |
-	                            Qt::BottomDockWidgetArea);
+//	QDockWidget *dockPlayer = new QDockWidget(tr("Player controls"), this);
+//	dockPlayer->setAllowedAreas(Qt::TopDockWidgetArea |
+//	                            Qt::BottomDockWidgetArea);
 
-	PlayerControlWidget *pcw = new PlayerControlWidget(dockPlayer);
-	dockPlayer->setWidget(pcw);
+//	PlayerControlWidget *pcw = new PlayerControlWidget(dockPlayer);
+//	dockPlayer->setWidget(pcw);
 
-	addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
+//	addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
 
 	connect(pane->gl, SIGNAL(sceneChanged()),
 	        this, SLOT(onWidgetSceneChanged()));
-	connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
-	        pane->gl, SLOT(updateState(uint, float)));
-	connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
-	        pane->gl, SLOT(updateGL()));
-	/* XXX This should go away... */
+//	connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
+//	        pane->gl, SLOT(updateState(uint, float)));
+//	connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
+//	        pane->gl, SLOT(updateGL()));
+//	/* XXX This should go away... */
 	connect(pane->gl, SIGNAL(needRepaint()),
 	        pane->gl, SLOT(updateGL()));
 
@@ -207,6 +208,11 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 	isFileLoaded = true;
 
 	onWidgetSceneChanged();
+
+	graph::DummySolver *solver = new graph::DummySolver(this);
+	solver->scene = dynamic_cast<graph::Scene *>(pane->gl->getScene());
+	solver->createPlayerWidget(this)->show();
+	connect(solver, SIGNAL(oneStepMade()), pane->gl, SLOT(updateGL()));
 }
 
 }
