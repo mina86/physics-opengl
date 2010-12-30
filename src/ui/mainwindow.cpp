@@ -173,6 +173,10 @@ void MainWindow::initActions()
 	fileMenu->addAction(saveAction);
 	fileMenu->addSeparator();
 	fileMenu->addAction(quitAction);
+
+	ui.toolBar->addAction(loadAction);
+	ui.toolBar->addAction(saveAction);
+	ui.toolBar->addAction(settingsAction);
 }
 
 void MainWindow::onWidgetSceneChanged()
