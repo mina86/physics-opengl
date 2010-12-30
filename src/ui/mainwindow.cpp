@@ -188,15 +188,6 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 {
 	pane = new GLPane(config);
 
-//	QDockWidget *dockPlayer = new QDockWidget(tr("Player controls"), this);
-//	dockPlayer->setAllowedAreas(Qt::TopDockWidgetArea |
-//	                            Qt::BottomDockWidgetArea);
-
-//	PlayerControlWidget *pcw = new PlayerControlWidget(dockPlayer);
-//	dockPlayer->setWidget(pcw);
-
-//	addDockWidget(Qt::BottomDockWidgetArea, dockPlayer);
-
 	connect(pane->gl, SIGNAL(sceneChanged()),
 	        this, SLOT(onWidgetSceneChanged()));
 //	connect(pcw, SIGNAL(newFrameNeeded(uint, float)),
@@ -214,8 +205,12 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 	onWidgetSceneChanged();
 
 	graph::DummySolver *solver = new graph::DummySolver(this);
-	solver->scene = pane->gl->getScene<graph::Scene>();
-	solver->createPlayerWidget(this)->show();
+	solver->scene = dynamic_cast<graph::Scene *>(pane->gl->getScene());
+
+	QDockWidget *playerDockWidget = new QDockWidget(tr("Player controls", "widget name"), this);
+	playerDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea);
+	playerDockWidget->setWidget(solver->createPlayerWidget(playerDockWidget));
+	addDockWidget(Qt::BottomDockWidgetArea, playerDockWidget);
 	connect(solver, SIGNAL(oneStepMade()), pane->gl, SLOT(updateGL()));
 }
 
