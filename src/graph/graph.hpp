@@ -87,7 +87,7 @@ struct Graph {
 	/*
 	 * Note that e(u, v) == e(v, u) and e(v, v) == edge_type().
 	 * Invalid indexes are likely to cause troubles, se make
-	 * sure u < edges() and v < edges().
+	 * sure u < nodes() and v < nodes().
 	 */
 	edge_type e(unsigned u, unsigned v) const {
 		if (u == v) {

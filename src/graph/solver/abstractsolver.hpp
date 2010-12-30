@@ -1,5 +1,5 @@
 /*
- * src/graph/graph.hpp
+ * src/graph/solver/abstractsolver.hpp
  * Copyright 2010 by Michal Nazarewicz <mina86@mina86.com>
  *               and Maciej Swietochowski
  *
