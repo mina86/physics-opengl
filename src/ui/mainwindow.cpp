@@ -25,6 +25,7 @@
 #include "dialogs/settingsdialog.hpp"
 #include "playercontrolwidget.hpp"
 #include "../graph/solver/dummysolver.hpp"
+#include "../graph/solver/evolutionarysolver.hpp"
 
 #include <fstream>
 
@@ -204,14 +205,14 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 
 	onWidgetSceneChanged();
 
-	graph::DummySolver *solver = new graph::DummySolver(this);
-	solver->scene = dynamic_cast<graph::Scene *>(pane->gl->getScene());
+	graph::EvolutionarySolver *solver = new graph::EvolutionarySolver(this);
+	solver->setScene(dynamic_cast<graph::Scene *>(pane->gl->getScene()));
 
 	QDockWidget *playerDockWidget = new QDockWidget(tr("Player controls", "widget name"), this);
 	playerDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea);
 	playerDockWidget->setWidget(solver->createPlayerWidget(playerDockWidget));
 	addDockWidget(Qt::BottomDockWidgetArea, playerDockWidget);
-	connect(solver, SIGNAL(oneStepMade()), pane->gl, SLOT(updateGL()));
+	connect(solver, SIGNAL(graphChanged()), pane->gl, SLOT(updateGL()));
 }
 
 }

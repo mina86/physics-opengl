@@ -20,6 +20,7 @@
 #define ABSTRACTSOLVER_HPP
 
 #include <QWidget>
+#include "../scene.hpp"
 
 namespace graph
 {
@@ -27,6 +28,16 @@ namespace graph
 	{
 		AbstractSolver(QObject *parent) : QObject(parent) { }
 		virtual QWidget* createPlayerWidget(QWidget *parent) = 0;
+		virtual bool setScene(Scene* theScene) {
+			scene = theScene;
+			return true;
+		}
+
+	signals:
+		void graphChanged();
+
+	protected:
+		Scene* scene;
 
 	private:
 		Q_OBJECT

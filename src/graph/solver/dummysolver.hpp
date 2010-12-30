@@ -20,7 +20,6 @@
 #define DUMMYSOLVER_HPP
 
 #include "abstractsolver.hpp"
-#include "../scene.hpp"
 
 namespace graph
 {
@@ -30,8 +29,6 @@ namespace graph
 		explicit DummySolver(QObject *parent = 0);
 
 		QWidget* createPlayerWidget(QWidget *parent);
-
-		Scene* scene;
 
 	signals:
 		void oneStepMade();

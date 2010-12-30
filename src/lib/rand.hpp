@@ -23,12 +23,16 @@ namespace lib {
 
 void initRand();
 
+//TODO: Provide gaussian random number generator
+//or make whole code depend on GSL
+
 /*
  * Even if USE_GSL is defined, libc's rand() is also initialised.
  */
 #ifdef USE_GSL
 
 #include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 
 extern gsl_rng *gsl_rng_object;
 
