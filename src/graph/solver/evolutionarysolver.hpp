@@ -28,9 +28,8 @@ namespace graph {
 	struct EvolutionarySolver : public AbstractSolver
 	{
 
-		EvolutionarySolver(QObject *parent = 0);
+		EvolutionarySolver(QObject *parent, Scene *scene);
 		virtual QWidget* createPlayerWidget(QWidget *parent);
-		bool setScene(Scene *theScene);
 
 	protected:
 		typedef std::auto_ptr<std::vector<Graph> > population_ptr;

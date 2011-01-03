@@ -205,8 +205,9 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 
 	onWidgetSceneChanged();
 
-	graph::EvolutionarySolver *solver = new graph::EvolutionarySolver(this);
-	solver->setScene(dynamic_cast<graph::Scene *>(pane->gl->getScene()));
+	graph::EvolutionarySolver *solver = new graph::EvolutionarySolver(
+			this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
+	);
 
 	QDockWidget *playerDockWidget = new QDockWidget(tr("Player controls", "widget name"), this);
 	playerDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea);

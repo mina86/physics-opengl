@@ -30,10 +30,14 @@
 
 namespace graph {
 
-EvolutionarySolver::EvolutionarySolver(QObject *parent)
-	: AbstractSolver(parent),
+EvolutionarySolver::EvolutionarySolver(QObject *parent, Scene *scene)
+	: AbstractSolver(parent, scene),
 	population(0)
 {
+	iterationCount = 0;
+	populationSize = 10;
+	//TODO: delete graphs if re-setting scene
+	population = population_ptr(new std::vector<Graph>(populationSize, *(dynamic_cast<Graph*>(scene))));
 }
 
 QWidget* EvolutionarySolver::createPlayerWidget(QWidget *theParent)
@@ -51,16 +55,6 @@ QWidget* EvolutionarySolver::createPlayerWidget(QWidget *theParent)
 	connect(player->ui.oneIterationButton, SIGNAL(clicked()), this, SLOT(makeOneIteration()));
 
 	return player;
-}
-
-bool EvolutionarySolver::setScene(Scene *theScene)
-{
-	scene = theScene;
-	iterationCount = 0;
-	populationSize = 10;
-	//TODO: delete graphs if re-setting scene
-	population = population_ptr(new std::vector<Graph>(populationSize, *(dynamic_cast<Graph*>(scene))));
-	return true;
 }
 
 void EvolutionarySolver::makeOneIteration()

@@ -26,12 +26,8 @@ namespace graph
 {
 	struct AbstractSolver : public QObject
 	{
-		AbstractSolver(QObject *parent) : QObject(parent) { }
+		AbstractSolver(QObject *parent, Scene *theScene) : QObject(parent), scene(theScene) { }
 		virtual QWidget* createPlayerWidget(QWidget *parent) = 0;
-		virtual bool setScene(Scene* theScene) {
-			scene = theScene;
-			return true;
-		}
 
 	signals:
 		void graphChanged();

@@ -26,8 +26,7 @@ namespace graph
 
 	struct DummySolver : public AbstractSolver
 	{
-		explicit DummySolver(QObject *parent = 0);
-
+		explicit DummySolver(QObject *parent, Scene *scene);
 		QWidget* createPlayerWidget(QWidget *parent);
 
 	signals:

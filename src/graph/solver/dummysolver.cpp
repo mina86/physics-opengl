@@ -25,8 +25,8 @@
 namespace graph
 {
 
-DummySolver::DummySolver(QObject *parent) :
-	AbstractSolver(parent)
+DummySolver::DummySolver(QObject *parent, Scene *scene) :
+	AbstractSolver(parent, scene)
 {
 }
 
