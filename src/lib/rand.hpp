@@ -19,6 +19,18 @@
 #ifndef H_RAND_HPP
 #define H_RAND_HPP
 
+#ifdef USE_GSL
+
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
+
+#else
+
+#include <stdlib.h>
+
+#endif
+
+
 namespace lib {
 
 void initRand();
@@ -30,9 +42,6 @@ void initRand();
  * Even if USE_GSL is defined, libc's rand() is also initialised.
  */
 #ifdef USE_GSL
-
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
 
 extern gsl_rng *gsl_rng_object;
 
@@ -47,8 +56,6 @@ T rndp(T n) {
 }
 
 #else
-
-#include <stdlib.h>
 
 template<typename T>
 T rnd(T n) {
