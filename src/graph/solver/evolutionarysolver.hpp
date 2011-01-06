@@ -23,6 +23,8 @@
 #include <vector>
 #include "../../gl/vector.hpp"
 
+#include "evo/evoconfig.hpp"
+
 namespace graph {
 
 	struct EvolutionarySolver : public AbstractSolver
@@ -35,7 +37,6 @@ namespace graph {
 		typedef std::auto_ptr<std::vector<Graph> > population_ptr;
 
 		int iterationCount;
-		int populationSize;
 		population_ptr population;
 		population_ptr reproduce(population_ptr & population);
 		population_ptr genetic(population_ptr reproduced);
@@ -43,6 +44,8 @@ namespace graph {
 		static bool strictWeakOrderingOfGraphs(const Graph first, const Graph second);
 		static double evaluate(const Graph &g);
 		static double euclidean_distance(const gl::Vector<float> &v1, const gl::Vector<float> &v2);
+
+		solver::evo::Config config;
 
 	protected slots:
 		void makeOneIteration();

@@ -17,49 +17,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "evolutionarysolver.hpp"
-#include "../../lib/rand.hpp"
 #include "evolutionarysolverplayer.hpp"
+#include "../../lib/rand.hpp"
 
-#include <QHBoxLayout>
-#include <QPushButton>
-
-#include <cmath>
-#include <ctime>
-#include <memory>
 #include <algorithm>
 
 namespace graph {
 
 EvolutionarySolver::EvolutionarySolver(QObject *parent, Scene *scene)
-	: AbstractSolver(parent, scene),
-	population(0)
+	: AbstractSolver(parent, scene)
 {
 	iterationCount = 0;
-	populationSize = 10;
-	//TODO: delete graphs if re-setting scene
-	population = population_ptr(new std::vector<Graph>(populationSize, *(dynamic_cast<Graph*>(scene))));
+	//TODO: adjust population size when populationSize changed
+	population = population_ptr(new std::vector<Graph>(config->populationSize, *(dynamic_cast<Graph*>(scene))));
 }
 
 QWidget* EvolutionarySolver::createPlayerWidget(QWidget *theParent)
 {
-//	QWidget *player = new QWidget(theParent);
-//	QHBoxLayout *layout = new QHBoxLayout();
-//	QPushButton *button = new QPushButton(tr("One iteration"), theParent);
-
-//	layout->addWidget(button);
-//	player->setLayout(layout);
-
-//	connect(button, SIGNAL(clicked()), this, SLOT(makeOneIteration()));
-
 	EvolutionarySolverPlayer *player = new EvolutionarySolverPlayer(theParent);
 	connect(player->ui.oneIterationButton, SIGNAL(clicked()), this, SLOT(makeOneIteration()));
-
+	//connect(&(config->populationSize), SIGNAL(changed(long)), player->ui.populationSize, SLOT(setValue(long)));
+	player->ui.populationSize->setValue(config->populationSize);
 	return player;
 }
 
 void EvolutionarySolver::makeOneIteration()
 {
-	int j;
+//	int j;
 //	while (fabs(bestvold - bestv)/bestvold > 0.00000001)
 //	{
 		++iterationCount;
@@ -87,7 +71,8 @@ void EvolutionarySolver::makeOneIteration()
 
 EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(population_ptr & population)
 {
-	return population_ptr(new std::vector<Graph>(*population));
+//	return population_ptr(new std::vector<Graph>(*population));
+	return population_ptr(new std::vector<Graph>(population->size(), population->front()));
 }
 
 EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr reproduced)
@@ -170,7 +155,7 @@ double EvolutionarySolver::evaluate(const Graph &g)
 				result += fabs(3.0 - dist);
 //			// Otherwise, they should be at another distance
 //			else
-				result += fabs(6.0 - dist);
+				result += (6.0/dist);
 
 //			// Extra penalty for collisions
 			if (dist < 2 * exclusiveRadius)
@@ -184,6 +169,5 @@ double EvolutionarySolver::euclidean_distance(const gl::Vector<float> &v1, const
 {
 	return sqrt(pow(v1.x() - v2.x(), 2) + pow(v1.y() - v2.y(), 2) + pow(v1.z() - v2.z(), 2));
 }
-
 
 }
