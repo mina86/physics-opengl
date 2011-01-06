@@ -52,6 +52,8 @@ struct Value : public QObject {
 	template<class T>
 	const T *cast() const { return static_cast<T*>(this); }
 
+	virtual QWidget* makeControlWidget(QWidget *parent) const = 0;
+
 signals:
 	void changed(const Value &v);
 
@@ -84,6 +86,8 @@ struct Bool : public Value {
 		set(v.value);
 		return *this;
 	}
+
+	QWidget* makeControlWidget(QWidget *parent) const;
 
 public slots:
 	void set(bool v);
@@ -124,6 +128,8 @@ struct Integer : public Value  {
 		return *this;
 	}
 
+	QWidget* makeControlWidget(QWidget *parent) const;
+
 	const value_type min, max;
 
 public slots:
@@ -161,6 +167,8 @@ struct Real : public Value  {
 		return *this;
 	}
 
+	QWidget* makeControlWidget(QWidget *parent) const;
+
 	const value_type min, max;
 
 public slots:
@@ -183,10 +191,19 @@ struct List : public Integer {
 	List(const char *theName, const Item *theItems, value_type v = 0)
 		throw(std::out_of_range);
 
+	QWidget* makeControlWidget(QWidget *parent) const;
+
 	const Item *const items;
+
+signals:
+	void controlItemChangeReq(int i);
 
 private:
 	Q_OBJECT
+
+private slots:
+	void setControlItem(long v);
+	void onControlItemChanged(int v);
 };
 
 struct Data : public QObject {

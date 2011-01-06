@@ -22,7 +22,7 @@
 #include "../gl/glwidget.hpp"
 #include "../graph/scene.hpp"
 
-#include "dialogs/settingsdialog.hpp"
+#include "dialogs/autosettingsdialog.hpp"
 #include "playercontrolwidget.hpp"
 #include "../graph/solver/dummysolver.hpp"
 #include "../graph/solver/evolutionarysolver.hpp"
@@ -58,7 +58,7 @@ void MainWindow::changeEvent(QEvent *e)
 
 void MainWindow::openSettingsDialog()
 {
-	SettingsDialog *settingsDialog = new SettingsDialog(this, config);
+	AutoSettingsDialog *settingsDialog = new AutoSettingsDialog(&config, this);
 	settingsDialog->show();
 }
 

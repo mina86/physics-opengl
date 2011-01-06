@@ -18,6 +18,12 @@
  */
 #include "abstract-config.hpp"
 
+#include <QCheckBox>
+#include <QComboBox>
+
+#include "ui/widgets/qlongspinbox.hpp"
+#include "ui/widgets/qfloatspinbox.hpp"
+
 namespace ui {
 
 namespace cfg {
@@ -119,6 +125,62 @@ void Data::init() {
 
 void Data::valueChanged(const Value &) {
 	emit changed();
+}
+
+QWidget* Bool::makeControlWidget(QWidget *parent) const
+{
+	QCheckBox *checkbox = new QCheckBox(name, parent);
+	checkbox->setCheckState(*this ? Qt::Checked : Qt::Unchecked);
+	connect(checkbox, SIGNAL(toggled(bool)), this, SLOT(set(bool)));
+	connect(this, SIGNAL(changed(bool)), checkbox, SLOT(setChecked(bool)));
+	return checkbox;
+}
+
+QWidget* Integer::makeControlWidget(QWidget *parent) const
+{
+	ui::QLongSpinBox *spinbox = new ui::QLongSpinBox(parent);
+	spinbox->setRange(min, max);
+	spinbox->setValue(value);
+	connect(spinbox, SIGNAL(valueChanged(long)), this, SLOT(set(long)));
+	connect(this, SIGNAL(changed(long)), spinbox, SLOT(setValue(long)));
+	return spinbox;
+}
+
+QWidget* Real::makeControlWidget(QWidget *parent) const
+{
+	ui::QFloatSpinBox *spinbox = new ui::QFloatSpinBox(parent);
+	spinbox->setRange(min, max);
+	spinbox->setValue(value);
+	connect(spinbox, SIGNAL(valueChanged(float)), this, SLOT(set(float)));
+	connect(this, SIGNAL(changed(float)), spinbox, SLOT(setValue(float)));
+	return spinbox;
+}
+
+QWidget* List::makeControlWidget(QWidget *parent) const
+{
+	QComboBox *combobox = new QComboBox(parent);
+	const List::Item *it = items;
+	int index = 0;
+	while (*it) {
+		combobox->insertItem(index, *it);
+		++it;
+		++index;
+	}
+	combobox->setCurrentIndex(*this);
+	connect(combobox, SIGNAL(currentIndexChanged(int)), this, SLOT(onControlItemChanged(int)));
+	connect(this, SIGNAL(changed(long)), this, SLOT(setControlItem(long)));
+	connect(this, SIGNAL(controlItemChangeReq(int)), combobox, SLOT(setCurrentIndex(int)));
+	return combobox;
+}
+
+void List::setControlItem(long v)
+{
+	emit controlItemChangeReq((int)v);
+}
+
+void List::onControlItemChanged(int v)
+{
+	set(v);
 }
 
 }
