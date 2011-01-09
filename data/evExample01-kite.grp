@@ -1,0 +1,19 @@
+node "Center" @  0 0 0 color 1 0.9 0.9
+node "Body1" @  0 0 0 color 0.8 1 0.8
+node "Body2" @  0 0 0 color 0.8 1 0.8
+node "Body3" @  0 0 0 color 0.8 1 0.8
+node "Body4" @  0 0 0 color 0.8 1 0.8
+node "Body5" @  0 0 0 color 0.8 1 0.8
+node "Body6" @  0 0 0 color 0.8 1 0.8
+node "Tail1" @  0 0 0 color 0.8 0.8 1
+node "Tail2" @  0 0 0 color 0.7 0.7 0.9
+node "Tail3" @  0 0 0 color 0.6 0.6 0.8
+edge "Center" "Body1"
+edge "Center" "Body2"
+edge "Center" "Body3"
+edge "Center" "Body4"
+edge "Center" "Body5"
+edge "Center" "Body6"
+edge "Body1" "Tail1"
+edge "Tail1" "Tail2"
+edge "Tail2" "Tail3"
