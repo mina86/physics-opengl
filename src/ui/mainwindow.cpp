@@ -37,7 +37,7 @@ namespace ui {
 
 MainWindow::MainWindow(gl::Config theConfig, QWidget *parent)
 	: QMainWindow(parent), config(theConfig),
-	  pane(NULL), isFileLoaded(false) {
+	  pane(NULL), solver(NULL), isFileLoaded(false) {
 
 	ui.setupUi(this);
 
@@ -205,7 +205,7 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 
 	onWidgetSceneChanged();
 
-	graph::solver::EvolutionarySolver *solver = new graph::solver::EvolutionarySolver(
+	solver = new graph::solver::EvolutionarySolver(
 			this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
 	);
 
@@ -214,6 +214,18 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 	playerDockWidget->setWidget(solver->createPlayerWidget(playerDockWidget));
 	addDockWidget(Qt::BottomDockWidgetArea, playerDockWidget);
 	connect(solver, SIGNAL(graphChanged()), pane->gl, SLOT(updateGL()));
+
+	QAction *solverSettingsAction = new QAction(tr("Solver settings", "menu"), this);
+	solverSettingsAction->setToolTip(tr("Change settings of chosen solver"));
+	connect(solverSettingsAction, SIGNAL(triggered()), this, SLOT(openSolverSettingsDialog()));
+	ui.menubar->addAction(solverSettingsAction);
+}
+
+void MainWindow::openSolverSettingsDialog() {
+	if (solver && solver->getConfigData()) {
+		AutoSettingsDialog *settingsDialog = new AutoSettingsDialog(solver->getConfigData(), this);
+		settingsDialog->show();
+	}
 }
 
 }

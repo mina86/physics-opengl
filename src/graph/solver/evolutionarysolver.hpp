@@ -34,6 +34,7 @@ namespace solver {
 
 		EvolutionarySolver(QObject *parent, Scene *scene);
 		virtual QWidget* createPlayerWidget(QWidget *parent);
+		ui::cfg::Data* getConfigData() { return &(*config); }
 
 	protected:
 		struct Score {
@@ -63,15 +64,16 @@ namespace solver {
 		population_ptr reproduce(population_ptr & population);
 		population_ptr genetic(population_ptr reproduced);
 		population_ptr succession(population_ptr population, population_ptr offsprings);
+
 		static bool strictWeakOrderingOfGraphs(const individual_t &first, const individual_t &second);
 		static double evaluate(const Graph &g);
-
-		solver::evo::Config config;
 
 	protected slots:
 		void makeOneIteration();
 
 	private:
+		evo::Config config;
+
 		Q_OBJECT
 	};
 

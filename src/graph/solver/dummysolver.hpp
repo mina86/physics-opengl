@@ -29,6 +29,7 @@ struct DummySolver : public AbstractSolver
 {
 	explicit DummySolver(QObject *parent, Scene *scene);
 	QWidget* createPlayerWidget(QWidget *parent);
+	ui::cfg::Data* getConfigData() { return NULL; }
 
 signals:
 	void oneStepMade();

@@ -21,6 +21,7 @@
 
 #include <QWidget>
 #include "../scene.hpp"
+#include "../../ui/abstract-config.hpp"
 
 namespace graph {
 
@@ -30,6 +31,7 @@ struct AbstractSolver : public QObject
 {
 	AbstractSolver(QObject *parent, Scene *theScene) : QObject(parent), scene(theScene) { }
 	virtual QWidget* createPlayerWidget(QWidget *parent) = 0;
+	virtual ui::cfg::Data* getConfigData() = 0;
 
 signals:
 	void graphChanged();

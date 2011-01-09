@@ -27,6 +27,8 @@
 #include "ui_mainwindow.h"
 #include "glpane.hpp"
 
+#include "graph/solver/abstractsolver.hpp"
+
 namespace ui {
 
 struct MainWindow : public QMainWindow {
@@ -39,8 +41,11 @@ public slots:
 	void openSettingsDialog();
 	void load();
 	void save();
+	void openSolverSettingsDialog();
 
 protected:
+	graph::solver::AbstractSolver *solver;
+
 	void changeEvent(QEvent *e);
 	void prepare();
 
