@@ -36,12 +36,27 @@ namespace solver {
 		virtual QWidget* createPlayerWidget(QWidget *parent);
 
 	protected:
-		typedef Graph individual_t;
+		struct Score {
+			Score() : valid(false) { }
+			mutable bool valid;
+			mutable double score;
+		};
+
+		typedef std::pair<Graph, Score> individual_t;
 		typedef std::vector<individual_t> population_t;
 		typedef std::auto_ptr<population_t> population_ptr;
 
-		static Graph&       graph(individual_t &i)       { return i; }
-		static const Graph& graph(const individual_t &i) { return i; }
+		static Graph&       graph(individual_t &i)            { i.second.valid = false; return i.first; }
+		static const Graph& graph(const individual_t &i)      { return i.first; }
+		static const Graph& constgraph(const individual_t &i) { return i.first; }
+
+		static double evaluate(const individual_t &i) {
+			if (!i.second.valid) {
+				i.second.score = evaluate(i.first);
+				i.second.valid = true;
+			}
+			return i.second.score;
+		}
 
 		int iterationCount;
 		population_ptr population;

@@ -31,7 +31,7 @@ EvolutionarySolver::EvolutionarySolver(QObject *parent, Scene *scene)
 {
 	iterationCount = 0;
 	//TODO: adjust population size when populationSize changed
-	individual_t seed(*dynamic_cast<Graph*>(scene));
+	individual_t seed(*dynamic_cast<Graph*>(scene), Score());
 	population = population_ptr(new population_t(config->populationSize, seed));
 }
 
@@ -67,7 +67,7 @@ void EvolutionarySolver::makeOneIteration()
 //		std::cout << "Graph " << j << " scored " << evaluate(*i) << std::endl;
 //		++j;
 //	}
-	scene->set(graph(population->front()));
+	scene->set(constgraph(population->front()));
 	emit graphChanged();
 }
 
@@ -102,7 +102,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 
 	while (i != population->end() && j != offsprings->end() && newpopulation->size() < population->size())
 	{
-		if (evaluate(graph(*i)) <= evaluate(graph(*j)))
+		if (evaluate(*i) <= evaluate(*j))
 		{
 			newpopulation->push_back(*i);
 			++i;
