@@ -11,17 +11,17 @@ namespace evo {
 
 enum SelectionType { Trivial, RandomUniform, Proportional, Tournament };
 const char * const selectionTypes[] = {
-	"Trivial", "Random uniform", "Proportional", "Tournament(k)"
+	"Trivial", "Random uniform", "Proportional", "Tournament(k)", NULL
 };
 
 enum CrossoverType { NoCrossover, Arithmetic, Interchange };
 const char * const crossoverTypes[] = {
-	"None", "Arithmetic", "Interchange"
+	"None", "Arithmetic", "Interchange", NULL
 };
 
 enum SuccessionType { Straight, EliteOfUnion /*, EliteSumOf*/ };
 const char * const successionTypes[] = {
-	"Straight", "Elite of union" /*, "Union of elite" */
+	"Straight", "Elite of union" /*, "Union of elite" */, NULL
 };
 
 struct Data;

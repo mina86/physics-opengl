@@ -22,6 +22,16 @@ Data::Data()
 ui::cfg::Data::iterator Data::items() const {
 	static const unsigned array[] = {
 		CFG_DATA_OFFSET(populationSize),
+
+		CFG_DATA_OFFSET(selectionType),
+		CFG_DATA_OFFSET(selectionInteger1),
+		CFG_DATA_OFFSET(crossoverType),
+		CFG_DATA_OFFSET(successionType),
+
+		CFG_DATA_OFFSET(mutationEnabled),
+		CFG_DATA_OFFSET(mutationMu),
+		CFG_DATA_OFFSET(mutationSigmasquared),
+
 		~0u,
 	};
 	return iterator(array);
