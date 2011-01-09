@@ -17,12 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "evolutionarysolver.hpp"
-#include "evolutionarysolverplayer.hpp"
+#include "evo/evolutionarysolverplayer.hpp"
 #include "../../lib/rand.hpp"
 
 #include <algorithm>
 
 namespace graph {
+
+namespace solver {
 
 EvolutionarySolver::EvolutionarySolver(QObject *parent, Scene *scene)
 	: AbstractSolver(parent, scene)
@@ -35,7 +37,7 @@ EvolutionarySolver::EvolutionarySolver(QObject *parent, Scene *scene)
 
 QWidget* EvolutionarySolver::createPlayerWidget(QWidget *theParent)
 {
-	EvolutionarySolverPlayer *player = new EvolutionarySolverPlayer(theParent);
+	evo::EvolutionarySolverPlayer *player = new evo::EvolutionarySolverPlayer(theParent);
 	connect(player->ui.oneIterationButton, SIGNAL(clicked()), this, SLOT(makeOneIteration()));
 	//connect(&(config->populationSize), SIGNAL(changed(long)), player->ui.populationSize, SLOT(setValue(long)));
 	player->ui.populationSize->setValue(config->populationSize);
@@ -160,6 +162,8 @@ double EvolutionarySolver::evaluate(const Graph &g)
 		}
 	}
 	return result;
+}
+
 }
 
 }

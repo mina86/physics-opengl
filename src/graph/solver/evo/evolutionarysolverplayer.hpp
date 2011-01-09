@@ -10,6 +10,12 @@ namespace Ui {
 
 namespace graph {
 
+namespace solver {
+
+struct EvolutionarySolver;
+
+namespace evo {
+
 class EvolutionarySolverPlayer : public QWidget
 {
 	Q_OBJECT
@@ -23,9 +29,13 @@ protected:
 private:
 	Ui::EvolutionarySolverPlayer ui;
 
-friend class EvolutionarySolver;
+friend class graph::solver::EvolutionarySolver;
 
 };
+
+}
+
+}
 
 }
 

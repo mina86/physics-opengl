@@ -21,23 +21,26 @@
 
 #include "abstractsolver.hpp"
 
-namespace graph
+namespace graph {
+
+namespace solver {
+
+struct DummySolver : public AbstractSolver
 {
+	explicit DummySolver(QObject *parent, Scene *scene);
+	QWidget* createPlayerWidget(QWidget *parent);
 
-	struct DummySolver : public AbstractSolver
-	{
-		explicit DummySolver(QObject *parent, Scene *scene);
-		QWidget* createPlayerWidget(QWidget *parent);
+signals:
+	void oneStepMade();
 
-	signals:
-		void oneStepMade();
+public slots:
+	void playOnce();
 
-	public slots:
-		void playOnce();
+private:
+	Q_OBJECT
+};
 
-	private:
-		Q_OBJECT
-	};
+}
 
 }
 

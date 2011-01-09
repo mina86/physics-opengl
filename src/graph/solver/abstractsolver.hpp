@@ -22,22 +22,27 @@
 #include <QWidget>
 #include "../scene.hpp"
 
-namespace graph
+namespace graph {
+
+namespace solver {
+
+struct AbstractSolver : public QObject
 {
-	struct AbstractSolver : public QObject
-	{
-		AbstractSolver(QObject *parent, Scene *theScene) : QObject(parent), scene(theScene) { }
-		virtual QWidget* createPlayerWidget(QWidget *parent) = 0;
+	AbstractSolver(QObject *parent, Scene *theScene) : QObject(parent), scene(theScene) { }
+	virtual QWidget* createPlayerWidget(QWidget *parent) = 0;
 
-	signals:
-		void graphChanged();
+signals:
+	void graphChanged();
 
-	protected:
-		Scene* scene;
+protected:
+	Scene* scene;
 
-	private:
-		Q_OBJECT
-	};
+private:
+	Q_OBJECT
+};
+
+}
+
 }
 
 #endif // ABSTRACTSOLVER_HPP

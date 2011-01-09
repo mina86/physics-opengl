@@ -27,6 +27,8 @@
 
 namespace graph {
 
+namespace solver {
+
 	struct EvolutionarySolver : public AbstractSolver
 	{
 
@@ -57,6 +59,8 @@ namespace graph {
 	private:
 		Q_OBJECT
 	};
+
+}
 
 }
 

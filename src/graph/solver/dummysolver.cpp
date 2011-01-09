@@ -22,8 +22,9 @@
 
 #include "../vector-rand.hpp"
 
-namespace graph
-{
+namespace graph {
+
+namespace solver {
 
 DummySolver::DummySolver(QObject *parent, Scene *scene) :
 	AbstractSolver(parent, scene)
@@ -47,6 +48,8 @@ void DummySolver::playOnce()
 	}
 
 	emit oneStepMade();
+}
+
 }
 
 }

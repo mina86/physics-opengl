@@ -2,8 +2,12 @@
 
 namespace graph {
 
+namespace solver {
+
+namespace evo {
+
 EvolutionarySolverPlayer::EvolutionarySolverPlayer(QWidget *parent) :
-		QWidget(parent)
+QWidget(parent)
 {
 	ui.setupUi(this);
 }
@@ -18,6 +22,10 @@ void EvolutionarySolverPlayer::changeEvent(QEvent *e)
 	default:
 		break;
 	}
+}
+
+}
+
 }
 
 }

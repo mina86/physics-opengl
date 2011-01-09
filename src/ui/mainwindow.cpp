@@ -205,7 +205,7 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 
 	onWidgetSceneChanged();
 
-	graph::EvolutionarySolver *solver = new graph::EvolutionarySolver(
+	graph::solver::EvolutionarySolver *solver = new graph::solver::EvolutionarySolver(
 			this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
 	);
 
