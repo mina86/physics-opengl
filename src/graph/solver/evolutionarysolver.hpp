@@ -43,7 +43,6 @@ namespace graph {
 		population_ptr succession(population_ptr population, population_ptr offsprings);
 		static bool strictWeakOrderingOfGraphs(const Graph first, const Graph second);
 		static double evaluate(const Graph &g);
-		static double euclidean_distance(const gl::Vector<float> &v1, const gl::Vector<float> &v2);
 
 		solver::evo::Config config;
 
