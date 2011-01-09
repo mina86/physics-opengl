@@ -29,7 +29,8 @@ EvolutionarySolver::EvolutionarySolver(QObject *parent, Scene *scene)
 {
 	iterationCount = 0;
 	//TODO: adjust population size when populationSize changed
-	population = population_ptr(new std::vector<Graph>(config->populationSize, *(dynamic_cast<Graph*>(scene))));
+	individual_t seed(*dynamic_cast<Graph*>(scene));
+	population = population_ptr(new population_t(config->populationSize, seed));
 }
 
 QWidget* EvolutionarySolver::createPlayerWidget(QWidget *theParent)
@@ -64,7 +65,7 @@ void EvolutionarySolver::makeOneIteration()
 //		std::cout << "Graph " << j << " scored " << evaluate(*i) << std::endl;
 //		++j;
 //	}
-	scene->set(population->front());
+	scene->set(graph(population->front()));
 	emit graphChanged();
 }
 
@@ -72,14 +73,14 @@ void EvolutionarySolver::makeOneIteration()
 EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(population_ptr & population)
 {
 //	return population_ptr(new std::vector<Graph>(*population));
-	return population_ptr(new std::vector<Graph>(population->size(), population->front()));
+	return population_ptr(new population_t(population->size(), population->front()));
 }
 
 EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr reproduced)
 {
-	for (std::vector<Graph>::iterator i = reproduced->begin(); i != reproduced->end(); ++i)
+	for (population_t::iterator i = reproduced->begin(); i != reproduced->end(); ++i)
 	{
-		for (Graph::nodes_iterator j = i->nodes_begin(); j != i->nodes_end(); ++j)
+		for (Graph::nodes_iterator j = graph(*i).nodes_begin(); j != graph(*i).nodes_end(); ++j)
 		{
 			j->x() += gsl_ran_gaussian(lib::gsl_rng_object, 1.0);
 			j->y() += gsl_ran_gaussian(lib::gsl_rng_object, 1.0);
@@ -91,17 +92,15 @@ EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr re
 
 EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr population, population_ptr offsprings)
 {
-	population_ptr newpopulation(new std::vector<Graph>());
+	population_ptr newpopulation(new population_t());
 	std::sort(population->begin(), population->end(), strictWeakOrderingOfGraphs);
 	std::sort(offsprings->begin(), offsprings->end(), strictWeakOrderingOfGraphs);
 
-	std::vector<Graph>::const_iterator i = population->begin(), j = offsprings->begin();
+	population_t::const_iterator i = population->begin(), j = offsprings->begin();
 
 	while (i != population->end() && j != offsprings->end() && newpopulation->size() < population->size())
 	{
-		double v1 = evaluate(*i);
-		double v2 = evaluate(*j);
-		if (v1 <= v2)
+		if (evaluate(graph(*i)) <= evaluate(graph(*j)))
 		{
 			newpopulation->push_back(*i);
 			++i;
@@ -121,11 +120,9 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 	return newpopulation;
 }
 
-bool EvolutionarySolver::strictWeakOrderingOfGraphs(const Graph first, const Graph second)
+bool EvolutionarySolver::strictWeakOrderingOfGraphs(const individual_t &first, const individual_t &second)
 {
-	double v1 = evaluate(first);
-	double v2 = evaluate(second);
-	return v1 < v2;
+	return evaluate(first) < evaluate(second);
 }
 
 double EvolutionarySolver::evaluate(const Graph &g)

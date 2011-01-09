@@ -34,14 +34,19 @@ namespace graph {
 		virtual QWidget* createPlayerWidget(QWidget *parent);
 
 	protected:
-		typedef std::auto_ptr<std::vector<Graph> > population_ptr;
+		typedef Graph individual_t;
+		typedef std::vector<individual_t> population_t;
+		typedef std::auto_ptr<population_t> population_ptr;
+
+		static Graph&       graph(individual_t &i)       { return i; }
+		static const Graph& graph(const individual_t &i) { return i; }
 
 		int iterationCount;
 		population_ptr population;
 		population_ptr reproduce(population_ptr & population);
 		population_ptr genetic(population_ptr reproduced);
 		population_ptr succession(population_ptr population, population_ptr offsprings);
-		static bool strictWeakOrderingOfGraphs(const Graph first, const Graph second);
+		static bool strictWeakOrderingOfGraphs(const individual_t &first, const individual_t &second);
 		static double evaluate(const Graph &g);
 
 		solver::evo::Config config;
