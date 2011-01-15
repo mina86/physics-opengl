@@ -39,7 +39,6 @@ Data::Data()
 	  showText("Show names above objects", true),
 	  showTextures("Display textures", true),
 	  lowQuality("Use low quality rendering", false),
-	  showHelperAxis("Show helper axis", true),
 	  showStars("Show stars (disable if rendering too slow)", true),
 	  drawStyle("Object draw style", drawStyles) {
 	connect(&drawStyle, SIGNAL(changed(long)),
@@ -53,7 +52,6 @@ ui::cfg::Data::iterator Data::items() const {
 		CFG_DATA_OFFSET(showText),
 		CFG_DATA_OFFSET(showTextures),
 		CFG_DATA_OFFSET(lowQuality),
-		CFG_DATA_OFFSET(showHelperAxis),
 		CFG_DATA_OFFSET(showStars),
 		CFG_DATA_OFFSET(drawStyle),
 		~0u,

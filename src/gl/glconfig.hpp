@@ -42,7 +42,7 @@ struct Data : public ui::cfg::Data {
 	ui::cfg::Real runFactor, creepFactor;
 	ui::cfg::Real cutOffDistance2;
 	ui::cfg::Bool showText, showTextures, lowQuality;
-	ui::cfg::Bool showHelperAxis, showStars;
+	ui::cfg::Bool showStars;
 	ui::cfg::List drawStyle;
 	gl::Quadric quad;
 

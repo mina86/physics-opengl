@@ -355,34 +355,6 @@ bool Widget::sphere(value_type size, const Vector &point,
 		glDisable(GL_TEXTURE_2D);
 	}
 
-	if (config->showHelperAxis) {
-		glPushMatrix();
-
-		glDisable(GL_LIGHTING);
-
-		doRotate();
-
-		glLoadIdentity();
-		glTranslatef(-point.x(), -point.y(), -point.z());
-
-		glBegin(GL_LINES);
-		glColor3f(1, 0, 0);
-		// glVertex3f(-size - 2.0, 0, 0); glVertex3f(size + 2.0, 0, 0);
-		// glColor3f(0, 1, 0);
-		// glVertex3f(0, -size - 2.0, 0); glVertex3f(0, size + 2.0, 0);
-		// glColor3f(0, 0, 1);
-		// glVertex3f(0, 0, -size -2.0); glVertex3f(0, 0, size + 2.0);
-
-		Vector t = top() * (size * (value_type)1.5);
-		glVertex3f(-t.x() , -t.y(), -t.z()); glVertex3fv(t.v());
-
-		glEnd();
-
-		glEnable(GL_LIGHTING);
-
-		glPopMatrix();
-	}
-
 	return factor < 0.99;
 }
 
