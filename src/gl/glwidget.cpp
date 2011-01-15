@@ -179,7 +179,8 @@ bool Widget::isInFront(const Vector &vec) const {
 /********************************** OpenGL **********************************/
 
 Widget::Widget(Config &theConfig, QWidget *parent)
-	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent), config(theConfig) {
+	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent), config(theConfig),
+	  starsBuilt(false) {
 	reset();
 	connect(&config, SIGNAL(changed()), this, SLOT(configChanged()));
 }
@@ -203,9 +204,14 @@ void Widget::doLookAt() const {
 }
 
 void Widget::initializeGL() {
-	glClearColor(0.6, 0.6, 0.6, 1.0);
+	glClearColor(0.1, 0.1, 0.1, 1.0);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_MULTISAMPLE);
+
+	if (config->showStars) {
+		stars.makeStars();
+		starsBuilt = true;
+	}
 }
 
 void Widget::resizeGL(int width, int height) {
@@ -263,7 +269,11 @@ void Widget::paintStars() {
 		return;
 	}
 
-	GLuint id = Texture::stars();
+	if (!starsBuilt) {
+		stars.makeStars();
+		starsBuilt = true;
+	}
+	GLuint id = *stars;
 	if (!id) {
 		return;
 	}

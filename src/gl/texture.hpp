@@ -58,7 +58,7 @@ struct Texture {
 	unsigned getWidth () const             { return width; }
 	unsigned getHeight() const             { return height; }
 
-	void assign(unsigned theWidth, unsigned theHeight, unsigned char*theData);
+	void assign(unsigned theWidth, unsigned theHeight, unsigned char *theData);
 
 	static const char *filename_prefix;
 	static const char *filename_suffix;
@@ -85,7 +85,7 @@ struct Texture {
 
 	static bool useNearest;
 
-	static GLuint stars();
+	void makeStars();
 	static unsigned starsQuality;
 
 private:

@@ -28,6 +28,7 @@
 #include "vector.hpp"
 #include "glconfig.hpp"
 #include "abstract-scene.hpp"
+#include "texture.hpp"
 
 namespace gl {
 
@@ -203,6 +204,9 @@ private:
 	mutable bool matrixValid;
 
 	QPoint lastPos;
+
+	Texture stars;
+	bool starsBuilt;
 
 	Q_OBJECT
 };
