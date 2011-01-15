@@ -24,6 +24,7 @@
 namespace graph {
 
 gl::Vector<float> &randCartesian(gl::Vector<float> &v, float max);
+gl::Vector<float> &randVersor(gl::Vector<float> &v);
 gl::Vector<float> &randSpheric(gl::Vector<float> &v, float max);
 gl::Vector<float> &addRandNormal(gl::Vector<float> &v, float sigma);
 

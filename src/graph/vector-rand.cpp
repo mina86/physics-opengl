@@ -32,15 +32,18 @@ gl::Vector<float> &randCartesian(gl::Vector<float> &v, float max) {
 	return v;
 }
 
-gl::Vector<float> &randSpheric(gl::Vector<float> &v, float max) {
-	float r = lib::rnd(max);
+gl::Vector<float> &randVersor(gl::Vector<float> &v) {
 	float a = lib::rnd(M_PI);
 	float b = lib::rndp(2.0 * M_PI);
 	float s = std::sin(a);
-	v.x() = r * s * std::cos(b);
-	v.y() = r * s * std::sin(b);
-	v.z() = r * std::cos(a);
+	v.x() = s * std::cos(b);
+	v.y() = s * std::sin(b);
+	v.z() = std::cos(a);
 	return v;
+}
+
+gl::Vector<float> &randSpheric(gl::Vector<float> &v, float max) {
+	return randVersor(v) *= lib::rnd(max);
 }
 
 /*
