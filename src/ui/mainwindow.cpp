@@ -25,12 +25,14 @@
 #include "dialogs/autosettingsdialog.hpp"
 #include "playercontrolwidget.hpp"
 #include "../graph/solver/evo/evolutionarysolver.hpp"
+#include "../graph/solver/force/forcesolver.hpp"
 
 #include <fstream>
 
 #include <QtGui>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QInputDialog>
 
 namespace ui {
 
@@ -204,9 +206,26 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 
 	onWidgetSceneChanged();
 
-	solver = new graph::solver::EvolutionarySolver(
-			this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
-	);
+	QString solverNameEvo = tr("Evolutionary solver");
+	QString solverNameForce = tr("Physical forces solver");
+	QStringList solvers;
+	solvers << solverNameEvo;
+	solvers << solverNameForce;
+	bool ok = false;
+	QString solverNameChosen;
+	while (!ok) {
+		solverNameChosen = QInputDialog::getItem(this, tr("Choose solver"), tr("Solver"),
+							  solvers, 0, false, &ok);
+	}
+	if (solverNameChosen == solverNameEvo) {
+		solver = new graph::solver::EvolutionarySolver(
+				this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
+		);
+	} else if (solverNameChosen == solverNameForce) {
+		solver = new graph::solver::ForceSolver(
+				this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
+		);
+	}
 
 	QDockWidget *playerDockWidget = new QDockWidget(tr("Player controls", "widget name"), this);
 	playerDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea);
