@@ -39,6 +39,7 @@ struct ForceSolver : public AbstractSolver {
 private:
 	gl::Vector<float> calculateForce(gl::Vector<float> r,
 	                                 bool connected);
+	gl::Vector<float> calculateMiddleForce(const gl::Vector<float> &x);
 
 	struct NodeState {
 		NodeState() : velocity(0.0, 0.0, 0.0), force(0.0, 0.0, 0.0) { }

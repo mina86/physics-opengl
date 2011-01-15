@@ -19,6 +19,7 @@
 #include "forcesolver.hpp"
 
 #include "../../vector-rand.hpp"
+#include "../../../gl/glconfig.hpp"
 
 #include <algorithm>
 #include <queue>
@@ -45,6 +46,7 @@ ui::cfg::Data *ForceSolver::getConfigData() {
 static const float repulsion_force = 1.0;
 static const float attraction_force = 1.0;
 static const float hit_force = 2.5;
+static const float middle_force = 1.0;
 static const float dt = 0.001;
 static const float desired = 5.0;
 static const float damping = 0.9;
@@ -69,6 +71,7 @@ float ForceSolver::makeOneIteration() {
 	Graph::nodes_iterator n = g.nodes_begin();
 	for (Nodes::iterator it = nodes.begin(), end = nodes.end();
 	     it != end; ++it, ++n) {
+		it->force += calculateMiddleForce(*n);
 		it->velocity += it->force * dt;
 		it->velocity *= damping;
 		energy += it->velocity.length2();
@@ -81,13 +84,13 @@ float ForceSolver::makeOneIteration() {
 
 gl::Vector<float> ForceSolver::calculateForce(gl::Vector<float> r,
                                               bool connected) {
-	float d = r.length(), f;
+	float d = r.length();
 
 	if (d < 0.01) {
 		/* Nodes are (nearly) at the same position. */
 		randVersor(r) *= hit_force;
 	} else {
-		f = repulsion_force / (d * d);
+		float f = repulsion_force / (d * d);
 		if (connected) {
 			f -= attraction_force * fabs(d - desired);
 		}
@@ -98,7 +101,18 @@ gl::Vector<float> ForceSolver::calculateForce(gl::Vector<float> r,
 	return r;
 }
 
+gl::Vector<float> ForceSolver::calculateMiddleForce(const gl::Vector<float> &x) {
+	float l = x.length(), d;
+	if (l > MAX_DISTANCE - 0.5) {
+		d = MAX_DISTANCE - 0.5;
+	} else {
+		d = MAX_DISTANCE - l;
+	}
+
+	d = 1 / d;
+	return x * (middle_force * d * d / l);
 }
 
 }
 
+}
