@@ -1,5 +1,5 @@
 /*
- * src/graph/solver/evolutionarysolver.hpp
+ * src/graph/solver/evo/evolutionarysolver.hpp
  * Copyright 2010 by Michal Nazarewicz <mina86@mina86.com>
  *               and Maciej Swietochowski
  *
@@ -19,11 +19,12 @@
 #ifndef EVOLUTIONARYSOLVER_HPP
 #define EVOLUTIONARYSOLVER_HPP
 
-#include "abstractsolver.hpp"
-#include <vector>
-#include "../../gl/vector.hpp"
+#include "../abstractsolver.hpp"
+#include "../../../gl/vector.hpp"
 
-#include "evo/evoconfig.hpp"
+#include "evoconfig.hpp"
+
+#include <vector>
 
 namespace graph {
 

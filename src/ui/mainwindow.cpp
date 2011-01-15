@@ -24,8 +24,7 @@
 
 #include "dialogs/autosettingsdialog.hpp"
 #include "playercontrolwidget.hpp"
-#include "../graph/solver/dummysolver.hpp"
-#include "../graph/solver/evolutionarysolver.hpp"
+#include "../graph/solver/evo/evolutionarysolver.hpp"
 
 #include <fstream>
 

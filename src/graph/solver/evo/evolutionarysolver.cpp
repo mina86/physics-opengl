@@ -1,5 +1,5 @@
 /*
- * src/graph/solver/evolutionarysolver.hpp
+ * src/graph/solver/evo/evolutionarysolver.hpp
  * Copyright 2010 by Michal Nazarewicz <mina86@mina86.com>
  *               and Maciej Swietochowski
  *
@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "evolutionarysolver.hpp"
-#include "evo/evolutionarysolverplayer.hpp"
-#include "../../lib/rand.hpp"
+#include "evolutionarysolverplayer.hpp"
+#include "../../../lib/rand.hpp"
 
 #include <algorithm>
 
