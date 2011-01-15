@@ -62,13 +62,13 @@ gl::Vector<float> &addRandNormal(gl::Vector<float> &v, float sigma) {
 	for (;;) {
 		do {
 			a = lib::rndp(2.0) - 1.0;
-			a = lib::rndp(2.0) - 1.0;
-			r2 = a*a + a*a;
+			b = lib::rndp(2.0) - 1.0;
+			r2 = a*a + b*b;
 		} while (r2 > 1.0 || r2 == 0);
 
 		r2 = sigma * std::sqrt(-2.0 * std::log(r2) / r2);
 		a = a * r2;
-		b = a * r2;
+		b = b * r2;
 
 		if (first) {
 			v.x() += a;
