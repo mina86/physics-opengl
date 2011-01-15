@@ -74,8 +74,76 @@ void EvolutionarySolver::makeOneIteration()
 
 EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(population_ptr & population)
 {
-//	return population_ptr(new std::vector<Graph>(*population));
-	return population_ptr(new population_t(population->size(), population->front()));
+	evo::SelectionType selectionType = (evo::SelectionType)((long)config->selectionType);
+	switch (selectionType) {
+	case evo::Trivial:
+		return population_ptr(new population_t(*population));
+		break;
+	case evo::RandomUniform:
+		{
+			population_ptr offsprings(new population_t());
+			while (offsprings->size() < population->size()) {
+				population_t::size_type idx;
+				idx = lib::rnd<population_t::size_type>(population->size()-1);
+				offsprings->push_back((*population)[idx]);
+			}
+			return offsprings;
+		}
+	case evo::Proportional:
+		{
+			population_ptr offsprings(new population_t());
+			population_t::size_type s = population->size();
+			double *distribution = new double[s+1]; //cumulative distribution
+			double sum = 0;
+			population_t::const_iterator i = population->begin();
+			population_t::size_type j = 1;
+			while (i != population->end()) {
+				double eval = evaluate(*i);
+				distribution[j] = eval;
+				sum += eval;
+				++i;
+				++j;
+			}
+			distribution[0] = 0;
+			for (j=1; j <= s; ++j) {
+				distribution[j] /= sum;
+				distribution[j] += distribution[j-1];
+			}
+			distribution[s-1] = 1;
+
+			for (j=0; j < s; ++j) {
+				double r = lib::rndp<double>(1);
+				//TODO: optimization with iterative binary search (for huge populations)
+				for (unsigned k = 0; k < s; ++k) {
+					if (distribution[k] < r && r <= distribution[k+1]) {
+						offsprings->push_back((*population)[k]);
+						break;
+					}
+				}
+			}
+			delete[] distribution;
+			return offsprings;
+		}
+	case evo::Tournament:
+		{
+			population_ptr offsprings(new population_t());
+			//prepare indexes vector
+			individual_t **indivptrs = new individual_t*[population->size()];
+			for (population_t::size_type i = 0; i < population->size(); ++i) {
+				indivptrs[i] = &((*population)[i]);
+			}
+			//s-times do k-element tournament
+			for (population_t::size_type s = 0; s < population->size(); ++s) {
+				for (ui::cfg::Integer::value_type k = 0; k < config->selectionInteger1; ++k) {
+					population_t::size_type r = lib::rndp<population_t::size_type>(population->size()-k);
+					std::swap(indivptrs[k], indivptrs[r+k]);
+				}
+				std::sort(indivptrs, indivptrs + config->selectionInteger1, strictWeakOrderingOfGraphPointers);
+				offsprings->push_back(individual_t(*(indivptrs[0])));
+			}
+			return offsprings;
+		}
+	}
 }
 
 EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr reproduced)
@@ -126,6 +194,11 @@ bool EvolutionarySolver::strictWeakOrderingOfGraphs(const individual_t &first, c
 {
 	return evaluate(first) < evaluate(second);
 }
+bool EvolutionarySolver::strictWeakOrderingOfGraphPointers(const individual_t * const first, const individual_t * const second)
+{
+	return evaluate(*first) < evaluate(*second);
+}
+
 
 double EvolutionarySolver::evaluate(const Graph &g)
 {

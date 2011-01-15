@@ -67,6 +67,7 @@ namespace solver {
 		population_ptr succession(population_ptr population, population_ptr offsprings);
 
 		static bool strictWeakOrderingOfGraphs(const individual_t &first, const individual_t &second);
+		static bool strictWeakOrderingOfGraphPointers(const individual_t * const first, const individual_t * const second);
 		static double evaluate(const Graph &g);
 
 	protected slots:
