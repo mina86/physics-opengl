@@ -61,6 +61,8 @@ namespace solver {
 		}
 
 		int iterationCount;
+		void runOneIteration();
+		void updateScene();
 		population_ptr population;
 		population_ptr reproduce(const population_t * const population);
 		population_ptr genetic(population_ptr reproduced);

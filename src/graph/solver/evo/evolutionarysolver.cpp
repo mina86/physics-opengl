@@ -48,29 +48,7 @@ QWidget* EvolutionarySolver::createPlayerWidget(QWidget *theParent)
 
 void EvolutionarySolver::makeOneIteration()
 {
-//	int j;
-//	while (fabs(bestvold - bestv)/bestvold > 0.00000001)
-//	{
-		++iterationCount;
-		population_ptr offsprings = genetic(reproduce(population.get()));
-//		j = 1;
-//		for(std::vector<Graph>::const_iterator i = offsprings->begin(); i!= offsprings->end(); ++i)
-//		{
-//			std::cout << "Offspring " << j << " scored " << evaluate(*i) << std::endl;
-//			++j;
-//		}
-		population = succession(population, offsprings);
-//		bestvold = bestv;
-//		bestv = best(population);
-//	}
-//	j = 1;
-//	for(std::vector<Graph>::const_iterator i = population->begin(); i!= population->end(); ++i)
-//	{
-//		std::cout << "Graph " << j << " scored " << evaluate(*i) << std::endl;
-//		++j;
-//	}
-	scene->set(constgraph(population->front()));
-	emit graphChanged();
+	runOneIteration();
 }
 
 
@@ -313,7 +291,6 @@ bool EvolutionarySolver::strictWeakOrderingOfGraphPointers(const individual_t * 
 	return evaluate(*first) < evaluate(*second);
 }
 
-
 double EvolutionarySolver::evaluate(const Graph &g)
 {
 	double result = 0.0;
@@ -349,6 +326,19 @@ double EvolutionarySolver::evaluate(const Graph &g)
 		}
 	}
 	return result;
+}
+
+void EvolutionarySolver::runOneIteration()
+{
+	++iterationCount;
+	population_ptr offsprings = genetic(reproduce(population.get()));
+	population = succession(population, offsprings);
+}
+
+void EvolutionarySolver::updateScene()
+{
+	scene->set(constgraph(population->front()));
+	emit graphChanged();
 }
 
 }
