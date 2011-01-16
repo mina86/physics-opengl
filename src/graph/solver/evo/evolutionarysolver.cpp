@@ -19,6 +19,7 @@
 #include "evolutionarysolver.hpp"
 #include "evolutionarysolverplayer.hpp"
 #include "../../../lib/rand.hpp"
+#include "../../../lib/auto-array.hpp"
 #include "../../vector-rand.hpp"
 
 #include <algorithm>
@@ -93,7 +94,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(const populatio
 		{
 			population_ptr offsprings(new population_t());
 			population_t::size_type s = population->size();
-			std::auto_ptr<double> a_distribution(new double[s+1]);
+			lib::auto_array<double> a_distribution(new double[s+1]);
 			double *distribution = a_distribution.get(); //cumulative distribution
 			double sum = 0;
 			population_t::const_iterator i = population->begin();
@@ -129,7 +130,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(const populatio
 			population_ptr offsprings(new population_t());
 
 			//prepare pointers vector
-			std::auto_ptr<const individual_t *> a_indivptrs(new const individual_t*[population->size()]);
+			lib::auto_array<const individual_t *> a_indivptrs(new const individual_t*[population->size()]);
 			const individual_t **indivptrs = a_indivptrs.get();
 			for (population_t::size_type i = 0; i < population->size(); ++i) {
 				indivptrs[i] = &((*population)[i]);
