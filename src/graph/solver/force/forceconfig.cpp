@@ -25,13 +25,13 @@ namespace solver {
 namespace force {
 
 Data::Data()
-	: repulsionForce("Repulsion force", 0.0, 100.0, 1.0),
-	  attractionForce("Attraction force", 0.0, 100.0, 1.0),
-	  hitForce("Repulsion when nodes are very near", 0.0, 100.0, 5.0),
-	  middleForce("Force towards the center", 0.0, 100.0, 0.5),
+	: repulsionForce("Repulsion force", 0.0, 10000.0, 100.0),
+	  attractionForce("Attraction force", 0.0, 10000.0, 100.0),
+	  hitForce("Repulsion when nodes are very near", 0.0, 10000.0, 5.0),
+	  middleForce("Force towards the center", 0.0, 10000.0, 100),
 	  desiredDistance("Desired edge length", 2.0, 100.0, 5.0),
 	  damping("Damping", 0.01, 0.99, 0.9),
-	  dt("dt per iteration", 0.0001, 0.01, 0.01) {
+	  dt("dt per iteration", 0.0001, 0.1, 0.05) {
 	init();
 }
 
