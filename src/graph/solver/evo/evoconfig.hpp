@@ -19,9 +19,9 @@ const char * const crossoverTypes[] = {
 	"Arithmeatic (mean)", "Arithmetic (random)", "Interchange", NULL
 };
 
-enum SuccessionType { Straight, EliteOfUnion /*, EliteSumOf*/ };
+enum SuccessionType { Straight, EliteOfUnion, EliteSumOf };
 const char * const successionTypes[] = {
-	"Straight", "Elite of union" /*, "Union of elite" */, NULL
+	"Straight", "Elite of union", "Union of elite", NULL
 };
 
 struct Data;

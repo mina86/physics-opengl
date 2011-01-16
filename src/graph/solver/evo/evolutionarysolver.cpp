@@ -239,32 +239,60 @@ EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr re
 
 EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr population, population_ptr offsprings)
 {
-	population_ptr newpopulation(new population_t());
-	std::sort(population->begin(), population->end(), strictWeakOrderingOfGraphs);
-	std::sort(offsprings->begin(), offsprings->end(), strictWeakOrderingOfGraphs);
-
-	population_t::const_iterator i = population->begin(), j = offsprings->begin();
-
-	while (i != population->end() && j != offsprings->end() && newpopulation->size() < population->size())
-	{
-		if (evaluate(*i) <= evaluate(*j))
+	evo::SuccessionType successionType = (evo::SuccessionType)((long)config->successionType);
+	switch (successionType) {
+	case evo::Straight:
+		return offsprings;
+	case evo::EliteOfUnion:
 		{
-			newpopulation->push_back(*i);
-			++i;
+			population_ptr newpopulation(new population_t());
+			std::sort(population->begin(), population->end(), strictWeakOrderingOfGraphs);
+			std::sort(offsprings->begin(), offsprings->end(), strictWeakOrderingOfGraphs);
+
+			population_t::const_iterator i = population->begin(), j = offsprings->begin();
+
+			while (i != population->end() && j != offsprings->end() && newpopulation->size() < population->size())
+			{
+				if (evaluate(*i) <= evaluate(*j))
+				{
+					newpopulation->push_back(*i);
+					++i;
+				}
+				else
+				{
+					newpopulation->push_back(*j);
+					++j;
+				}
+			}
+
+			while (i != population->end() && newpopulation->size() < population->size())
+				newpopulation->push_back(*(i++));
+			while (j != offsprings->end() && newpopulation->size() < population->size())
+				newpopulation->push_back(*(j++));
+
+			return newpopulation;
 		}
-		else
+	case evo::EliteSumOf:
 		{
-			newpopulation->push_back(*j);
-			++j;
+			population_ptr newpopulation(new population_t());
+			std::sort(population->begin(), population->end(), strictWeakOrderingOfGraphs);
+			std::sort(offsprings->begin(), offsprings->end(), strictWeakOrderingOfGraphs);
+
+			population_t::const_iterator i[2];
+			i[0] = population->begin();
+			i[1] = offsprings->begin();
+			unsigned j = 0;
+
+			while (i[0] != population->end() && i[1] != offsprings->end() && newpopulation->size() < population->size())
+			{
+				newpopulation->push_back(*(i[j]));
+				++(i[j]);
+				j = 1 - j;
+			}
+
+			return newpopulation;
 		}
 	}
-
-	while (i != population->end() && newpopulation->size() < population->size())
-		newpopulation->push_back(*(i++));
-	while (j != offsprings->end() && newpopulation->size() < population->size())
-		newpopulation->push_back(*(j++));
-
-	return newpopulation;
 }
 
 bool EvolutionarySolver::strictWeakOrderingOfGraphs(const individual_t &first, const individual_t &second)
