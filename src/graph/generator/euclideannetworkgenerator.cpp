@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "euclideannetworkgenerator.hpp"
+
+#include "make-connected.hpp"
+
 #include "../vector-rand.hpp"
 
 namespace graph {
@@ -55,10 +58,12 @@ EuclideanNetworkGenerator::graph_ptr EuclideanNetworkGenerator::generate() {
 
 	graph_ptr g(new Graph(nodesCount));
 
+	/* Randomize nodes */
 	for (Graph::nodes_iterator i = g->nodes_begin(); i != g->nodes_end(); ++i) {
 		randSpheric(*i, scale);
 	}
 
+	/* Find edges */
 	Graph::const_nodes_iterator j, k, offset;
 	offset = g->nodes_begin();
 	for (j = g->nodes_begin(); j != g->nodes_end(); ++j) {
@@ -70,8 +75,12 @@ EuclideanNetworkGenerator::graph_ptr EuclideanNetworkGenerator::generate() {
 		}
 	}
 
+	/* Make connected */
+	makeConnected(*g.get());
+
 	return g;
 }
+
 }
 
 }
