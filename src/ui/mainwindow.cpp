@@ -40,7 +40,7 @@ namespace ui {
 
 MainWindow::MainWindow(gl::Config theConfig, QWidget *parent)
 	: QMainWindow(parent), config(theConfig),
-	  pane(NULL), solver(NULL), isFileLoaded(false) {
+	  pane(NULL), solver(NULL), solverPlayerWidget(NULL), isFileLoaded(false) {
 
 	ui.setupUi(this);
 
