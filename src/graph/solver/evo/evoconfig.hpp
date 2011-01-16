@@ -14,9 +14,9 @@ const char * const selectionTypes[] = {
 	"Trivial", "Random uniform", "Proportional", "Tournament(k)", NULL
 };
 
-enum CrossoverType { NoCrossover, Arithmetic, Interchange };
+enum CrossoverType { Mean, Arithmetic, Interchange };
 const char * const crossoverTypes[] = {
-	"None", "Arithmetic", "Interchange", NULL
+	"Arithmeatic (mean)", "Arithmetic (random)", "Interchange", NULL
 };
 
 enum SuccessionType { Straight, EliteOfUnion /*, EliteSumOf*/ };
@@ -30,15 +30,18 @@ typedef ui::Config<Data> Config;
 
 struct Data : public ui::cfg::Data {
 	ui::cfg::Integer populationSize;
-	ui::cfg::List selectionType;
-	ui::cfg::List crossoverType;
-	ui::cfg::List successionType;
 
+	ui::cfg::List selectionType;
 	ui::cfg::Integer selectionInteger1;
 
-	// Mutation X ~ N(mu, sigma^2)
+	ui::cfg::Real crossoverProbability;
+	ui::cfg::List crossoverType;
+
+	// Mutation X ~ N(0, sigma^2)
 	ui::cfg::Real mutationProbability;
 	ui::cfg::Real mutationSigma;
+
+	ui::cfg::List successionType;
 
 	virtual struct iterator items() const;
 

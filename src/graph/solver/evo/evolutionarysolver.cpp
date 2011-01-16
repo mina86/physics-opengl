@@ -149,6 +149,79 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(population_ptr 
 
 EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr reproduced)
 {
+	if (config->crossoverProbability > 0) {
+		std::random_shuffle(reproduced->begin(), reproduced->end(), lib::rnd<long>);
+		population_t::size_type numberOfPairs = reproduced->size() / 2;
+		evo::CrossoverType crossoverType = (evo::CrossoverType)((long)config->crossoverType);
+		switch (crossoverType) {
+		case evo::Mean:
+			{
+				float middlepoint = 0.5;
+				float middlepoint2 = 1 - middlepoint;
+				for (population_t::size_type i = 0; i < numberOfPairs; ++i) {
+					if (lib::rndp<float>(1.0) <= config->crossoverProbability) {
+						Graph &g1 = graph((*reproduced)[2*i  ]);
+						const Graph &g2 = constgraph((*reproduced)[2*i+1]);
+						Graph::nodes_iterator ni1 = g1.nodes_begin();
+						Graph::const_nodes_iterator ni2 = g2.nodes_begin();
+						while (ni1 != g1.nodes_end()) {
+							ni1->set(ni1->x()*middlepoint + ni2->x()*middlepoint2,
+									 ni1->y()*middlepoint + ni2->y()*middlepoint2,
+									 ni1->z()*middlepoint + ni2->z()*middlepoint2);
+							++ni1;
+							++ni2;
+						}
+					}
+				}
+			}
+			break;
+		case evo::Arithmetic:
+			{
+				float middlepoint = lib::rnd<float>(1.0);
+				float middlepoint2 = 1 - middlepoint;
+				for (population_t::size_type i = 0; i < numberOfPairs; ++i) {
+					if (lib::rndp<float>(1.0) <= config->crossoverProbability) {
+						Graph &g1 = graph((*reproduced)[2*i  ]);
+						const Graph &g2 = constgraph((*reproduced)[2*i+1]);
+						Graph::nodes_iterator ni1 = g1.nodes_begin();
+						Graph::const_nodes_iterator ni2 = g2.nodes_begin();
+						while (ni1 != g1.nodes_end()) {
+							ni1->set(ni1->x()*middlepoint + ni2->x()*middlepoint2,
+									 ni1->y()*middlepoint + ni2->y()*middlepoint2,
+									 ni1->z()*middlepoint + ni2->z()*middlepoint2);
+							++ni1;
+							++ni2;
+						}
+					}
+				}
+			}
+			break;
+		case evo::Interchange:
+			{
+				for (population_t::size_type i = 0; i < numberOfPairs; ++i) {
+					if (lib::rndp<float>(1.0) <= config->crossoverProbability) {
+						Graph &g1 = graph((*reproduced)[2*i  ]);
+						Graph &g2 = graph((*reproduced)[2*i+1]);
+						Graph::nodes_iterator ni1 = g1.nodes_begin();
+						Graph::nodes_iterator ni2 = g2.nodes_begin();
+						unsigned j=0;
+						unsigned breakingpoint = g1.nodes() * lib::rndp(1.0);
+						while (j < breakingpoint) {
+							Graph::node_type tmp(*ni1);
+							(*ni1) = (*ni2);
+							(*ni2) = tmp;
+							++ni1;
+							++ni2;
+						}
+					}
+				}
+			}
+			break;
+		default:
+			break;
+		}
+	}
+
 	//Mutation
 	if (config->mutationProbability > 0) {
 		for (population_t::iterator i = reproduced->begin(); i != reproduced->end(); ++i)
