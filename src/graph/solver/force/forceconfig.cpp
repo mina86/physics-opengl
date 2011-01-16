@@ -1,5 +1,5 @@
 /*
- * src/graph/solver/force/forcesolver.hpp
+ * src/graph/solver/force/forceconfig.cpp
  * Copyright 2010 by Michal Nazarewicz <mina86@mina86.com>
  *               and Maciej Swietochowski
  *
@@ -16,46 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FORCESOLVER_HPP
-#define FORCESOLVER_HPP
-
-#include "../../../gl/vector.hpp"
-#include "../abstractsolver.hpp"
 #include "forceconfig.hpp"
-
-#include <vector>
 
 namespace graph {
 
 namespace solver {
 
-struct ForceSolver : public AbstractSolver {
-	ForceSolver(QObject *parent, Scene *scene);
-	QWidget* createPlayerWidget(QWidget *parent);
-	ui::cfg::Data *getConfigData();
+namespace force {
 
-	float makeOneIteration(float dt);
+Data::Data()
+	: repulsionForce("Repulsion force", 0.0, 100.0, 1.0),
+	  attractionForce("Attraction force", 0.0, 100.0, 1.0),
+	  hitForce("Repulsion when nodes are very near", 0.0, 100.0, 5.0),
+	  middleForce("Force towards the center", 0.0, 100.0, 0.5),
+	  desiredDistance("Desired edge length", 2.0, 100.0, 5.0),
+	  damping("Damping", 0.01, 0.99, 0.9) {
+	init();
+}
 
-private:
-	gl::Vector<float> calculateForce(gl::Vector<float> r,
-	                                 bool connected);
-	gl::Vector<float> calculateMiddleForce(const gl::Vector<float> &x);
+ui::cfg::Data::iterator Data::items() const {
+	static const unsigned array[] = {
+		CFG_DATA_OFFSET(repulsionForce),
+		CFG_DATA_OFFSET(attractionForce),
+		CFG_DATA_OFFSET(hitForce),
+		CFG_DATA_OFFSET(middleForce),
+		CFG_DATA_OFFSET(desiredDistance),
+		CFG_DATA_OFFSET(damping),
 
-	struct NodeState {
-		NodeState() : velocity(0.0, 0.0, 0.0), force(0.0, 0.0, 0.0) { }
-
-		gl::Vector<float> velocity, force;
+		~0u,
 	};
-	typedef std::vector< NodeState > Nodes;
-
-	Nodes nodes;
-	force::Config config;
-
-	Q_OBJECT
-};
+	return iterator(array);
+}
 
 }
 
 }
 
-#endif // EVOLUTIONARYSOLVER_HPP
+}

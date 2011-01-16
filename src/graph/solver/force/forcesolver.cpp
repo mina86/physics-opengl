@@ -39,20 +39,10 @@ QWidget *ForceSolver::createPlayerWidget(QWidget *parent) {
 }
 
 ui::cfg::Data *ForceSolver::getConfigData() {
-	/* XXX TODO */
-	return NULL;
+	return &*config;
 }
 
-static const float repulsion_force = 1.0;
-static const float attraction_force = 1.0;
-static const float hit_force = 2.5;
-static const float middle_force = 1.0;
-static const float dt = 0.001;
-static const float desired = 5.0;
-static const float damping = 0.9;
-static const float energy_limit = 1.0;
-
-float ForceSolver::makeOneIteration() {
+float ForceSolver::makeOneIteration(float dt) {
 	Graph &g = dynamic_cast<Graph &>(*scene);
 	const unsigned count = g.nodes();
 
@@ -73,13 +63,13 @@ float ForceSolver::makeOneIteration() {
 	     it != end; ++it, ++n) {
 		it->force += calculateMiddleForce(*n);
 		it->velocity += it->force * dt;
-		it->velocity *= damping;
+		it->velocity *= config->damping;
 		energy += it->velocity.length2();
 		*n += (it->force * (dt * 0.5f) + it->velocity) * dt;
 		it->force.set(0.0, 0.0, 0.0);
 	}
 
-	return energy > energy_limit;
+	return energy;
 }
 
 gl::Vector<float> ForceSolver::calculateForce(gl::Vector<float> r,
@@ -88,11 +78,11 @@ gl::Vector<float> ForceSolver::calculateForce(gl::Vector<float> r,
 
 	if (d < 0.01) {
 		/* Nodes are (nearly) at the same position. */
-		randVersor(r) *= hit_force;
+		randVersor(r) *= config->hitForce;
 	} else {
-		float f = repulsion_force / (d * d);
+		float f = config->repulsionForce / (d * d);
 		if (connected) {
-			f -= attraction_force * fabs(d - desired);
+			f -= config->attractionForce * (d - config->desiredDistance);
 		}
 
 		r *= f / d;
@@ -110,7 +100,7 @@ gl::Vector<float> ForceSolver::calculateMiddleForce(const gl::Vector<float> &x) 
 	}
 
 	d = 1 / d;
-	return x * (middle_force * d * d / l);
+	return x * (config->middleForce * d * d / l);
 }
 
 }
