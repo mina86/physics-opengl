@@ -25,8 +25,6 @@
 #include <algorithm>
 #include <queue>
 
-#include <stdio.h>
-
 namespace graph {
 
 namespace solver {
@@ -68,18 +66,12 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 		Graph::nodes_iterator n = g.nodes_begin();
 		for (Nodes::iterator it = nodes.begin(), end = nodes.end();
 			 it != end; ++it, ++n) {
-			it->force += calculateMiddleForce(*n);
+			addMiddleForce(it->force, *n);
 			it->velocity += it->force * dt;
 			it->velocity *= config->damping;
 
-			fprintf(stderr, "\tvelocity = %g,%g,%g; %g,%g,%g ->",
-					it->velocity.x(), it->velocity.y(), it->velocity.z(),
-					n->x(), n->y(), n->z());
-
 			/* energy += it->velocity.length2(); */
 			*n += (it->force * (dt * 0.5f) + it->velocity) * dt;
-
-			fprintf(stderr, " %g,%g,%g\n", n->x(), n->y(), n->z());
 
 			it->force.set(0.0, 0.0, 0.0);
 		}
@@ -107,7 +99,7 @@ gl::Vector<float> ForceSolver::calculateForce(gl::Vector<float> r,
 	return r;
 }
 
-gl::Vector<float> ForceSolver::calculateMiddleForce(const gl::Vector<float> &x) {
+void ForceSolver::addMiddleForce(gl::Vector<float> &f, const gl::Vector<float> &x) {
 	float l = x.length(), d;
 	if (l > MAX_DISTANCE - 0.5) {
 		d = MAX_DISTANCE - 0.5;
@@ -115,8 +107,10 @@ gl::Vector<float> ForceSolver::calculateMiddleForce(const gl::Vector<float> &x) 
 		d = MAX_DISTANCE - l;
 	}
 
-	d = 1 / d;
-	return x * (config->middleForce * d * d / l);
+	if (l > 1.0) {
+		d = 1 / d;
+		f += x * (config->middleForce * d * d / l);
+	}
 }
 
 }
