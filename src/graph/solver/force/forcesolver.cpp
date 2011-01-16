@@ -22,9 +22,6 @@
 #include "../../../gl/glconfig.hpp"
 #include "../../../ui/playercontrolwidget.hpp"
 
-#include <algorithm>
-#include <queue>
-
 namespace graph {
 
 namespace solver {
@@ -38,6 +35,7 @@ QWidget *ForceSolver::createPlayerWidget(QWidget *parent) {
 	ui::PlayerControlWidget *player = new ui::PlayerControlWidget(parent);
 	connect(player, SIGNAL(newFrameNeeded(uint)),
 	        this, SLOT(playNextFrame(uint)));
+	connect(this, SIGNAL(graphStable()), player, SLOT(pause()));
 	return player;
 }
 
@@ -51,18 +49,19 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 
 	while (iterations--) {
 		const float dt = config->dt;
-		/* float energy = 0.0; */
 
 		Graph::edges_iterator it = g.edges_begin();
 		for (unsigned from = 1; from < count; ++from) {
 			gl::Vector<float> p(g.n(from));
 			for (unsigned to = 0; to < from; ++to, ++it) {
 				gl::Vector<float> f = calculateForce(p - g.n(to), *it);
+
 				nodes[from].force += f;
 				nodes[to].force   -= f;
 			}
 		}
 
+		float energy = 0.0;
 		Graph::nodes_iterator n = g.nodes_begin();
 		for (Nodes::iterator it = nodes.begin(), end = nodes.end();
 			 it != end; ++it, ++n) {
@@ -70,10 +69,15 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 			it->velocity += it->force * dt;
 			it->velocity *= config->damping;
 
-			/* energy += it->velocity.length2(); */
+			energy += it->velocity.length2();
 			*n += (it->force * (dt * 0.5f) + it->velocity) * dt;
 
 			it->force.set(0.0, 0.0, 0.0);
+		}
+
+		if (energy < 0.0001) {
+			emit graphStable();
+			break;
 		}
 	}
 

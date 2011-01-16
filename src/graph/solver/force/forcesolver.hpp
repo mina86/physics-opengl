@@ -37,6 +37,9 @@ struct ForceSolver : public AbstractSolver {
 protected slots:
 	void playNextFrame(unsigned iterations);
 
+signals:
+	void graphStable();
+
 private:
 	gl::Vector<float> calculateForce(gl::Vector<float> r,
 	                                 bool connected);
