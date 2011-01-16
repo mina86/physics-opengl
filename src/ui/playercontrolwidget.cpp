@@ -33,24 +33,23 @@ PlayerControlWidget::PlayerControlWidget(QWidget *parent) :
 	mTimer->setSingleShot(false);
 	connect(mTimer, SIGNAL(timeout()), this, SLOT(playNextFrame()));
 
-	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
-	connect(ui.pauseButton, SIGNAL(clicked()), this, SLOT(pause()));
+	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(togglePlay()));
+	connect(ui.stepButton, SIGNAL(clicked()), this, SLOT(step()));
 
 	connect(ui.fpsSlider, SIGNAL(valueChanged(int)), this, SLOT(setFps(int)));
 	connect(ui.fpsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setFps(int)));
 	connect(this, SIGNAL(fpsChanged(int)), ui.fpsSlider, SLOT(setValue(int)));
 	connect(this, SIGNAL(fpsChanged(int)), ui.fpsSpinBox, SLOT(setValue(int)));
 	connect(ui.speedSlider, SIGNAL(valueChanged(int)), this, SLOT(setSpeed(int)));
-	connect(ui.speedSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setSpeed(double)));
+	connect(ui.speedSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setSpeed(int)));
 
-	ui.playButton->setEnabled(fpsRate > 0 && !isPlaying);
-	ui.pauseButton->setEnabled(isPlaying);
+	fpsRate = 0;
+	setFps(1);
+	speed = 0;
+	setSpeed(1);
 
-	fpsRate = -1000;
-	speedExponent = -1000;
-	setFps(0);
-	setSpeed(0.0);
-	debugprint();
+	ui.playButton->setText(tr("&Play"));
+	ui.stepButton->setEnabled(true);
 }
 
 void PlayerControlWidget::changeEvent(QEvent *e)
@@ -82,16 +81,22 @@ void PlayerControlWidget::togglePlay()
 
 void PlayerControlWidget::setPlay(bool play)
 {
+	if (!fpsRate) {
+		play = false;
+	}
+
 	if (play == isPlaying)
 		return;
 
 	isPlaying = play;
-	ui.playButton->setEnabled(!isPlaying && fpsRate > 0);
-	ui.pauseButton->setEnabled(isPlaying);
-	if (isPlaying && fpsRate > 0)
+	ui.stepButton->setEnabled(!isPlaying);
+	if (isPlaying) {
+		ui.playButton->setText(tr("&Pause"));
 		mTimer->start();
-	else
+	} else {
+		ui.playButton->setText(tr("&Play"));
 		mTimer->stop();
+	}
 }
 
 void PlayerControlWidget::setFps(int newFps)
@@ -100,53 +105,39 @@ void PlayerControlWidget::setFps(int newFps)
 		return;
 
 	fpsRate = newFps;
-	emit fpsChanged(fpsRate);
-	if (fpsRate == 0)
-	{
+	if (!fpsRate) {
 		pause();
-		ui.playButton->setEnabled(false);
-	}
-	else
-	{
-		ui.playButton->setEnabled(!isPlaying);
+	} else {
 		mTimer->setInterval(1000 / fpsRate);
 	}
-	debugprint();
+
+	emit fpsChanged(fpsRate);
 }
 
 void PlayerControlWidget::playNextFrame()
 {
-	float rate = fpsRate ? 1.0/fpsRate : 1.0;
-	float tickCount = speed * rate + tickCountOverflow;
-	tickCountOverflow = trunc(tickCount);
-	emit newFrameNeeded((unsigned)floor(tickCount));
+	float tickCount = speed / fpsRate + tickCountOverflow;
+	tickCountOverflow = tickCount - floor(tickCount);
+	unsigned ticks = floor(tickCount);
+	if (ticks) {
+		emit newFrameNeeded(ticks);
+	}
 }
 
-void PlayerControlWidget::debugprint()
+void PlayerControlWidget::step()
 {
-	ui.fpsDisplayLabel->setText(QString(tr("FPS: %1; new frame each %2 seconds"))
-				 .arg(fpsRate, 3)
-				 .arg((fpsRate == 0 ? 0 : 1.0/(double)fpsRate), 8, 'g', 4));
-	ui.speedDisplayLabel->setText(QString(tr("Speed: %1 (%2x)"))
-				 .arg(speedExponent)
-				 .arg(speed));
+	if (!isPlaying) {
+		emit newFrameNeeded(1);
+	}
 }
 
 void PlayerControlWidget::setSpeed(int newSpeed)
 {
-	setSpeed((double)newSpeed / 10.0);
-}
-
-void PlayerControlWidget::setSpeed(double newSpeed)
-{
-	if (fabs(newSpeed - speedExponent) < FLOATCOMPAREEPSILON)
-		return;
-
-	speedExponent = newSpeed;
-	speed = pow10(speedExponent);
-	ui.speedSlider->setValue(round(speedExponent * 10));
-	ui.speedSpinBox->setValue(speedExponent);
-	debugprint();
+	if ((int)speed != newSpeed) {
+		speed = newSpeed;
+		ui.speedSlider->setValue(newSpeed);
+		ui.speedSpinBox->setValue(newSpeed);
+	}
 }
 
 }

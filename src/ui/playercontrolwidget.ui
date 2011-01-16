@@ -28,17 +28,17 @@
         <bool>true</bool>
        </property>
        <property name="text">
-        <string>Play</string>
+        <string>&amp;Play</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pauseButton">
+      <widget class="QPushButton" name="stepButton">
        <property name="enabled">
         <bool>true</bool>
        </property>
        <property name="text">
-        <string>Pause</string>
+        <string>&amp;Single step</string>
        </property>
       </widget>
      </item>
@@ -56,13 +56,13 @@
      <item row="0" column="1">
       <widget class="QSlider" name="fpsSlider">
        <property name="maximum">
-        <number>25</number>
+        <number>30</number>
        </property>
        <property name="pageStep">
-        <number>1</number>
+        <number>4</number>
        </property>
        <property name="value">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -74,8 +74,11 @@
        <property name="suffix">
         <string> fps</string>
        </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
        <property name="maximum">
-        <number>25</number>
+        <number>30</number>
        </property>
       </widget>
      </item>
@@ -89,13 +92,13 @@
      <item row="1" column="1">
       <widget class="QSlider" name="speedSlider">
        <property name="minimum">
-        <number>-30</number>
+        <number>1</number>
        </property>
        <property name="maximum">
-        <number>30</number>
+        <number>1000</number>
        </property>
        <property name="pageStep">
-        <number>5</number>
+        <number>10</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -103,45 +106,18 @@
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QDoubleSpinBox" name="speedSpinBox">
-       <property name="prefix">
-        <string>1e</string>
+      <widget class="QSpinBox" name="speedSpinBox">
+       <property name="suffix">
+        <string>x</string>
        </property>
        <property name="minimum">
-        <double>-3.000000000000000</double>
+        <number>1</number>
        </property>
        <property name="maximum">
-        <double>3.000000000000000</double>
+        <number>1000</number>
        </property>
        <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="3">
-      <widget class="QLabel" name="fpsDisplayLabel">
-       <property name="font">
-        <font>
-         <family>Monospace</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>fpsDisplayLabel</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::PlainText</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QLabel" name="speedDisplayLabel">
-       <property name="font">
-        <font>
-         <family>Monospace</family>
-        </font>
-       </property>
-       <property name="text">
-        <string>speedDisplayLabel</string>
+        <number>10</number>
        </property>
       </widget>
      </item>

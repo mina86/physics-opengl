@@ -34,12 +34,11 @@ struct PlayerControlWidget : public QWidget {
 public slots:
 	void play();
 	void pause();
+	void step();
 	void togglePlay();
 	void setPlay(bool play);
 	void setFps(int newSpeed);
-
 	void setSpeed(int);
-	void setSpeed(double);
 
 signals:
 	void fpsChanged(int);
@@ -47,14 +46,12 @@ signals:
 
 protected:
 	void changeEvent(QEvent *e);
-	void debugprint();
 
 	QTimer *mTimer;
 	bool isPlaying;
 
 	int fpsRate;
-	double speed;
-	double speedExponent;
+	unsigned speed;
 
 	double tickCountOverflow;
 
