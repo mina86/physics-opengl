@@ -20,7 +20,6 @@
 #define EUCLIDEANNETWORKGENERATOR_HPP
 
 #include "abstractgenerator.hpp"
-#include "euclideannetworkgenerator.hpp"
 #include "../../ui/abstract-config.hpp"
 
 namespace graph {
@@ -33,24 +32,14 @@ struct Data : public ui::cfg::Data {
 	ui::cfg::Integer nodesCount;
 	ui::cfg::Real radius;
 	ui::cfg::Real scale;
-	virtual struct iterator items() const {
-		static const unsigned array[] = {
-			CFG_DATA_OFFSET(nodesCount),
-			CFG_DATA_OFFSET(radius),
-			CFG_DATA_OFFSET(scale),
-			~0u,
-		};
-		return iterator(array);
-	}
+
+	virtual struct iterator items() const;
 
 private:
-	Data() : nodesCount("Number of nodes", 1, 10000, 20),
-		radius("Proximity radius", 0, 1, 0.3),
-		scale("Scale", 1, 1000, 30)
-	{
-		init();
-	}
+	Data();
+
 	friend struct ui::Config<Data>;
+
 	Q_OBJECT
 };
 
@@ -58,14 +47,13 @@ private:
 
 struct EuclideanNetworkGenerator : public AbstractGenerator
 {
-	typedef ui::Config<euclinet::Data> Config;
-
-	EuclideanNetworkGenerator(QObject *parent = 0);
+	EuclideanNetworkGenerator(QObject *parent = 0)
+			: AbstractGenerator(parent) { }
 	graph_ptr generate();
-	ui::cfg::Data* getConfigData() { return &(*config); }
+	ui::cfg::Data *getConfigData();
 
 private:
-	Config config;
+	ui::Config<euclinet::Data> config;
 
 	Q_OBJECT
 };

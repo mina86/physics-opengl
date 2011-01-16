@@ -23,13 +23,32 @@ namespace graph {
 
 namespace generator {
 
-EuclideanNetworkGenerator::EuclideanNetworkGenerator(QObject *parent) :
-	AbstractGenerator(parent)
-{
+namespace euclinet {
+
+Data::iterator Data::items() const {
+	static const unsigned array[] = {
+		CFG_DATA_OFFSET(nodesCount),
+		CFG_DATA_OFFSET(radius),
+		CFG_DATA_OFFSET(scale),
+		~0u,
+	};
+	return iterator(array);
 }
 
-EuclideanNetworkGenerator::graph_ptr EuclideanNetworkGenerator::generate()
-{
+Data::Data()
+  : nodesCount("Number of nodes", 1, 10000, 20),
+	radius("Proximity radius", 0, 1, 0.3),
+	scale("Scale", 1, 1000, 30) {
+	init();
+}
+
+}
+
+ui::cfg::Data *EuclideanNetworkGenerator::getConfigData() {
+	return &*config;
+}
+
+EuclideanNetworkGenerator::graph_ptr EuclideanNetworkGenerator::generate() {
 	unsigned nodesCount = (unsigned)config->nodesCount;
 	float scale = config->scale;
 	float radius = config->radius * scale;
@@ -39,7 +58,6 @@ EuclideanNetworkGenerator::graph_ptr EuclideanNetworkGenerator::generate()
 	for (Graph::nodes_iterator i = g->nodes_begin(); i != g->nodes_end(); ++i) {
 		randSpheric(*i, scale);
 	}
-
 
 	Graph::const_nodes_iterator j, k, offset;
 	offset = g->nodes_begin();
