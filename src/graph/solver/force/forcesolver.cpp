@@ -20,6 +20,7 @@
 
 #include "../../vector-rand.hpp"
 #include "../../../gl/glconfig.hpp"
+#include "../../../ui/playercontrolwidget.hpp"
 
 #include <algorithm>
 #include <queue>
@@ -34,42 +35,46 @@ ForceSolver::ForceSolver(QObject *parent, Scene *scene)
 }
 
 QWidget *ForceSolver::createPlayerWidget(QWidget *parent) {
-	/* XXX TODO */
-	return NULL;
+	ui::PlayerControlWidget *player = new ui::PlayerControlWidget(parent);
+	connect(player, SIGNAL(newFrameNeeded(uint, float)),
+	        this, SLOT(playNextFrame(uint, float)));
+	return player;
 }
 
 ui::cfg::Data *ForceSolver::getConfigData() {
 	return &*config;
 }
 
-float ForceSolver::makeOneIteration(float dt) {
+void ForceSolver::playNextFrame(unsigned iterations, float dt) {
 	Graph &g = dynamic_cast<Graph &>(*scene);
 	const unsigned count = g.nodes();
 
-	float energy = 0.0;
+	while (iterations--) {
+		/* float energy = 0.0; */
 
-	Graph::edges_iterator it = g.edges_begin();
-	for (unsigned from = 1; from < count; ++from) {
-		gl::Vector<float> p(g.n(from));
-		for (unsigned to = 0; to < from; ++to, ++it) {
-			gl::Vector<float> f = calculateForce(p - g.n(to), *it);
-			nodes[from].force += f;
-			nodes[to].force   -= f;
+		Graph::edges_iterator it = g.edges_begin();
+		for (unsigned from = 1; from < count; ++from) {
+			gl::Vector<float> p(g.n(from));
+			for (unsigned to = 0; to < from; ++to, ++it) {
+				gl::Vector<float> f = calculateForce(p - g.n(to), *it);
+				nodes[from].force += f;
+				nodes[to].force   -= f;
+			}
+		}
+
+		Graph::nodes_iterator n = g.nodes_begin();
+		for (Nodes::iterator it = nodes.begin(), end = nodes.end();
+			 it != end; ++it, ++n) {
+			it->force += calculateMiddleForce(*n);
+			it->velocity += it->force * dt;
+			it->velocity *= config->damping;
+			/* energy += it->velocity.length2(); */
+			*n += (it->force * (dt * 0.5f) + it->velocity) * dt;
+			it->force.set(0.0, 0.0, 0.0);
 		}
 	}
 
-	Graph::nodes_iterator n = g.nodes_begin();
-	for (Nodes::iterator it = nodes.begin(), end = nodes.end();
-	     it != end; ++it, ++n) {
-		it->force += calculateMiddleForce(*n);
-		it->velocity += it->force * dt;
-		it->velocity *= config->damping;
-		energy += it->velocity.length2();
-		*n += (it->force * (dt * 0.5f) + it->velocity) * dt;
-		it->force.set(0.0, 0.0, 0.0);
-	}
-
-	return energy;
+	emit graphChanged();
 }
 
 gl::Vector<float> ForceSolver::calculateForce(gl::Vector<float> r,

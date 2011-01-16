@@ -34,7 +34,8 @@ struct ForceSolver : public AbstractSolver {
 	QWidget* createPlayerWidget(QWidget *parent);
 	ui::cfg::Data *getConfigData();
 
-	float makeOneIteration(float dt);
+protected slots:
+	void playNextFrame(unsigned iterations, float dt);
 
 private:
 	gl::Vector<float> calculateForce(gl::Vector<float> r,
