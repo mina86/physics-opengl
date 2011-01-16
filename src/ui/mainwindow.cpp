@@ -114,13 +114,7 @@ void MainWindow::load()
 		return;
 	}
 
-	if (!isFileLoaded) {
-		loadScene(scene);
-	} else {
-		MainWindow *anotherWindow = new MainWindow(config);
-		anotherWindow->loadScene(scene);
-		anotherWindow->show();
-	}
+	loadScene(scene);
 }
 
 void MainWindow::save()
@@ -219,6 +213,12 @@ void MainWindow::onWidgetSceneChanged()
 
 void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 {
+	if (isFileLoaded) {
+		MainWindow *anotherWindow = new MainWindow(config);
+		anotherWindow->loadScene(scene);
+		anotherWindow->show();
+	}
+
 	pane = new GLPane(config);
 
 	connect(pane->gl, SIGNAL(sceneChanged()),
@@ -246,41 +246,33 @@ void MainWindow::openSolverSettingsDialog() {
 }
 
 void MainWindow::generateGraph() {
-	pane = new GLPane(config);
-
-	connect(pane->gl, SIGNAL(sceneChanged()),
-			this, SLOT(onWidgetSceneChanged()));
-//	/* XXX This should go away... */
-	connect(pane->gl, SIGNAL(needRepaint()),
-			pane->gl, SLOT(updateGL()));
-
-	setCentralWidget(pane);
-
 	QString genNameEcnet = tr("Euclidean network");
 	QStringList generators;
 	generators << genNameEcnet;
+
 	bool ok = false;
 	QString genNameChosen;
-	while (!ok) {
-		genNameChosen = QInputDialog::getItem(this, tr("Choose generator"), tr("Generator"),
-							  generators, 0, false, &ok);
-	}
+
+	genNameChosen = QInputDialog::getItem(this, tr("Choose generator"), tr("Generator"),
+										  generators, 0, false, &ok);
+
+	if (!ok)
+		return;
+
 	graph::generator::AbstractGenerator::graph_ptr graph;
-	graph::Scene *scene;
 	gl::AbstractScene::ptr ptr;
+
 	if (genNameChosen == genNameEcnet) {
-		graph::generator::EuclideanNetworkGenerator *ecngen = new graph::generator::EuclideanNetworkGenerator(this);
-		AutoSettingsDialog *genParamsDialog = new AutoSettingsDialog(ecngen->getConfigData(), this);
+		graph::generator::EuclideanNetworkGenerator ecngen;
+		AutoSettingsDialog *genParamsDialog = new AutoSettingsDialog(ecngen.getConfigData(), this);
 		genParamsDialog->setModal(true);
 		genParamsDialog->exec();
-		graph = ecngen->generate();
-		scene = new graph::Scene(*graph);
-		ptr.reset(scene);
+		graph = ecngen.generate();
+		ptr.reset(new graph::Scene(*graph));
+		delete genParamsDialog;
 	}
 
-	pane->gl->setScene(ptr);
-	isFileLoaded = true;
-	onWidgetSceneChanged();
+	loadScene(ptr);
 }
 
 void MainWindow::loadSolver() {
