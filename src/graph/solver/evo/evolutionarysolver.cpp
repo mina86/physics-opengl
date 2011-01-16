@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "evolutionarysolver.hpp"
-#include "evolutionarysolverplayer.hpp"
 #include "../../../lib/rand.hpp"
 #include "../../../lib/auto-array.hpp"
 #include "../../vector-rand.hpp"
