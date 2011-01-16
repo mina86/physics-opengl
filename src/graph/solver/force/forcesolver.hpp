@@ -41,7 +41,7 @@ signals:
 	void graphStable();
 
 private:
-	gl::Vector<float> calculateForce(gl::Vector<float> r,
+	gl::Vector<float> calculateForce(gl::Vector<float> r, float q,
 	                                 bool connected);
 	void addMiddleForce(gl::Vector<float> &f, const gl::Vector<float> &x);
 
@@ -49,6 +49,7 @@ private:
 		NodeState() : velocity(0.0, 0.0, 0.0), force(0.0, 0.0, 0.0) { }
 
 		gl::Vector<float> velocity, force;
+		unsigned deg;
 	};
 	typedef std::vector< NodeState > Nodes;
 

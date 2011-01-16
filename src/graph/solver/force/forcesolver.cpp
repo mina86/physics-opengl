@@ -29,6 +29,19 @@ namespace solver {
 ForceSolver::ForceSolver(QObject *parent, Scene *scene)
 	: AbstractSolver(parent, scene),
 	  nodes(dynamic_cast<Graph &>(*scene).nodes()) {
+
+	Graph &g = dynamic_cast<Graph &>(*scene);
+	const unsigned count = g.nodes();
+
+	Graph::edges_iterator it = g.edges_begin();
+	for (unsigned from = 1; from < count; ++from) {
+		for (unsigned to = 0; to < from; ++to, ++it) {
+			if (*it) {
+				++nodes[from].deg;
+				++nodes[to].deg;
+			}
+		}
+	}
 }
 
 QWidget *ForceSolver::createPlayerWidget(QWidget *parent) {
@@ -52,10 +65,11 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 
 		Graph::edges_iterator it = g.edges_begin();
 		for (unsigned from = 1; from < count; ++from) {
-			gl::Vector<float> p(g.n(from));
+			const gl::Vector<float> p(g.n(from));
+			const unsigned deg = nodes[from].deg;
 			for (unsigned to = 0; to < from; ++to, ++it) {
-				gl::Vector<float> f = calculateForce(p - g.n(to), *it);
-
+				gl::Vector<float> f =
+					calculateForce(p - g.n(to), (float)deg * nodes[to].deg, *it);
 				nodes[from].force += f;
 				nodes[to].force   -= f;
 			}
@@ -84,7 +98,7 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 	emit graphChanged();
 }
 
-gl::Vector<float> ForceSolver::calculateForce(gl::Vector<float> r,
+gl::Vector<float> ForceSolver::calculateForce(gl::Vector<float> r, float q,
                                               bool connected) {
 	float d = r.length();
 
@@ -93,6 +107,10 @@ gl::Vector<float> ForceSolver::calculateForce(gl::Vector<float> r,
 		randVersor(r) *= config->hitForce;
 	} else {
 		float f = config->repulsionForce / (d * d);
+		if (config->attractionMultiply) {
+			f *= q;
+		}
+
 		if (connected) {
 			f -= config->attractionForce * (d - config->desiredDistance);
 		}

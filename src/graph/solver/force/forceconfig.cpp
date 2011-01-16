@@ -31,7 +31,8 @@ Data::Data()
 	  middleForce("Force towards the center", 0.0, 10000.0, 100),
 	  desiredDistance("Desired edge length", 2.0, 100.0, 5.0),
 	  damping("Damping", 0.01, 0.99, 0.9),
-	  dt("dt per iteration", 0.0001, 0.1, 0.05) {
+	  dt("dt per iteration", 0.0001, 0.1, 0.05),
+	  attractionMultiply("Attraction proportional to degree", true) {
 	init();
 }
 
@@ -39,6 +40,7 @@ ui::cfg::Data::iterator Data::items() const {
 	static const unsigned array[] = {
 		CFG_DATA_OFFSET(repulsionForce),
 		CFG_DATA_OFFSET(attractionForce),
+		CFG_DATA_OFFSET(attractionMultiply),
 		CFG_DATA_OFFSET(hitForce),
 		CFG_DATA_OFFSET(middleForce),
 		CFG_DATA_OFFSET(desiredDistance),
