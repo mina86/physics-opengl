@@ -57,14 +57,25 @@ void EvolutionarySolver::makeOneIteration()
 
 EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(const population_t * const population)
 {
+	population_t::size_type newPopulationSize = config->populationSize;
 	switch (config->selectionType) {
 	case evo::Trivial:
-		return population_ptr(new population_t(*population));
+		{
+			population_ptr offsprings(new population_t());
+			while (offsprings->size() < newPopulationSize) {
+				for (population_t::const_iterator i = population->begin();
+				i != population->end() && offsprings->size() < newPopulationSize;
+				++i) {
+					offsprings->push_back(*i);
+				}
+			}
+			return offsprings;
+		}
 		break;
 	case evo::RandomUniform:
 		{
 			population_ptr offsprings(new population_t());
-			while (offsprings->size() < population->size()) {
+			while (offsprings->size() < newPopulationSize) {
 				population_t::size_type idx;
 				idx = lib::rnd<population_t::size_type>(population->size()-1);
 				offsprings->push_back((*population)[idx]);
@@ -94,7 +105,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(const populatio
 			}
 			distribution[s-1] = 1;
 
-			for (j=0; j < s; ++j) {
+			for (j=0; j < newPopulationSize; ++j) {
 				double r = lib::rndp<double>(1);
 				//TODO: optimization with iterative binary search (for huge populations)
 				for (unsigned k = 0; k < s; ++k) {
@@ -120,7 +131,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(const populatio
 			//population->size()-times do k-element tournament
 			//pick tournament members by swapping them to beginning of pointers vector
 			//resolve tournament by sorting front of that vector on evaluation score
-			for (population_t::size_type s = 0; s < population->size(); ++s) {
+			for (population_t::size_type s = 0; s < newPopulationSize; ++s) {
 				for (ui::cfg::Integer::value_type k = 0; k < config->selectionInteger1; ++k) {
 					population_t::size_type r = lib::rndp<population_t::size_type>(population->size()-k);
 					std::swap(indivptrs[k], indivptrs[r+k]);
@@ -229,6 +240,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 {
 	switch (config->successionType) {
 	case evo::Straight:
+		std::sort(offsprings->begin(), offsprings->end(), strictWeakOrderingOfGraphs);
 		return offsprings;
 	case evo::EliteOfUnion:
 		{
@@ -277,6 +289,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 				j = 1 - j;
 			}
 
+			std::sort(newpopulation->begin(), newpopulation->end(), strictWeakOrderingOfGraphs);
 			return newpopulation;
 		}
 	default:
