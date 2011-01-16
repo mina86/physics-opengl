@@ -12,9 +12,8 @@ Data::Data()
 	crossoverType("Crossover type", crossoverTypes, NoCrossover),
 	successionType("Succession type", successionTypes, EliteOfUnion),
 	selectionInteger1("Selection: k-param", 1, 1000, 2),
-	mutationEnabled("Enable mutation (normal distribtuion)?", true),
-	mutationMu("Mutation mean value", -10, 10, 0),
-	mutationSigmasquared("Mutation variance", -10, 10, 0)
+	mutationProbability("Mutation probability", 0, 1, 0.7),
+	mutationSigma("Mutation standard derivation", -10, 10, 0.1)
 {
 	init();
 }
@@ -28,9 +27,8 @@ ui::cfg::Data::iterator Data::items() const {
 		CFG_DATA_OFFSET(crossoverType),
 		CFG_DATA_OFFSET(successionType),
 
-		CFG_DATA_OFFSET(mutationEnabled),
-		CFG_DATA_OFFSET(mutationMu),
-		CFG_DATA_OFFSET(mutationSigmasquared),
+		CFG_DATA_OFFSET(mutationProbability),
+		CFG_DATA_OFFSET(mutationSigma),
 
 		~0u,
 	};

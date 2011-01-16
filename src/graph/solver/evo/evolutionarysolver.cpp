@@ -19,6 +19,7 @@
 #include "evolutionarysolver.hpp"
 #include "evolutionarysolverplayer.hpp"
 #include "../../../lib/rand.hpp"
+#include "../../vector-rand.hpp"
 
 #include <algorithm>
 
@@ -148,13 +149,16 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(population_ptr 
 
 EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr reproduced)
 {
-	for (population_t::iterator i = reproduced->begin(); i != reproduced->end(); ++i)
-	{
-		for (Graph::nodes_iterator j = graph(*i).nodes_begin(); j != graph(*i).nodes_end(); ++j)
+	//Mutation
+	if (config->mutationProbability > 0) {
+		for (population_t::iterator i = reproduced->begin(); i != reproduced->end(); ++i)
 		{
-			j->x() += gsl_ran_gaussian(lib::gsl_rng_object, 1.0);
-			j->y() += gsl_ran_gaussian(lib::gsl_rng_object, 1.0);
-			j->z() += gsl_ran_gaussian(lib::gsl_rng_object, 1.0);
+			float r = lib::rndp<float>(1.0);
+			if (r <= config->mutationProbability) {
+				for (Graph::nodes_iterator j = graph(*i).nodes_begin(); j != graph(*i).nodes_end(); ++j) {
+					graph::addRandNormal(*j, config->mutationSigma);
+				}
+			}
 		}
 	}
 	return reproduced;

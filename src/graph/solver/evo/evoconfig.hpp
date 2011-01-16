@@ -37,9 +37,8 @@ struct Data : public ui::cfg::Data {
 	ui::cfg::Integer selectionInteger1;
 
 	// Mutation X ~ N(mu, sigma^2)
-	ui::cfg::Bool mutationEnabled;
-	ui::cfg::Real mutationMu;
-	ui::cfg::Real mutationSigmasquared;
+	ui::cfg::Real mutationProbability;
+	ui::cfg::Real mutationSigma;
 
 	virtual struct iterator items() const;
 
