@@ -26,7 +26,7 @@ namespace ui {
 PlayerControlWidget::PlayerControlWidget(QWidget *parent) :
 		QWidget(parent),
 		isPlaying(false),
-		fpsRate(0)
+		tickCountOverflow(0)
 {
 	ui.setupUi(this);
 	mTimer = new QTimer(this);
@@ -121,8 +121,9 @@ void PlayerControlWidget::setFps(int newFps)
 void PlayerControlWidget::playNextFrame()
 {
 	float rate = fpsRate ? 1.0/fpsRate : 1.0;
-	float tickCount = (speed/precision)*rate;
-	emit newFrameNeeded(std::max((unsigned)1, (unsigned)round(tickCount)), precision);
+	float tickCount = (speed/precision)*rate + tickCountOverflow;
+	tickCountOverflow = tickCount - floor(tickCount);
+	emit newFrameNeeded((unsigned)floor(tickCount), precision);
 }
 
 void PlayerControlWidget::debugprint()

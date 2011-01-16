@@ -60,6 +60,8 @@ protected:
 	double precision;
 	double precisionExponent;
 
+	double tickCountOverflow;
+
 protected slots:
 	void playNextFrame();
 
