@@ -217,6 +217,7 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 		MainWindow *anotherWindow = new MainWindow(config);
 		anotherWindow->loadScene(scene);
 		anotherWindow->show();
+		return;
 	}
 
 	pane = new GLPane(config);
