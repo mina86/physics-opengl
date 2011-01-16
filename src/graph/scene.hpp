@@ -94,6 +94,9 @@ public:
 private:
 	Scene();
 
+	void saveNodes(std::ostream &out) throw(std::ios_base::failure);
+	void saveEdges(std::ostream &out) throw(std::ios_base::failure);
+
 	Node *nodes_ext_vec;
 };
 

@@ -23,6 +23,7 @@
 #include <algorithm>
 
 #include "../gl/glwidget.hpp"
+#include "../gl/vector-print.hpp"
 
 namespace graph {
 
@@ -125,7 +126,39 @@ void Scene::updateState(unsigned ticks, float dt) {
 }
 
 void Scene::save(std::ostream &out) throw(std::ios_base::failure) {
-	(void)out;
+	saveNodes(out);
+	saveEdges(out);
+}
+
+void Scene::saveNodes(std::ostream &out) throw(std::ios_base::failure) {
+	nodes_iterator it = nodes_begin(), e = nodes_end();
+	for (; it != e; ++it) {
+		out << "node ";
+
+		if ((*it).second.name.find('"', 0) == std::string::npos) {
+			out << '"' << (*it).second.name << '"';
+		} else if ((*it).second.name.find('\'', 0) == std::string::npos) {
+			out << '\'' << (*it).second.name << '\'';
+		}
+
+		out << " @ " << (*it).first << " color "
+			<< (*it).second.color[0] << ' '
+			<< (*it).second.color[1] << ' '
+			<< (*it).second.color[2] << '\n';
+	}
+}
+
+void Scene::saveEdges(std::ostream &out) throw(std::ios_base::failure) {
+	edges_iterator it = edges_begin();
+	const unsigned n = nodes();
+
+	for (unsigned u = 1; u < n; ++u) {
+		for (unsigned v = 0; v < u; ++v, ++it) {
+			if (*it) {
+				out << "edge " << u << ' ' << v << '\n';
+			}
+		}
+	}
 }
 
 }
