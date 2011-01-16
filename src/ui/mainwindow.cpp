@@ -149,6 +149,7 @@ void MainWindow::save()
 void MainWindow::initActions()
 {
 	fileMenu = ui.menubar->addMenu(tr("&File", "menu"));
+	solverMenu = ui.menubar->addMenu(tr("Sol&ver", "menu"));
 
 	quitAction = new QAction(tr("&Quit", "quit app"), this);
 	quitAction->setShortcut(Qt::CTRL + Qt::Key_Q);
@@ -176,6 +177,22 @@ void MainWindow::initActions()
 	generateAction->setToolTip(tr("Generate scene"));
 	connect(generateAction, SIGNAL(triggered()), this, SLOT(generateGraph()));
 
+	solveAction = new QAction(this);
+	solveAction->setText(tr("Load solver", "action to start solving a scene"));
+	solveAction->setToolTip(tr("Choose a solver and start solving"));
+	connect(solveAction, SIGNAL(triggered()), this, SLOT(loadSolver()));
+
+	solverSettingsAction = new QAction(tr("Solver settings", "menu"), this);
+	solverSettingsAction->setToolTip(tr("Change settings of chosen solver"));
+	solverSettingsAction->setEnabled(false);
+	connect(solverSettingsAction, SIGNAL(triggered()), this, SLOT(openSolverSettingsDialog()));
+
+	solverPlayerAction = new QAction(tr("Solver player"), this);
+	solverPlayerAction->setToolTip(tr("Open solver player widget"));
+	solverPlayerAction->setEnabled(false);
+	solverPlayerAction->setCheckable(true);
+	solverPlayerAction->setChecked(true);
+
 	fileMenu->addAction(settingsAction);
 	fileMenu->addSeparator();
 	fileMenu->addAction(loadAction);
@@ -183,10 +200,16 @@ void MainWindow::initActions()
 	fileMenu->addSeparator();
 	fileMenu->addAction(quitAction);
 
+	solverMenu->addAction(solveAction);
+	solverMenu->addAction(solverPlayerAction);
+	solverMenu->addAction(solverSettingsAction);
+
+	ui.menubar->addAction(settingsAction);
+
 	ui.toolBar->addAction(loadAction);
 	ui.toolBar->addAction(saveAction);
-	ui.toolBar->addAction(settingsAction);
 	ui.toolBar->addAction(generateAction);
+	ui.toolBar->addAction(solveAction);
 }
 
 void MainWindow::onWidgetSceneChanged()
@@ -213,38 +236,6 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 	isFileLoaded = true;
 
 	onWidgetSceneChanged();
-
-	QString solverNameEvo = tr("Evolutionary solver");
-	QString solverNameForce = tr("Physical forces solver");
-	QStringList solvers;
-	solvers << solverNameEvo;
-	solvers << solverNameForce;
-	bool ok = false;
-	QString solverNameChosen;
-	while (!ok) {
-		solverNameChosen = QInputDialog::getItem(this, tr("Choose solver"), tr("Solver"),
-							  solvers, 0, false, &ok);
-	}
-	if (solverNameChosen == solverNameEvo) {
-		solver = new graph::solver::EvolutionarySolver(
-				this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
-		);
-	} else if (solverNameChosen == solverNameForce) {
-		solver = new graph::solver::ForceSolver(
-				this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
-		);
-	}
-
-	QDockWidget *playerDockWidget = new QDockWidget(tr("Player controls", "widget name"), this);
-	playerDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea);
-	playerDockWidget->setWidget(solver->createPlayerWidget(playerDockWidget));
-	addDockWidget(Qt::BottomDockWidgetArea, playerDockWidget);
-	connect(solver, SIGNAL(graphChanged()), pane->gl, SLOT(updateGL()));
-
-	QAction *solverSettingsAction = new QAction(tr("Solver settings", "menu"), this);
-	solverSettingsAction->setToolTip(tr("Change settings of chosen solver"));
-	connect(solverSettingsAction, SIGNAL(triggered()), this, SLOT(openSolverSettingsDialog()));
-	ui.menubar->addAction(solverSettingsAction);
 }
 
 void MainWindow::openSolverSettingsDialog() {
@@ -290,17 +281,143 @@ void MainWindow::generateGraph() {
 	pane->gl->setScene(ptr);
 	isFileLoaded = true;
 	onWidgetSceneChanged();
+}
 
-//	QDockWidget *playerDockWidget = new QDockWidget(tr("Player controls", "widget name"), this);
-//	playerDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea);
-//	playerDockWidget->setWidget(solver->createPlayerWidget(playerDockWidget));
-//	addDockWidget(Qt::BottomDockWidgetArea, playerDockWidget);
-//	connect(solver, SIGNAL(graphChanged()), pane->gl, SLOT(updateGL()));
+void MainWindow::loadSolver() {
+	if (isSolverLoaded()) {
+		QMessageBox::StandardButton sb = QMessageBox::question(
+				this,
+				tr("Solver already loaded"),
+				tr("There's already a solver loaded. Do you want to unload it first?"),
+				QMessageBox::Yes | QMessageBox::Cancel,
+				QMessageBox::Cancel);
+		switch (sb) {
+		case QMessageBox::Yes:
+			unloadSolver();
+			break;
+		default:
+			return;
+		}
+	}
 
-//	QAction *solverSettingsAction = new QAction(tr("Solver settings", "menu"), this);
-//	solverSettingsAction->setToolTip(tr("Change settings of chosen solver"));
-//	connect(solverSettingsAction, SIGNAL(triggered()), this, SLOT(openSolverSettingsDialog()));
-//	ui.menubar->addAction(solverSettingsAction);
+	if (chooseSolverByDialog()) {
+		connect(solver, SIGNAL(graphChanged()), pane->gl, SLOT(updateGL()));
+		solverSettingsAction->setEnabled(true);
+		createSolverPlayerWidget();
+	}
+}
+
+void MainWindow::unloadSolver(bool askForConfirmation) {
+	if (askForConfirmation) {
+		QMessageBox::StandardButton sb = QMessageBox::question(
+				this,
+				tr("Unload solver?"),
+				tr("Unloading solver is irreversible. You may be able to start a new solver where this stopped, but it won't be the same as simply continuing with current solver.  Are you sure you want to unload the solver?"),
+				QMessageBox::Yes | QMessageBox::Cancel,
+				QMessageBox::Cancel);
+		switch (sb) {
+		case QMessageBox::Yes:
+			break;
+		default:
+			return;
+		}
+	}
+	delete solver;
+	solver = NULL;
+	destroySolverPlayerWidget();
+	solverSettingsAction->setEnabled(false);
+}
+
+bool MainWindow::chooseSolverByDialog() {
+	if (!pane || !pane->gl->getScene()) {
+		QMessageBox::warning(
+				this,
+				tr("Unable to choose solver"),
+				tr("Unable to choose solver -- there's no scene loaded. Load or generate one."),
+				QMessageBox::Cancel,
+				QMessageBox::Cancel);
+		return false;
+	}
+
+	QString solverNameEvo = tr("Evolutionary solver");
+	QString solverNameForce = tr("Physical forces solver");
+	QStringList solvers;
+	solvers << solverNameEvo;
+	solvers << solverNameForce;
+
+	bool ok = false;
+	QString solverNameChosen;
+
+	solverNameChosen = QInputDialog::getItem(
+			this, tr("Choose solver"), tr("Solver"),
+			solvers, 0, false, &ok);
+	if (!ok)
+		return false;
+
+	if (solverNameChosen == solverNameEvo) {
+		solver = new graph::solver::EvolutionarySolver(
+				this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
+		);
+		return true;
+	} else if (solverNameChosen == solverNameForce) {
+		solver = new graph::solver::ForceSolver(
+				this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
+		);
+		return true;
+	}
+	return false;
+}
+
+void MainWindow::createSolverPlayerWidget() {
+	if (!isSolverLoaded()) {
+		QMessageBox::warning(
+				this,
+				tr("Solver not loaded"),
+				tr("Unable to create solver player widget because no solver is loaded."),
+				QMessageBox::Ok);
+		return;
+	}
+
+	if (isSolverPlayerLoaded()) {
+		QMessageBox::StandardButton sb = QMessageBox::question(
+				this,
+				tr("Solver player already loaded"),
+				tr("There's already a solver player loaded. Do you want to unload it first?"),
+				QMessageBox::Yes | QMessageBox::Cancel,
+				QMessageBox::Cancel);
+		switch (sb) {
+		case QMessageBox::Yes:
+			destroySolverPlayerWidget();
+			break;
+		default:
+			return;
+		}
+	}
+
+	QDockWidget *dockWidget = new QDockWidget(tr("Player controls", "widget name"), this);
+	dockWidget->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+	dockWidget->setWidget(solver->createPlayerWidget(dockWidget));
+	dockWidget->setVisible(solverPlayerAction->isChecked());
+	addDockWidget(Qt::BottomDockWidgetArea, dockWidget);
+	connect(dockWidget, SIGNAL(visibilityChanged(bool)), solverPlayerAction, SLOT(setChecked(bool)));
+	connect(solverPlayerAction, SIGNAL(toggled(bool)), dockWidget, SLOT(setVisible(bool)));
+	solverPlayerWidget  = dockWidget;
+	solverPlayerAction->setEnabled(true);
+}
+
+void MainWindow::destroySolverPlayerWidget() {
+	if (!isSolverPlayerLoaded()) {
+		QMessageBox::warning(
+				this,
+				tr("Solver player not loaded"),
+				tr("Unable to close solver player widget because no solver is loaded."),
+				QMessageBox::Ok);
+		return;
+	}
+
+	delete solverPlayerWidget;
+	solverPlayerWidget = NULL;
+	solverPlayerAction->setEnabled(false);
 }
 
 }

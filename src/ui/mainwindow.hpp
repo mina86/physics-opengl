@@ -20,6 +20,7 @@
 #define H_MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <QMenu>
 
 #include "../gl/glconfig.hpp"
 #include "../gl/glwidget.hpp"
@@ -37,6 +38,9 @@ struct MainWindow : public QMainWindow {
 	gl::Config config;
 	GLPane * pane;
 
+	bool isSolverLoaded() const { return solver != NULL; }
+	bool isSolverPlayerLoaded() const { return solverPlayerWidget != NULL; }
+
 public slots:
 	void openSettingsDialog();
 	void load();
@@ -44,13 +48,21 @@ public slots:
 	void openSolverSettingsDialog();
 	void generateGraph();
 
+	void loadSolver();
+	void unloadSolver(bool askForConfirmation = true);
+	void createSolverPlayerWidget();
+	void destroySolverPlayerWidget();
+
 protected:
 	graph::solver::AbstractSolver *solver;
+	QWidget *solverPlayerWidget;
 
 	void changeEvent(QEvent *e);
 	void prepare();
 
 	bool isFileLoaded;
+
+	bool chooseSolverByDialog();
 
 protected slots:
 	void onWidgetSceneChanged();
@@ -64,11 +76,15 @@ private:
 	void initActions();
 
 	QMenu *fileMenu;
+	QMenu *solverMenu;
 	QAction *saveAction;
 	QAction *loadAction;
 	QAction *quitAction;
 	QAction *settingsAction;
 	QAction *generateAction;
+	QAction *solveAction;
+	QAction *solverSettingsAction;
+	QAction *solverPlayerAction;
 
 	Q_OBJECT
 };
