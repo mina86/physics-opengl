@@ -116,7 +116,7 @@ void PlayerControlWidget::setFps(int newFps)
 
 void PlayerControlWidget::playNextFrame()
 {
-	float tickCount = speed / fpsRate + tickCountOverflow;
+	float tickCount = (float)speed / fpsRate + tickCountOverflow;
 	tickCountOverflow = tickCount - floor(tickCount);
 	unsigned ticks = floor(tickCount);
 	if (ticks) {
