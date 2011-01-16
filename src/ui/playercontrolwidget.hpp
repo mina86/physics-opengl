@@ -40,12 +40,10 @@ public slots:
 
 	void setSpeed(int);
 	void setSpeed(double);
-	void setPrecision(int);
-	void setPrecision(double);
 
 signals:
 	void fpsChanged(int);
-	void newFrameNeeded(unsigned tickCount, float tickInterval);
+	void newFrameNeeded(unsigned tickCount);
 
 protected:
 	void changeEvent(QEvent *e);
@@ -57,8 +55,6 @@ protected:
 	int fpsRate;
 	double speed;
 	double speedExponent;
-	double precision;
-	double precisionExponent;
 
 	double tickCountOverflow;
 

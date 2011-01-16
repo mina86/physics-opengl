@@ -42,18 +42,14 @@ PlayerControlWidget::PlayerControlWidget(QWidget *parent) :
 	connect(this, SIGNAL(fpsChanged(int)), ui.fpsSpinBox, SLOT(setValue(int)));
 	connect(ui.speedSlider, SIGNAL(valueChanged(int)), this, SLOT(setSpeed(int)));
 	connect(ui.speedSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setSpeed(double)));
-	connect(ui.precisionSlider, SIGNAL(valueChanged(int)), this, SLOT(setPrecision(int)));
-	connect(ui.precisionSpinBox, SIGNAL(valueChanged(double)), this, SLOT(setPrecision(double)));
 
 	ui.playButton->setEnabled(fpsRate > 0 && !isPlaying);
 	ui.pauseButton->setEnabled(isPlaying);
 
 	fpsRate = -1000;
 	speedExponent = -1000;
-	precisionExponent = -1000;
 	setFps(0);
 	setSpeed(0.0);
-	setPrecision(0.0);
 	debugprint();
 }
 
@@ -121,9 +117,9 @@ void PlayerControlWidget::setFps(int newFps)
 void PlayerControlWidget::playNextFrame()
 {
 	float rate = fpsRate ? 1.0/fpsRate : 1.0;
-	float tickCount = (speed/precision)*rate + tickCountOverflow;
-	tickCountOverflow = tickCount - floor(tickCount);
-	emit newFrameNeeded((unsigned)floor(tickCount), precision);
+	float tickCount = speed * rate + tickCountOverflow;
+	tickCountOverflow = trunc(tickCount);
+	emit newFrameNeeded((unsigned)floor(tickCount));
 }
 
 void PlayerControlWidget::debugprint()
@@ -134,9 +130,6 @@ void PlayerControlWidget::debugprint()
 	ui.speedDisplayLabel->setText(QString(tr("Speed: %1 (%2x)"))
 				 .arg(speedExponent)
 				 .arg(speed));
-	ui.precisionDisplayLabel->setText(QString(tr("Pracision: %1 (%2)"))
-				 .arg(precisionExponent)
-				 .arg(precision));
 }
 
 void PlayerControlWidget::setSpeed(int newSpeed)
@@ -153,23 +146,6 @@ void PlayerControlWidget::setSpeed(double newSpeed)
 	speed = pow10(speedExponent);
 	ui.speedSlider->setValue(round(speedExponent * 10));
 	ui.speedSpinBox->setValue(speedExponent);
-	debugprint();
-}
-
-void PlayerControlWidget::setPrecision(int newPrecision)
-{
-	setPrecision((double)newPrecision / 10.0);
-}
-
-void PlayerControlWidget::setPrecision(double newPrecision)
-{
-	if (fabs(newPrecision - precisionExponent) < FLOATCOMPAREEPSILON)
-		return;
-
-	precisionExponent = newPrecision;
-	precision = pow10(precisionExponent);
-	ui.precisionSlider->setValue(round(precisionExponent * 10));
-	ui.precisionSpinBox->setValue(precisionExponent);
 	debugprint();
 }
 

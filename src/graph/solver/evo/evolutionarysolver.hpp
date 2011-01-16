@@ -74,7 +74,7 @@ namespace solver {
 
 	protected slots:
 		void makeOneIteration();
-		void playNextFrame(unsigned iterations, float);
+		void playNextFrame(unsigned iterations);
 
 	private:
 		evo::Config config;

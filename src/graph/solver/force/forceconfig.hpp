@@ -29,7 +29,7 @@ namespace force {
 
 struct Data : public ui::cfg::Data {
 	ui::cfg::Real repulsionForce, attractionForce, hitForce, middleForce;
-	ui::cfg::Real desiredDistance, damping;
+	ui::cfg::Real desiredDistance, damping, dt;
 
 	virtual struct iterator items() const;
 

@@ -40,12 +40,8 @@ EvolutionarySolver::EvolutionarySolver(QObject *parent, Scene *scene)
 
 QWidget* EvolutionarySolver::createPlayerWidget(QWidget *theParent)
 {
-//	evo::EvolutionarySolverPlayer *player = new evo::EvolutionarySolverPlayer(theParent);
-//	connect(player->ui.oneIterationButton, SIGNAL(clicked()), this, SLOT(makeOneIteration()));
-//	//connect(&(config->populationSize), SIGNAL(changed(long)), player->ui.populationSize, SLOT(setValue(long)));
-//	player->ui.populationSize->setValue(config->populationSize);
 	ui::PlayerControlWidget *player = new ui::PlayerControlWidget(theParent);
-	connect(player, SIGNAL(newFrameNeeded(uint,float)), this, SLOT(playNextFrame(uint,float)));
+	connect(player, SIGNAL(newFrameNeeded(uint)), this, SLOT(playNextFrame(uint)));
 	return player;
 }
 
@@ -342,7 +338,7 @@ double EvolutionarySolver::evaluate(const Graph &g)
 	return result;
 }
 
-void EvolutionarySolver::playNextFrame(unsigned iterations, float)
+void EvolutionarySolver::playNextFrame(unsigned iterations)
 {
 	for (; iterations; --iterations) {
 		runOneIteration();

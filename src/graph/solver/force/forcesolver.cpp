@@ -25,6 +25,8 @@
 #include <algorithm>
 #include <queue>
 
+#include <stdio.h>
+
 namespace graph {
 
 namespace solver {
@@ -36,8 +38,8 @@ ForceSolver::ForceSolver(QObject *parent, Scene *scene)
 
 QWidget *ForceSolver::createPlayerWidget(QWidget *parent) {
 	ui::PlayerControlWidget *player = new ui::PlayerControlWidget(parent);
-	connect(player, SIGNAL(newFrameNeeded(uint, float)),
-	        this, SLOT(playNextFrame(uint, float)));
+	connect(player, SIGNAL(newFrameNeeded(uint)),
+	        this, SLOT(playNextFrame(uint)));
 	return player;
 }
 
@@ -45,11 +47,12 @@ ui::cfg::Data *ForceSolver::getConfigData() {
 	return &*config;
 }
 
-void ForceSolver::playNextFrame(unsigned iterations, float dt) {
+void ForceSolver::playNextFrame(unsigned iterations) {
 	Graph &g = dynamic_cast<Graph &>(*scene);
 	const unsigned count = g.nodes();
 
 	while (iterations--) {
+		const float dt = config->dt;
 		/* float energy = 0.0; */
 
 		Graph::edges_iterator it = g.edges_begin();
@@ -68,8 +71,16 @@ void ForceSolver::playNextFrame(unsigned iterations, float dt) {
 			it->force += calculateMiddleForce(*n);
 			it->velocity += it->force * dt;
 			it->velocity *= config->damping;
+
+			fprintf(stderr, "\tvelocity = %g,%g,%g; %g,%g,%g ->",
+					it->velocity.x(), it->velocity.y(), it->velocity.z(),
+					n->x(), n->y(), n->z());
+
 			/* energy += it->velocity.length2(); */
 			*n += (it->force * (dt * 0.5f) + it->velocity) * dt;
+
+			fprintf(stderr, " %g,%g,%g\n", n->x(), n->y(), n->z());
+
 			it->force.set(0.0, 0.0, 0.0);
 		}
 	}

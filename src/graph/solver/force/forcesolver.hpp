@@ -35,7 +35,7 @@ struct ForceSolver : public AbstractSolver {
 	ui::cfg::Data *getConfigData();
 
 protected slots:
-	void playNextFrame(unsigned iterations, float dt);
+	void playNextFrame(unsigned iterations);
 
 private:
 	gl::Vector<float> calculateForce(gl::Vector<float> r,
@@ -59,4 +59,4 @@ private:
 
 }
 
-#endif // EVOLUTIONARYSOLVER_HPP
+#endif

@@ -30,7 +30,8 @@ Data::Data()
 	  hitForce("Repulsion when nodes are very near", 0.0, 100.0, 5.0),
 	  middleForce("Force towards the center", 0.0, 100.0, 0.5),
 	  desiredDistance("Desired edge length", 2.0, 100.0, 5.0),
-	  damping("Damping", 0.01, 0.99, 0.9) {
+	  damping("Damping", 0.01, 0.99, 0.9),
+	  dt("dt per iteration", 0.0001, 0.01, 0.01) {
 	init();
 }
 
@@ -42,6 +43,7 @@ ui::cfg::Data::iterator Data::items() const {
 		CFG_DATA_OFFSET(middleForce),
 		CFG_DATA_OFFSET(desiredDistance),
 		CFG_DATA_OFFSET(damping),
+		CFG_DATA_OFFSET(dt),
 
 		~0u,
 	};
