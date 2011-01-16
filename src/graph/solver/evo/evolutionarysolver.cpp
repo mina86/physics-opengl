@@ -51,7 +51,7 @@ void EvolutionarySolver::makeOneIteration()
 //	while (fabs(bestvold - bestv)/bestvold > 0.00000001)
 //	{
 		++iterationCount;
-		population_ptr offsprings = genetic(reproduce(population));
+		population_ptr offsprings = genetic(reproduce(population.get()));
 //		j = 1;
 //		for(std::vector<Graph>::const_iterator i = offsprings->begin(); i!= offsprings->end(); ++i)
 //		{
@@ -73,10 +73,9 @@ void EvolutionarySolver::makeOneIteration()
 }
 
 
-EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(population_ptr & population)
+EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(const population_t * const population)
 {
-	evo::SelectionType selectionType = (evo::SelectionType)((long)config->selectionType);
-	switch (selectionType) {
+	switch (config->selectionType) {
 	case evo::Trivial:
 		return population_ptr(new population_t(*population));
 		break;
@@ -94,7 +93,8 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(population_ptr 
 		{
 			population_ptr offsprings(new population_t());
 			population_t::size_type s = population->size();
-			double *distribution = new double[s+1]; //cumulative distribution
+			std::auto_ptr<double> a_distribution(new double[s+1]);
+			double *distribution = a_distribution.get(); //cumulative distribution
 			double sum = 0;
 			population_t::const_iterator i = population->begin();
 			population_t::size_type j = 1;
@@ -122,18 +122,22 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(population_ptr 
 					}
 				}
 			}
-			delete[] distribution;
 			return offsprings;
 		}
 	case evo::Tournament:
 		{
 			population_ptr offsprings(new population_t());
-			//prepare indexes vector
-			individual_t **indivptrs = new individual_t*[population->size()];
+
+			//prepare pointers vector
+			std::auto_ptr<const individual_t *> a_indivptrs(new const individual_t*[population->size()]);
+			const individual_t **indivptrs = a_indivptrs.get();
 			for (population_t::size_type i = 0; i < population->size(); ++i) {
 				indivptrs[i] = &((*population)[i]);
 			}
-			//s-times do k-element tournament
+
+			//population->size()-times do k-element tournament
+			//pick tournament members by swapping them to beginning of pointers vector
+			//resolve tournament by sorting front of that vector on evaluation score
 			for (population_t::size_type s = 0; s < population->size(); ++s) {
 				for (ui::cfg::Integer::value_type k = 0; k < config->selectionInteger1; ++k) {
 					population_t::size_type r = lib::rndp<population_t::size_type>(population->size()-k);
@@ -144,6 +148,8 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(population_ptr 
 			}
 			return offsprings;
 		}
+	default:
+		return population_ptr(new population_t(*population));
 	}
 }
 
@@ -152,8 +158,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr re
 	if (config->crossoverProbability > 0) {
 		std::random_shuffle(reproduced->begin(), reproduced->end(), lib::rnd<long>);
 		population_t::size_type numberOfPairs = reproduced->size() / 2;
-		evo::CrossoverType crossoverType = (evo::CrossoverType)((long)config->crossoverType);
-		switch (crossoverType) {
+		switch (config->crossoverType) {
 		case evo::Mean:
 			{
 				float middlepoint = 0.5;
@@ -218,6 +223,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr re
 			}
 			break;
 		default:
+			/* no crossover */
 			break;
 		}
 	}
@@ -239,8 +245,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr re
 
 EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr population, population_ptr offsprings)
 {
-	evo::SuccessionType successionType = (evo::SuccessionType)((long)config->successionType);
-	switch (successionType) {
+	switch (config->successionType) {
 	case evo::Straight:
 		return offsprings;
 	case evo::EliteOfUnion:
@@ -292,6 +297,9 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 
 			return newpopulation;
 		}
+	default:
+		/* no succession -- should never happen */
+		return population;
 	}
 }
 

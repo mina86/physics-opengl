@@ -62,7 +62,7 @@ namespace solver {
 
 		int iterationCount;
 		population_ptr population;
-		population_ptr reproduce(population_ptr & population);
+		population_ptr reproduce(const population_t * const population);
 		population_ptr genetic(population_ptr reproduced);
 		population_ptr succession(population_ptr population, population_ptr offsprings);
 
