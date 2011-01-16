@@ -72,7 +72,7 @@ AbstractScene::ptr AbstractScene::load(std::istream &in)
 
 	enum {
 		T_EOF     = lib::Lexer::T_EOF,
-		T_INTEGER = lib::Lexer::T_REAL,
+		T_INTEGER = lib::Lexer::T_INTEGER,
 		T_REAL    = lib::Lexer::T_REAL,
 		T_STRING  = lib::Lexer::T_STRING,
 		T_NODE    = lib::Lexer::T_FIRST_KEYWOARD,
