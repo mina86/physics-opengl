@@ -42,6 +42,7 @@ public slots:
 	void load();
 	void save();
 	void openSolverSettingsDialog();
+	void generateGraph();
 
 protected:
 	graph::solver::AbstractSolver *solver;
@@ -67,6 +68,7 @@ private:
 	QAction *loadAction;
 	QAction *quitAction;
 	QAction *settingsAction;
+	QAction *generateAction;
 
 	Q_OBJECT
 };

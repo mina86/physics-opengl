@@ -26,6 +26,8 @@
 #include "playercontrolwidget.hpp"
 #include "../graph/solver/evo/evolutionarysolver.hpp"
 #include "../graph/solver/force/forcesolver.hpp"
+#include "../graph/generator/euclideannetworkgenerator.hpp"
+#include "../gl/abstract-scene.hpp"
 
 #include <fstream>
 
@@ -169,6 +171,11 @@ void MainWindow::initActions()
 	settingsAction->setToolTip(tr("Change settings of simulation"));
 	connect(settingsAction, SIGNAL(triggered()), this, SLOT(openSettingsDialog()));
 
+	generateAction = new QAction(this);
+	generateAction->setText(tr("&Generate", "action to generate scene"));
+	generateAction->setToolTip(tr("Generate scene"));
+	connect(generateAction, SIGNAL(triggered()), this, SLOT(generateGraph()));
+
 	fileMenu->addAction(settingsAction);
 	fileMenu->addSeparator();
 	fileMenu->addAction(loadAction);
@@ -179,6 +186,7 @@ void MainWindow::initActions()
 	ui.toolBar->addAction(loadAction);
 	ui.toolBar->addAction(saveAction);
 	ui.toolBar->addAction(settingsAction);
+	ui.toolBar->addAction(generateAction);
 }
 
 void MainWindow::onWidgetSceneChanged()
@@ -244,6 +252,55 @@ void MainWindow::openSolverSettingsDialog() {
 		AutoSettingsDialog *settingsDialog = new AutoSettingsDialog(solver->getConfigData(), this);
 		settingsDialog->show();
 	}
+}
+
+void MainWindow::generateGraph() {
+	pane = new GLPane(config);
+
+	connect(pane->gl, SIGNAL(sceneChanged()),
+			this, SLOT(onWidgetSceneChanged()));
+//	/* XXX This should go away... */
+	connect(pane->gl, SIGNAL(needRepaint()),
+			pane->gl, SLOT(updateGL()));
+
+	setCentralWidget(pane);
+
+	QString genNameEcnet = tr("Euclidean network");
+	QStringList generators;
+	generators << genNameEcnet;
+	bool ok = false;
+	QString genNameChosen;
+	while (!ok) {
+		genNameChosen = QInputDialog::getItem(this, tr("Choose generator"), tr("Generator"),
+							  generators, 0, false, &ok);
+	}
+	graph::generator::AbstractGenerator::graph_ptr graph;
+	graph::Scene *scene;
+	gl::AbstractScene::ptr ptr;
+	if (genNameChosen == genNameEcnet) {
+		graph::generator::EuclideanNetworkGenerator *ecngen = new graph::generator::EuclideanNetworkGenerator(this);
+		AutoSettingsDialog *genParamsDialog = new AutoSettingsDialog(ecngen->getConfigData(), this);
+		genParamsDialog->setModal(true);
+		genParamsDialog->exec();
+		graph = ecngen->generate();
+		scene = new graph::Scene(*graph);
+		ptr.reset(scene);
+	}
+
+	pane->gl->setScene(ptr);
+	isFileLoaded = true;
+	onWidgetSceneChanged();
+
+//	QDockWidget *playerDockWidget = new QDockWidget(tr("Player controls", "widget name"), this);
+//	playerDockWidget->setAllowedAreas(Qt::BottomDockWidgetArea);
+//	playerDockWidget->setWidget(solver->createPlayerWidget(playerDockWidget));
+//	addDockWidget(Qt::BottomDockWidgetArea, playerDockWidget);
+//	connect(solver, SIGNAL(graphChanged()), pane->gl, SLOT(updateGL()));
+
+//	QAction *solverSettingsAction = new QAction(tr("Solver settings", "menu"), this);
+//	solverSettingsAction->setToolTip(tr("Change settings of chosen solver"));
+//	connect(solverSettingsAction, SIGNAL(triggered()), this, SLOT(openSolverSettingsDialog()));
+//	ui.menubar->addAction(solverSettingsAction);
 }
 
 }
