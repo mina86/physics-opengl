@@ -312,14 +312,12 @@ double EvolutionarySolver::evaluate(const Graph &g)
 		{
 			kj = (j-g.nodes_begin());
 
-			double dist = i->distance(*j);
-//			std::cout << "Dist_(" << ki << "," << kj << "): " << dist  << std::endl;
-//			std::cout << "Dist2(" << ki << "," << kj << "): " << dist2 << std::endl;
+			double dist = i->distance(*j) + 0.00001; //avoid division by zero
 
-//			// If vertices connected - they should be at specified distance
+			// If vertices connected - they should be at specified distance
 			if (g.e(ki, kj))
 				result += fabs(3.0 - dist);
-//			// Otherwise, they should be at another distance
+			// Otherwise, they should be at another distance
 //			else
 				result += (6.0/dist);
 
