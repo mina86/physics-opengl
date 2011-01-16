@@ -41,6 +41,7 @@ void Graph::init(unsigned theN) throw(std::invalid_argument, std::bad_alloc) {
 		throw;
 	}
 
+	std::fill_n(nodes_vec, nodes(), node_type());
 	std::fill_n(edges_vec, edges(), edge_type());
 }
 

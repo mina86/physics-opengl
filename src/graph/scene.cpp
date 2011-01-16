@@ -26,18 +26,30 @@
 
 namespace graph {
 
-Scene::Scene(unsigned theN) throw(std::invalid_argument, std::bad_alloc)
-	: Graph(theN) {
+void Scene::commonInit() {
+	unsigned theN = nodes();
 	char buffer[32];
 
 	nodes_ext_vec = new Node[theN];
 
+	Graph::nodes_iterator it = Graph::nodes_begin();
 	Node *node = nodes_ext_vec;
 	for (unsigned i = 0; i < theN; ++i, ++node) {
 		sprintf(buffer, "#%u", i);
 		node->name.assign(buffer);
+		node->loadedPosition = *it;
+		++it;
 		std::fill_n(node->color, 4, (float)1);
 	}
+}
+
+Scene::Scene(unsigned theN) throw(std::invalid_argument, std::bad_alloc)
+	: Graph(theN) {
+	commonInit();
+}
+
+Scene::Scene(const Graph &g) : Graph(g) {
+	commonInit();
 }
 
 Scene::~Scene() {

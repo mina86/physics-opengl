@@ -40,7 +40,12 @@ struct Scene : public gl::AbstractScene, public Graph {
 	typedef std::pair<Graph::node_type &, Node &> node_type;
 	typedef std::pair<const Graph::node_type &, const Node &> const_node_type;
 
-	Scene(unsigned theN) throw(std::invalid_argument, std::bad_alloc);
+private:
+	void commonInit();
+
+public:
+	explicit Scene(unsigned theN) throw(std::invalid_argument, std::bad_alloc);
+	explicit Scene(const Graph &g);
 	~Scene();
 
 	/* No checking of v is done.  Beware! */
