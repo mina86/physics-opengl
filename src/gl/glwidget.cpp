@@ -333,7 +333,7 @@ bool Widget::sphere(value_type size, const Vector &point,
 		? std::sqrt(config->cutOffDistance2 / factor)
 		: 1;
 
-	unsigned slices = 60 * factor;
+	unsigned slices = 30 * factor;
 	if (size > 1) {
 		slices <<= 1;
 	}
@@ -391,8 +391,8 @@ void Widget::connection(value_type size, Vector r,
 	color2 = color2 ? color2 : color1;
 
 	/* If drawing style is anything else then fill, just draw a single
-	 * line. */
-	if (config->drawStyle) {
+	 * line.  Also, if nodes are very far away draw a single line. */
+	if (config->drawStyle || l > 100.0) {
 		glBegin(GL_LINES);
 		glColor3fv(color1);
 		glVertex3fv(zeros);
