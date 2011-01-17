@@ -53,6 +53,8 @@ public slots:
 	void createSolverPlayerWidget();
 	void destroySolverPlayerWidget();
 
+	void randomiseGraph();
+
 protected:
 	graph::solver::AbstractSolver *solver;
 	QWidget *solverPlayerWidget;
@@ -86,6 +88,7 @@ private:
 	QAction *solveAction;
 	QAction *solverSettingsAction;
 	QAction *solverPlayerAction;
+	QAction *randomiseAction;
 
 	Q_OBJECT
 };

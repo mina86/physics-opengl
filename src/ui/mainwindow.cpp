@@ -29,6 +29,7 @@
 #include "../graph/generator/euclideannetworkgenerator.hpp"
 #include "../graph/generator/ergenerator.hpp"
 #include "../graph/generator/treegenerator.hpp"
+#include "../graph/randomise-graph.hpp"
 #include "../gl/abstract-scene.hpp"
 
 #include <fstream>
@@ -195,6 +196,10 @@ void MainWindow::initActions()
 	solverPlayerAction->setCheckable(true);
 	solverPlayerAction->setChecked(true);
 
+	randomiseAction = new QAction(tr("Randomise"), this);
+	randomiseAction->setEnabled(false);
+	connect(randomiseAction, SIGNAL(triggered()), this, SLOT(randomiseGraph()));
+
 	fileMenu->addAction(settingsAction);
 	fileMenu->addSeparator();
 	fileMenu->addAction(loadAction);
@@ -213,6 +218,7 @@ void MainWindow::initActions()
 	ui.toolBar->addAction(saveAction);
 	ui.toolBar->addAction(generateAction);
 	ui.toolBar->addAction(solveAction);
+	ui.toolBar->addAction(randomiseAction);
 }
 
 void MainWindow::onWidgetSceneChanged()
@@ -243,6 +249,7 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 
 	setCentralWidget(pane);
 	pane->gl->setScene(scene);
+	randomiseAction->setEnabled(true);
 	isFileLoaded = true;
 
 	onWidgetSceneChanged();
@@ -431,6 +438,18 @@ void MainWindow::destroySolverPlayerWidget() {
 	delete solverPlayerWidget;
 	solverPlayerWidget = NULL;
 	solverPlayerAction->setEnabled(false);
+}
+
+void MainWindow::randomiseGraph() {
+	graph::GraphRandomiser *randomiser = new graph::GraphRandomiser();
+
+	AutoSettingsDialog *rndParamsDialog =
+		new AutoSettingsDialog(&(randomiser->getConfigData()), this);
+	rndParamsDialog->setModal(true);
+	rndParamsDialog->exec();
+	delete rndParamsDialog;
+
+	randomiser->randomise(*dynamic_cast<graph::Scene *>(pane->gl->getScene()));
 }
 
 }
