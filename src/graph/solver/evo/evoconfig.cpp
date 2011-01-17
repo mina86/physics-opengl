@@ -13,7 +13,7 @@ Data::Data()
 	crossoverProbability("Crossover probability", 0, 1, 0.1),
 	crossoverType("Crossover type", crossoverTypes, Mean),
 	mutationProbability("Mutation probability", 0, 1, 0.7),
-	mutationSigma("Mutation standard derivation", -10, 10, 0.1),
+	mutationSigma("Mutation standard deviation", -10, 10, 0.1),
 	successionType("Succession type", successionTypes, EliteOfUnion),
 	adjacentFunctionType("Evaluation Func for adjacent", adjacentFunctionTypes, Adj_XPower),
 	adjacentParamA("EvF-adjacent, param a", -1000, 1000, 5),
