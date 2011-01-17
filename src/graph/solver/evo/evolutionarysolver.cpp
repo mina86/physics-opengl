@@ -204,6 +204,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr re
 							(*ni2) = tmp;
 							++ni1;
 							++ni2;
+							++j;
 						}
 					}
 				}
