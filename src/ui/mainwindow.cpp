@@ -207,6 +207,11 @@ void MainWindow::initActions()
 	randomiseAction->setShortcut(Qt::CTRL + Qt::Key_R);
 	connect(randomiseAction, SIGNAL(triggered()), this, SLOT(randomiseGraph()));
 
+	cloneAction = new QAction(tr("&Clone"), this);
+	cloneAction->setEnabled(false);
+	cloneAction->setShortcut(Qt::CTRL + Qt::Key_C);
+	connect(cloneAction, SIGNAL(triggered()), this, SLOT(cloneGraph()));
+
 	fileMenu->addAction(loadAction);
 	fileMenu->addAction(generateAction);
 	fileMenu->addAction(saveAction);
@@ -218,7 +223,8 @@ void MainWindow::initActions()
 	solverMenu->addAction(solverPlayerAction);
 	solverMenu->addAction(solverSettingsAction);
 
-	toolsMenu->addAction(randomiseAction);;
+	toolsMenu->addAction(randomiseAction);
+	toolsMenu->addAction(cloneAction);
 	fileMenu->addSeparator();
 	toolsMenu->addAction(settingsAction);
 
@@ -227,6 +233,7 @@ void MainWindow::initActions()
 	ui.toolBar->addAction(saveAction);
 	ui.toolBar->addAction(solveAction);
 	ui.toolBar->addAction(randomiseAction);
+	ui.toolBar->addAction(cloneAction);
 }
 
 void MainWindow::onWidgetSceneChanged()
@@ -234,6 +241,7 @@ void MainWindow::onWidgetSceneChanged()
 	bool scene = pane->gl->getScene();
 	saveAction->setEnabled(scene);
 	randomiseAction->setEnabled(scene);
+	cloneAction->setEnabled(scene);
 	solveAction->setEnabled(scene);
 }
 
@@ -462,6 +470,10 @@ void MainWindow::randomiseGraph() {
 	delete randomiser;
 
 	pane->gl->updateGL();
+}
+
+void MainWindow::cloneGraph() {
+	loadScene(pane->gl->getScene()->clone());
 }
 
 }

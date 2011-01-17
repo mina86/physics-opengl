@@ -57,6 +57,22 @@ Scene::~Scene() {
 	delete[] nodes_ext_vec;
 }
 
+Scene::Scene(const Scene &s) : AbstractScene(), Graph(s) {
+	unsigned theN = nodes();
+	nodes_ext_vec = new Node[theN];
+
+	const Node *in = s.nodes_ext_vec;
+	Node *out = nodes_ext_vec;
+	do {
+		*out++ = *in++;
+	} while (--theN);
+}
+
+Scene::ptr Scene::clone() {
+	return ptr(new Scene(*this));
+}
+
+
 void Scene::initializeGL(const gl::Widget &) {
 	static const GLfloat direction[] = { 0, 0, -1, 0 };
 

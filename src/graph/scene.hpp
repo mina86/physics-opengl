@@ -46,6 +46,7 @@ private:
 public:
 	explicit Scene(unsigned theN) throw(std::invalid_argument, std::bad_alloc);
 	explicit Scene(const Graph &g);
+	explicit Scene(const Scene &s);
 	~Scene();
 
 	/* No checking of v is done.  Beware! */
@@ -90,6 +91,7 @@ public:
 	void drawScene(const gl::Widget &gl);
 	void updateState(unsigned ticks, float dt);
 	void save(std::ostream &out) throw(std::ios_base::failure);
+	ptr clone();
 
 private:
 	Scene();

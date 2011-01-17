@@ -37,6 +37,8 @@ struct AbstractScene {
 	virtual void drawScene(const Widget &gl) = 0;
 	virtual void updateState(unsigned ticks, float dt) = 0;
 
+	virtual ptr clone() = 0;
+
 	virtual void save(std::ostream &out) throw(std::ios_base::failure) = 0;
 	static  ptr  load(std::istream &in)
 		throw(std::ios_base::failure, lib::Lexer::error);
