@@ -63,7 +63,17 @@ struct Vector {
 	T length2  () const { return x()*x() + y()*y() + z()*z(); }
 	T distance (const Vector &vec) const { return (*this - vec).length (); }
 	T distance2(const Vector &vec) const { return (*this - vec).length2(); }
-	void normalize() { *this /= length(); }
+	Vector &normalize() {
+		*this /= length();
+		return *this;
+	}
+	Vector &limit(T v) {
+		T l = length();
+		if (l > v) {
+			*this *= v / l;
+		}
+		return *this;
+	}
 
 	Vector &operator+=(const Vector &vec) {
 		x() += vec.x();
