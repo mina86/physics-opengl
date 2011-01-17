@@ -37,7 +37,7 @@ struct Vector {
 	T *v() { return vector; }
 
 	Vector() {
-		/* Default constructor does not initialise */
+		zero();
 	}
 	Vector(T theX, T theY, T theZ) {
 		set(theX, theY, theZ);
