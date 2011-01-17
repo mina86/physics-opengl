@@ -53,6 +53,7 @@ struct Value : public QObject {
 	const T *cast() const { return static_cast<T*>(this); }
 
 	virtual QWidget* makeControlWidget(QWidget *parent) const = 0;
+	virtual QString getLabel() const { return name; }
 
 signals:
 	void changed(const Value &v);
@@ -129,6 +130,7 @@ struct Integer : public Value  {
 	}
 
 	QWidget* makeControlWidget(QWidget *parent) const;
+	QString getLabel() const { return QString("%1 (%2 : %3)").arg(name).arg(min).arg(max); }
 
 	const value_type min, max;
 
@@ -168,6 +170,7 @@ struct Real : public Value  {
 	}
 
 	QWidget* makeControlWidget(QWidget *parent) const;
+	QString getLabel() const { return QString("%1 (%2 : %3)").arg(name).arg(min).arg(max); }
 
 	const value_type min, max;
 
@@ -192,6 +195,7 @@ struct List : public Integer {
 		throw(std::out_of_range);
 
 	QWidget* makeControlWidget(QWidget *parent) const;
+	QString getLabel() const { return name; }
 
 	const Item *const items;
 

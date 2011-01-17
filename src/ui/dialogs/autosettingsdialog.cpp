@@ -16,7 +16,7 @@ AutoSettingsDialog::AutoSettingsDialog(cfg::Data *data, QWidget *parent, Qt::Win
 	QFormLayout *layout = new QFormLayout(optionsWidget);
 	for (cfg::Data::iterator it = data->items(); it; ++it) {
 		cfg::Value *valueItem = &(it(data));
-		layout->addRow(valueItem->name, valueItem->makeControlWidget(optionsWidget));
+		layout->addRow(valueItem->getLabel(), valueItem->makeControlWidget(optionsWidget));
 	}
 	optionsWidget->setLayout(layout);
 	dialogLayout->addWidget(optionsWidget);
