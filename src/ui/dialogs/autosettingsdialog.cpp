@@ -7,7 +7,7 @@
 
 namespace ui {
 
-AutoSettingsDialog::AutoSettingsDialog(cfg::Data *data, QWidget *parent, Qt::WindowFlags f) :
+AutoSettingsDialog::AutoSettingsDialog(cfg::Data *data, QWidget *parent, Qt::WindowFlags f, QString buttonText) :
 	QDialog(parent, f)
 {
 	QVBoxLayout *dialogLayout = new QVBoxLayout(this);
@@ -21,7 +21,7 @@ AutoSettingsDialog::AutoSettingsDialog(cfg::Data *data, QWidget *parent, Qt::Win
 	optionsWidget->setLayout(layout);
 	dialogLayout->addWidget(optionsWidget);
 
-	QPushButton *closeButton = new QPushButton(tr("Clo&se"), this);
+	QPushButton *closeButton = new QPushButton(buttonText, this);
 	closeButton->setDefault(true);
 	connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
 	QDialogButtonBox *bbox = new QDialogButtonBox(Qt::Horizontal, this);

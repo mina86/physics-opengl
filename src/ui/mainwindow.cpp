@@ -307,7 +307,7 @@ void MainWindow::generateGraph() {
 	}
 
 	AutoSettingsDialog *genParamsDialog =
-		new AutoSettingsDialog(gen->getConfigData(), this);
+		new AutoSettingsDialog(gen->getConfigData(), this, 0, tr("O&k", "Autosettingsdialog button text when generating graph"));
 	genParamsDialog->setModal(true);
 	genParamsDialog->exec();
 	delete genParamsDialog;
@@ -461,7 +461,7 @@ void MainWindow::randomiseGraph() {
 	graph::GraphRandomiser *randomiser = new graph::GraphRandomiser();
 
 	AutoSettingsDialog *rndParamsDialog =
-		new AutoSettingsDialog(&(randomiser->getConfigData()), this);
+		new AutoSettingsDialog(&(randomiser->getConfigData()), this, 0, tr("O&k", "Autosettingsdialog button text when randomising graph"));
 	rndParamsDialog->setModal(true);
 	rndParamsDialog->exec();
 	delete rndParamsDialog;

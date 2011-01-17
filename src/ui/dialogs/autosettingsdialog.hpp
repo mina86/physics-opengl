@@ -9,7 +9,7 @@ namespace ui {
 
 struct AutoSettingsDialog : public QDialog
 {
-	AutoSettingsDialog(cfg::Data *data, QWidget *parent = 0, Qt::WindowFlags f = 0);
+	AutoSettingsDialog(cfg::Data *data, QWidget *parent = 0, Qt::WindowFlags f = 0, QString buttonText = tr("Clo&se", "Autoconfigdialog button text"));
 
 signals:
 
