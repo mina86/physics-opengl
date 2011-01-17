@@ -2,7 +2,8 @@ node "Foo" @  5 0 0
 node "Bar" @ -5 0 0
 node "Baz" @  5 5 0
 node "Qux" @ -5 5 0
+node "Xyz" @ -5 -5 0
 edge "Foo" "Bar"
-edge "Bar" "Baz"
-edge "Bar" "Qux"
-
+edge "Foo" "Baz"
+edge "Foo" "Qux"
+edge "Foo" "Xyz"
