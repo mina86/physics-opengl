@@ -109,7 +109,7 @@ void makeConnected(Graph &g) {
 		}
 	}
 	if (x != prev) {
-		g.e(x, prev);
+		g.e(x, prev, true);
 	}
 
 	delete[] vec;
