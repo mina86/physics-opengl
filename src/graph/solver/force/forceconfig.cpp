@@ -35,7 +35,7 @@ Data::Data()
 	  damping("Damping", 0.01, 0.99, 0.9),
 	  moveLimit("Move limit", 1.0, MAX_DISTANCE, 10.0),
 	  velocityLimit("Velocity limit", 1.0, MAX_DISTANCE, 500.0),
-	  dt("dt per iteration", 0.0001, 0.1, 0.05),
+	  dt("dt per iteration", 0.0001, 0.5, 0.05),
 	  attractionMultiply("Attraction proportional to degree", true) {
 	init();
 }
