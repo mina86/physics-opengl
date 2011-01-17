@@ -33,6 +33,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="pauseButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>&amp;Pause</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="stepButton">
        <property name="enabled">
         <bool>true</bool>

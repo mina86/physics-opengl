@@ -33,7 +33,8 @@ PlayerControlWidget::PlayerControlWidget(QWidget *parent) :
 	mTimer->setSingleShot(false);
 	connect(mTimer, SIGNAL(timeout()), this, SLOT(playNextFrame()));
 
-	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(togglePlay()));
+	connect(ui.playButton, SIGNAL(clicked()), this, SLOT(play()));
+	connect(ui.pauseButton, SIGNAL(clicked()), this, SLOT(pause()));
 	connect(ui.stepButton, SIGNAL(clicked()), this, SLOT(step()));
 
 	connect(ui.fpsSlider, SIGNAL(valueChanged(int)), this, SLOT(setFps(int)));
@@ -47,9 +48,6 @@ PlayerControlWidget::PlayerControlWidget(QWidget *parent) :
 	setFps(1);
 	speed = 0;
 	setSpeed(1);
-
-	ui.playButton->setText(tr("&Play"));
-	ui.stepButton->setEnabled(true);
 }
 
 void PlayerControlWidget::changeEvent(QEvent *e)
@@ -90,11 +88,11 @@ void PlayerControlWidget::setPlay(bool play)
 
 	isPlaying = play;
 	ui.stepButton->setEnabled(!isPlaying);
+	ui.playButton->setEnabled(!isPlaying);
+	ui.pauseButton->setEnabled(isPlaying);
 	if (isPlaying) {
-		ui.playButton->setText(tr("&Pause"));
 		mTimer->start();
 	} else {
-		ui.playButton->setText(tr("&Play"));
 		mTimer->stop();
 	}
 }
