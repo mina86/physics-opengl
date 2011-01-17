@@ -33,7 +33,7 @@ Data::Data()
 	  hitForce("Repulsion when nodes are very near", 1.0, 10000.0, 25.0),
 	  middleForce("Force towards the center", 0.0, 10000.0, 100),
 	  desiredDistance("Desired edge length", 2.0, 100.0, 5.0),
-	  damping("Damping", 0.01, 0.99, 0.9),
+	  damping("Damping", 0.0, 0.99, 0.9),
 	  moveLimit("Move limit", 1.0, MAX_DISTANCE, 10.0),
 	  velocityLimit("Velocity limit", 1.0, MAX_DISTANCE, 500.0),
 	  dt("dt per iteration", 0.0001, 0.5, 0.05),

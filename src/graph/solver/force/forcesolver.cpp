@@ -94,12 +94,12 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 		     it != end; ++it, ++n) {
 			addMiddleForce(it->force, *n);
 			it->velocity += it->force * dt;
-			it->velocity *= config->damping;
 			it->velocity.limit(config->velocityLimit);
 
 			energy += it->velocity.length2();
 			*n += ((it->force * (dt * 0.5f) + it->velocity) * dt).limit(config->moveLimit);
 
+			it->velocity *= config->damping;
 			it->force.zero();
 		}
 
