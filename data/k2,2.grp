@@ -1,0 +1,8 @@
+node @ -2 -2 0
+node @ -2  2 0
+node @  2 -2 0
+node @  2  2 0
+edge 0 1
+edge 0 3
+edge 1 2
+edge 2 3
