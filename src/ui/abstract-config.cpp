@@ -18,6 +18,8 @@
  */
 #include "abstract-config.hpp"
 
+#include <math.h>
+
 #include <QCheckBox>
 #include <QComboBox>
 
@@ -151,6 +153,7 @@ QWidget* Real::makeControlWidget(QWidget *parent) const
 	ui::QFloatSpinBox *spinbox = new ui::QFloatSpinBox(parent);
 	spinbox->setRange(min, max);
 	spinbox->setValue(value);
+	spinbox->setStep(pow(10, round(log10((max - min) * 0.001))));
 	connect(spinbox, SIGNAL(valueChanged(float)), this, SLOT(set(float)));
 	connect(this, SIGNAL(changed(float)), spinbox, SLOT(setValue(float)));
 	return spinbox;
