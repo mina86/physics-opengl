@@ -77,6 +77,7 @@ private:
 
 	QMenu *fileMenu;
 	QMenu *solverMenu;
+	QMenu *toolsMenu;
 	QAction *saveAction;
 	QAction *loadAction;
 	QAction *closeAction;

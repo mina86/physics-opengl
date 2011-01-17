@@ -147,6 +147,7 @@ void MainWindow::initActions()
 {
 	fileMenu = ui.menubar->addMenu(tr("&File", "menu"));
 	solverMenu = ui.menubar->addMenu(tr("Sol&ver", "menu"));
+	toolsMenu = ui.menubar->addMenu(tr("&Tools", "menu"));
 
 	quitAction = new QAction(tr("&Quit", "quit app"), this);
 	quitAction->setShortcut(Qt::CTRL + Qt::Key_Q);
@@ -166,58 +167,64 @@ void MainWindow::initActions()
 	connect(loadAction, SIGNAL(triggered()), this, SLOT(load()));
 
 	closeAction = new QAction(this);
-	closeAction->setText(tr("Close", "action to close file/window"));
+	closeAction->setText(tr("&Close", "action to close file/window"));
 	closeAction->setToolTip("Close this window");
 	closeAction->setShortcut(QKeySequence::Close);
 	connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
 
-	settingsAction = new QAction(tr("Settings", "menu"), this);
+	settingsAction = new QAction(tr("&Settings", "menu"), this);
 	settingsAction->setToolTip(tr("Change settings of simulation"));
+	settingsAction->setShortcut(Qt::CTRL + Qt::Key_P);
 	connect(settingsAction, SIGNAL(triggered()), this, SLOT(openSettingsDialog()));
 
 	generateAction = new QAction(this);
 	generateAction->setText(tr("&Generate", "action to generate scene"));
 	generateAction->setToolTip(tr("Generate scene"));
+	generateAction->setShortcut(Qt::CTRL + Qt::Key_G);
 	connect(generateAction, SIGNAL(triggered()), this, SLOT(generateGraph()));
 
 	solveAction = new QAction(this);
-	solveAction->setText(tr("Load solver", "action to start solving a scene"));
+	solveAction->setText(tr("&Load solver", "action to start solving a scene"));
 	solveAction->setToolTip(tr("Choose a solver and start solving"));
 	solveAction->setEnabled(false);
+	solveAction->setShortcut(Qt::CTRL + Qt::Key_V);
 	connect(solveAction, SIGNAL(triggered()), this, SLOT(loadSolver()));
 
-	solverSettingsAction = new QAction(tr("Solver settings", "menu"), this);
+	solverSettingsAction = new QAction(tr("Solver se&ttings", "menu"), this);
 	solverSettingsAction->setToolTip(tr("Change settings of chosen solver"));
 	solverSettingsAction->setEnabled(false);
+	solverSettingsAction->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_P);
 	connect(solverSettingsAction, SIGNAL(triggered()), this, SLOT(openSolverSettingsDialog()));
 
-	solverPlayerAction = new QAction(tr("Solver player"), this);
+	solverPlayerAction = new QAction(tr("Solver &player"), this);
 	solverPlayerAction->setToolTip(tr("Open solver player widget"));
 	solverPlayerAction->setEnabled(false);
 	solverPlayerAction->setCheckable(true);
 	solverPlayerAction->setChecked(true);
 
-	randomiseAction = new QAction(tr("Randomise"), this);
+	randomiseAction = new QAction(tr("&Randomise"), this);
 	randomiseAction->setEnabled(false);
+	randomiseAction->setShortcut(Qt::CTRL + Qt::Key_R);
 	connect(randomiseAction, SIGNAL(triggered()), this, SLOT(randomiseGraph()));
 
-	fileMenu->addAction(settingsAction);
-	fileMenu->addSeparator();
 	fileMenu->addAction(loadAction);
+	fileMenu->addAction(generateAction);
 	fileMenu->addAction(saveAction);
-	fileMenu->addAction(closeAction);
 	fileMenu->addSeparator();
+	fileMenu->addAction(closeAction);
 	fileMenu->addAction(quitAction);
 
 	solverMenu->addAction(solveAction);
 	solverMenu->addAction(solverPlayerAction);
 	solverMenu->addAction(solverSettingsAction);
 
-	ui.menubar->addAction(settingsAction);
+	toolsMenu->addAction(randomiseAction);;
+	fileMenu->addSeparator();
+	toolsMenu->addAction(settingsAction);
 
 	ui.toolBar->addAction(loadAction);
-	ui.toolBar->addAction(saveAction);
 	ui.toolBar->addAction(generateAction);
+	ui.toolBar->addAction(saveAction);
 	ui.toolBar->addAction(solveAction);
 	ui.toolBar->addAction(randomiseAction);
 }
