@@ -93,4 +93,23 @@ void Graph::swapEdges(edge_type *&theEdges) {
 	std::swap(edges_vec, theEdges);
 }
 
+Graph::node_type Graph::massCenter() const {
+	node_type m(0.0, 0.0, 0.0);
+
+	const_nodes_iterator it = nodes_begin(), end = nodes_end();
+	for (; it != end; ++it) {
+		m += *it;
+	}
+
+	m /= nodes();
+	return m;
+}
+
+void Graph::moveBy(const node_type &vec) {
+	nodes_iterator it = nodes_begin(), end = nodes_end();
+	for (; it != end; ++it) {
+		*it += vec;
+	}
+}
+
 }

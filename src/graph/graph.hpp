@@ -128,6 +128,9 @@ struct Graph {
 	const_edges_iterator edges_begin() const { return edges_vec; }
 	const_edges_iterator edges_end()   const { return edges_vec + edges(); }
 
+	node_type massCenter() const;
+	void moveBy(const node_type &vec);
+
 private:
 	Graph();
 	void init(unsigned theN) throw(std::invalid_argument, std::bad_alloc);
