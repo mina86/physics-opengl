@@ -450,6 +450,9 @@ void MainWindow::randomiseGraph() {
 	delete rndParamsDialog;
 
 	randomiser->randomise(*dynamic_cast<graph::Scene *>(pane->gl->getScene()));
+	delete randomiser;
+
+	pane->gl->updateGL();
 }
 
 }
