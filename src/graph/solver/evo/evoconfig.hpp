@@ -26,7 +26,7 @@ const char * const successionTypes[] = {
 
 enum AdjacentFunctionType { Adj_None, Adj_XPower };
 const char * const adjacentFunctionTypes[] = {
-	"none", "abs(x-a)^b", NULL
+	"none", "abs(a-x)^b", NULL
 };
 
 enum NonAdjacentFunctionType { Nadj_None, Nadj_OverX };
@@ -36,7 +36,7 @@ const char * const nonAdjacentFunctionTypes[] = {
 
 enum AllFunctionType { All_None, All_XPower, All_OverX };
 const char * const allFunctionTypes[] = {
-	"none", "abs(x-a)^b", "a/(x-b)", NULL
+	"none", "abs(a-x)^b", "a/(x-b)", NULL
 };
 
 struct Data;
