@@ -30,6 +30,16 @@
 
 #include "graph/solver/abstractsolver.hpp"
 
+namespace graph {
+
+namespace generator {
+
+struct AbstractGenerator;
+
+}
+
+}
+
 namespace ui {
 
 struct MainWindow : public QMainWindow {
@@ -71,6 +81,8 @@ protected slots:
 private:
 	MainWindow();
 	MainWindow(const MainWindow &);
+
+	void doGenerateGraph(graph::generator::AbstractGenerator &gen);
 
 	Ui::MainWindow ui;
 	void initActions();
