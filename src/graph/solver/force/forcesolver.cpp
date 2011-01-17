@@ -27,7 +27,8 @@ namespace graph {
 namespace solver {
 
 ForceSolver::ForceSolver(Scene &scene)
-	: AbstractSolver(scene), nodes(scene.nodes()) {
+	: AbstractSolver(scene), first(true),
+	  nodes(new NodeState[scene.nodes()]) {
 
 	const unsigned count = scene.nodes();
 
@@ -40,6 +41,10 @@ ForceSolver::ForceSolver(Scene &scene)
 			}
 		}
 	}
+}
+
+ForceSolver::~ForceSolver() {
+	delete[] nodes;
 }
 
 QWidget *ForceSolver::createPlayerWidget(QWidget *parent) {
@@ -56,6 +61,17 @@ ui::cfg::Data *ForceSolver::getConfigData() {
 
 void ForceSolver::playNextFrame(unsigned iterations) {
 	const unsigned count = scene.nodes();
+
+	if (first) {
+		first = false;
+		if (config->positionDisord >= 0.0001) {
+			Graph::nodes_iterator it = scene.Graph::nodes_begin(),
+				end = scene.Graph::nodes_end();
+			for (; it != end; ++it) {
+				addRandNormal(*it, config->positionDisord);
+			}
+		}
+	}
 
 	while (iterations--) {
 		const float dt = config->dt;
@@ -74,7 +90,7 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 
 		float energy = 0.0;
 		Graph::nodes_iterator n = scene.Graph::nodes_begin();
-		for (Nodes::iterator it = nodes.begin(), end = nodes.end();
+		for (NodeState *it = nodes, *end = nodes + count;
 		     it != end; ++it, ++n) {
 			addMiddleForce(it->force, *n);
 			it->velocity += it->force * dt;
@@ -135,7 +151,8 @@ void ForceSolver::addMiddleForce(gl::Vector<float> &f, const gl::Vector<float> &
 }
 
 ForceSolver::NodeState::NodeState()
-	: velocity(0.0, 0.0, 0.0), force(0.0, 0.0, 0.0), deg(0) { }
+	: velocity(0.0, 0.0, 0.0), force(0.0, 0.0, 0.0), deg(0) {
+}
 
 
 }

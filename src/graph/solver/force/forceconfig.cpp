@@ -27,7 +27,8 @@ namespace solver {
 namespace force {
 
 Data::Data()
-	: repulsionForce("Repulsion force", 1.0, 10000.0, 100.0),
+	: positionDisord("Position disorder on solver init", 0.0, 100.0, 1.0),
+	  repulsionForce("Repulsion force", 1.0, 10000.0, 100.0),
 	  attractionForce("Attraction force", 1.0, 10000.0, 10.0),
 	  hitForce("Repulsion when nodes are very near", 1.0, 10000.0, 25.0),
 	  middleForce("Force towards the center", 0.0, 10000.0, 100),
@@ -43,6 +44,7 @@ Data::Data()
 
 ui::cfg::Data::iterator Data::items() const {
 	static const unsigned array[] = {
+		CFG_DATA_OFFSET(positionDisord),
 		CFG_DATA_OFFSET(repulsionForce),
 		CFG_DATA_OFFSET(attractionForce),
 		CFG_DATA_OFFSET(attractionMultiply),

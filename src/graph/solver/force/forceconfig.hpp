@@ -28,6 +28,7 @@ namespace solver {
 namespace force {
 
 struct Data : public ui::cfg::Data {
+	ui::cfg::Real positionDisord;
 	ui::cfg::Real repulsionForce, attractionForce, hitForce, middleForce;
 	ui::cfg::Real desiredDistance, damping, moveLimit, velocityLimit, dt;
 	ui::cfg::Bool attractionMultiply, massCenterFix;

@@ -23,14 +23,13 @@
 #include "../abstractsolver.hpp"
 #include "forceconfig.hpp"
 
-#include <vector>
-
 namespace graph {
 
 namespace solver {
 
 struct ForceSolver : public AbstractSolver {
 	ForceSolver(Scene &scene);
+	~ForceSolver();
 	QWidget* createPlayerWidget(QWidget *parent);
 	ui::cfg::Data *getConfigData();
 
@@ -50,9 +49,9 @@ private:
 		gl::Vector<float> velocity, force;
 		unsigned deg;
 	};
-	typedef std::vector< NodeState > Nodes;
 
-	Nodes nodes;
+	bool first;
+	NodeState *nodes;
 	force::Config config;
 
 	Q_OBJECT
