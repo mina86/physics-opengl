@@ -162,6 +162,12 @@ void MainWindow::initActions()
 	loadAction->setShortcut(QKeySequence::Open);
 	connect(loadAction, SIGNAL(triggered()), this, SLOT(load()));
 
+	closeAction = new QAction(this);
+	closeAction->setText(tr("Close", "action to close file/window"));
+	closeAction->setToolTip("Close this window");
+	closeAction->setShortcut(QKeySequence::Close);
+	connect(closeAction, SIGNAL(triggered()), this, SLOT(close()));
+
 	settingsAction = new QAction(tr("Settings", "menu"), this);
 	settingsAction->setToolTip(tr("Change settings of simulation"));
 	connect(settingsAction, SIGNAL(triggered()), this, SLOT(openSettingsDialog()));
@@ -191,6 +197,7 @@ void MainWindow::initActions()
 	fileMenu->addSeparator();
 	fileMenu->addAction(loadAction);
 	fileMenu->addAction(saveAction);
+	fileMenu->addAction(closeAction);
 	fileMenu->addSeparator();
 	fileMenu->addAction(quitAction);
 

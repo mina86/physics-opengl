@@ -79,6 +79,7 @@ private:
 	QMenu *solverMenu;
 	QAction *saveAction;
 	QAction *loadAction;
+	QAction *closeAction;
 	QAction *quitAction;
 	QAction *settingsAction;
 	QAction *generateAction;
