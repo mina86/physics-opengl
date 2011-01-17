@@ -84,8 +84,9 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(const populatio
 			double sum = 0;
 			population_t::const_iterator i = population->begin();
 			population_t::size_type j = 1;
+			Compare evaluator(*config);
 			while (i != population->end()) {
-				double eval = evaluate(*i);
+				double eval = evaluator(*i);
 				distribution[j] = eval;
 				sum += eval;
 				++i;
@@ -129,7 +130,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(const populatio
 					population_t::size_type r = lib::rndp<population_t::size_type>(population->size()-k);
 					std::swap(indivptrs[k], indivptrs[r+k]);
 				}
-				std::sort(indivptrs, indivptrs + config->selectionInteger1, strictWeakOrderingOfGraphPointers);
+				std::sort(indivptrs, indivptrs + config->selectionInteger1, Compare(*config));
 				offsprings->push_back(individual_t(*(indivptrs[0])));
 			}
 			return offsprings;
@@ -233,19 +234,20 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 {
 	switch (config->successionType) {
 	case evo::Straight:
-		std::sort(offsprings->begin(), offsprings->end(), strictWeakOrderingOfGraphs);
+		std::sort(offsprings->begin(), offsprings->end(), Compare(*config));
 		return offsprings;
 	case evo::EliteOfUnion:
 		{
 			population_ptr newpopulation(new population_t());
-			std::sort(population->begin(), population->end(), strictWeakOrderingOfGraphs);
-			std::sort(offsprings->begin(), offsprings->end(), strictWeakOrderingOfGraphs);
+			std::sort(population->begin(), population->end(), Compare(*config));
+			std::sort(offsprings->begin(), offsprings->end(), Compare(*config));
 
 			population_t::const_iterator i = population->begin(), j = offsprings->begin();
 
+			Compare evaluator(*config);
 			while (i != population->end() && j != offsprings->end() && newpopulation->size() < population->size())
 			{
-				if (evaluate(*i) <= evaluate(*j))
+				if (evaluator(*i) <= evaluator(*j))
 				{
 					newpopulation->push_back(*i);
 					++i;
@@ -267,8 +269,8 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 	case evo::EliteSumOf:
 		{
 			population_ptr newpopulation(new population_t());
-			std::sort(population->begin(), population->end(), strictWeakOrderingOfGraphs);
-			std::sort(offsprings->begin(), offsprings->end(), strictWeakOrderingOfGraphs);
+			std::sort(population->begin(), population->end(), Compare(*config));
+			std::sort(offsprings->begin(), offsprings->end(), Compare(*config));
 
 			population_t::const_iterator i[2];
 			i[0] = population->begin();
@@ -282,57 +284,13 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 				j = 1 - j;
 			}
 
-			std::sort(newpopulation->begin(), newpopulation->end(), strictWeakOrderingOfGraphs);
+			std::sort(newpopulation->begin(), newpopulation->end(), Compare(*config));
 			return newpopulation;
 		}
 	default:
 		/* no succession -- should never happen */
 		return population;
 	}
-}
-
-bool EvolutionarySolver::strictWeakOrderingOfGraphs(const individual_t &first, const individual_t &second)
-{
-	return evaluate(first) < evaluate(second);
-}
-bool EvolutionarySolver::strictWeakOrderingOfGraphPointers(const individual_t * const first, const individual_t * const second)
-{
-	return evaluate(*first) < evaluate(*second);
-}
-
-double EvolutionarySolver::evaluate(const Graph &g)
-{
-	double result = 0.0;
-	double exclusiveRadius = 1.0;
-
-	Graph::const_nodes_iterator i, j;
-	unsigned ki, kj;
-
-	for (i = g.nodes_begin(); i != g.nodes_end(); ++i)
-	{
-		ki = (i-g.nodes_begin());
-		j = i;
-		++j;
-
-		for (; j != g.nodes_end(); ++j)
-		{
-			kj = (j-g.nodes_begin());
-
-			double dist = i->distance(*j) + 0.00001; //avoid division by zero
-
-			// If vertices connected - they should be at specified distance
-			if (g.e(ki, kj))
-				result += fabs(3.0 - dist);
-			// Otherwise, they should be at another distance
-//			else
-				result += (6.0/dist);
-
-//			// Extra penalty for collisions
-			if (dist < 2 * exclusiveRadius)
-				result += 5 * (2 * exclusiveRadius - dist);
-		}
-	}
-	return result;
 }
 
 void EvolutionarySolver::playNextFrame(unsigned iterations)
@@ -354,6 +312,64 @@ void EvolutionarySolver::updateScene()
 {
 	scene.set(constgraph(population->front()));
 	emit graphChanged();
+}
+
+
+double Compare::evaluate(const Graph &g) {
+	double result = 0.0;
+	double exclusiveRadius = 1.0;
+
+	Graph::const_nodes_iterator i, j;
+	unsigned ki, kj;
+
+	for (i = g.nodes_begin(); i != g.nodes_end(); ++i)
+	{
+		ki = (i-g.nodes_begin());
+		j = i;
+		++j;
+
+		for (; j != g.nodes_end(); ++j)
+		{
+			kj = (j-g.nodes_begin());
+
+			double dist = i->distance(*j) + 0.00001; //avoid division by zero
+
+			// If vertices connected - they should be at specified distance
+			if (g.e(ki, kj)) {
+				switch(data.adjacentFunctionType) {
+				case evo::Adj_XPower:
+					result += pow(fabs(data.adjacentParamA - dist), data.adjacentParamB);
+					break;
+				default:
+					break;
+				}
+			} else {
+				switch(data.nonAdjacentFunctionType) {
+				case evo::Nadj_OverX:
+					result += data.nonAdjacentParamA / (dist - data.nonAdjacentParamB);
+					break;
+				default:
+					break;
+				}
+			}
+
+			switch(data.allFunctionType) {
+			case evo::All_XPower:
+				result += pow(fabs(data.allParamA - dist), data.allParamB);
+				break;
+			case evo::All_OverX:
+				result += data.allParamA / (dist - data.allParamB);
+				break;
+			default:
+				break;
+			}
+
+			// Extra penalty for collisions
+			if (dist < 2 * exclusiveRadius)
+				result += 5 * (2 * exclusiveRadius - dist);
+		}
+	}
+	return result;
 }
 
 }

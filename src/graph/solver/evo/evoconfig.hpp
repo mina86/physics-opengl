@@ -24,6 +24,21 @@ const char * const successionTypes[] = {
 	"Straight", "Elite of union", "Union of elite", NULL
 };
 
+enum AdjacentFunctionType { Adj_None, Adj_XPower };
+const char * const adjacentFunctionTypes[] = {
+	"none", "abs(x-a)^b", NULL
+};
+
+enum NonAdjacentFunctionType { Nadj_None, Nadj_OverX };
+const char * const nonAdjacentFunctionTypes[] = {
+	"none", "a/(x-b)", NULL
+};
+
+enum AllFunctionType { All_None, All_XPower, All_OverX };
+const char * const allFunctionTypes[] = {
+	"none", "abs(x-a)^b", "a/(x-b)", NULL
+};
+
 struct Data;
 
 typedef ui::Config<Data> Config;
@@ -42,6 +57,18 @@ struct Data : public ui::cfg::Data {
 	ui::cfg::Real mutationSigma;
 
 	ui::cfg::List successionType;
+
+	ui::cfg::List adjacentFunctionType;
+	ui::cfg::Real adjacentParamA;
+	ui::cfg::Real adjacentParamB;
+
+	ui::cfg::List nonAdjacentFunctionType;
+	ui::cfg::Real nonAdjacentParamA;
+	ui::cfg::Real nonAdjacentParamB;
+
+	ui::cfg::List allFunctionType;
+	ui::cfg::Real allParamA;
+	ui::cfg::Real allParamB;
 
 	virtual struct iterator items() const;
 

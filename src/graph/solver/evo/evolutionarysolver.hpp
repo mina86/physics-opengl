@@ -35,7 +35,6 @@ namespace solver {
 		virtual QWidget* createPlayerWidget(QWidget *parent);
 		ui::cfg::Data* getConfigData() { return &(*config); }
 
-	protected:
 		struct Score {
 			Score() : valid(false) { }
 			mutable bool valid;
@@ -46,17 +45,10 @@ namespace solver {
 		typedef std::vector<individual_t> population_t;
 		typedef std::auto_ptr<population_t> population_ptr;
 
+	protected:
 		static Graph&       graph(individual_t &i)            { i.second.valid = false; return i.first; }
 		static const Graph& graph(const individual_t &i)      { return i.first; }
 		static const Graph& constgraph(const individual_t &i) { return i.first; }
-
-		static double evaluate(const individual_t &i) {
-			if (!i.second.valid) {
-				i.second.score = evaluate(i.first);
-				i.second.valid = true;
-			}
-			return i.second.score;
-		}
 
 		int iterationCount;
 		void runOneIteration();
@@ -66,10 +58,6 @@ namespace solver {
 		population_ptr genetic(population_ptr reproduced);
 		population_ptr succession(population_ptr population, population_ptr offsprings);
 
-		static bool strictWeakOrderingOfGraphs(const individual_t &first, const individual_t &second);
-		static bool strictWeakOrderingOfGraphPointers(const individual_t * const first, const individual_t * const second);
-		static double evaluate(const Graph &g);
-
 	protected slots:
 		void makeOneIteration();
 		void playNextFrame(unsigned iterations);
@@ -78,6 +66,23 @@ namespace solver {
 		evo::Config config;
 
 		Q_OBJECT
+	};
+
+	struct Compare {
+		Compare(const evo::Data &theData) : data(theData) { }
+		double operator()(const EvolutionarySolver::individual_t &ind) { return evaluate(ind); }
+		bool operator()(const EvolutionarySolver::individual_t &first, const EvolutionarySolver::individual_t &second) { return evaluate(first) < evaluate(second); }
+		bool operator()(const EvolutionarySolver::individual_t *first, const EvolutionarySolver::individual_t *second) { return evaluate(*first) < evaluate(*second); }
+	private:
+		double evaluate(const EvolutionarySolver::individual_t &i) {
+			if (!i.second.valid) {
+				i.second.score = evaluate(i.first);
+				i.second.valid = true;
+			}
+			return i.second.score;
+		}
+		double evaluate(const Graph &g);
+		const evo::Data &data;
 	};
 
 }
