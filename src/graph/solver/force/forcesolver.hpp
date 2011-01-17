@@ -30,7 +30,7 @@ namespace graph {
 namespace solver {
 
 struct ForceSolver : public AbstractSolver {
-	ForceSolver(QObject *parent, Scene *scene);
+	ForceSolver(Scene &scene);
 	QWidget* createPlayerWidget(QWidget *parent);
 	ui::cfg::Data *getConfigData();
 

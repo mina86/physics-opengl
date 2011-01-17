@@ -30,10 +30,8 @@ namespace graph {
 
 namespace solver {
 
-	struct EvolutionarySolver : public AbstractSolver
-	{
-
-		EvolutionarySolver(QObject *parent, Scene *scene);
+	struct EvolutionarySolver : public AbstractSolver {
+		EvolutionarySolver(Scene &scene);
 		virtual QWidget* createPlayerWidget(QWidget *parent);
 		ui::cfg::Data* getConfigData() { return &(*config); }
 

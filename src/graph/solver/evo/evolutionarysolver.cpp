@@ -28,12 +28,10 @@ namespace graph {
 
 namespace solver {
 
-EvolutionarySolver::EvolutionarySolver(QObject *parent, Scene *scene)
-	: AbstractSolver(parent, scene)
-{
+EvolutionarySolver::EvolutionarySolver(Scene &scene) : AbstractSolver(scene) {
 	iterationCount = 0;
 	//TODO: adjust population size when populationSize changed
-	individual_t seed(*dynamic_cast<Graph*>(scene), Score());
+	individual_t seed(static_cast<Graph &>(scene), Score());
 	population = population_ptr(new population_t(config->populationSize, seed));
 }
 
@@ -354,7 +352,7 @@ void EvolutionarySolver::runOneIteration()
 
 void EvolutionarySolver::updateScene()
 {
-	scene->set(constgraph(population->front()));
+	scene.set(constgraph(population->front()));
 	emit graphChanged();
 }
 

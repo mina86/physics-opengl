@@ -26,14 +26,12 @@ namespace graph {
 
 namespace solver {
 
-ForceSolver::ForceSolver(QObject *parent, Scene *scene)
-	: AbstractSolver(parent, scene),
-	  nodes(dynamic_cast<Graph &>(*scene).nodes()) {
+ForceSolver::ForceSolver(Scene &scene)
+	: AbstractSolver(scene), nodes(scene.nodes()) {
 
-	Graph &g = dynamic_cast<Graph &>(*scene);
-	const unsigned count = g.nodes();
+	const unsigned count = scene.nodes();
 
-	Graph::edges_iterator it = g.edges_begin();
+	Graph::edges_iterator it = scene.edges_begin();
 	for (unsigned from = 1; from < count; ++from) {
 		for (unsigned to = 0; to < from; ++to, ++it) {
 			if (*it) {
@@ -57,18 +55,17 @@ ui::cfg::Data *ForceSolver::getConfigData() {
 }
 
 void ForceSolver::playNextFrame(unsigned iterations) {
-	Graph &g = dynamic_cast<Graph &>(*scene);
-	const unsigned count = g.nodes();
+	const unsigned count = scene.nodes();
 
 	while (iterations--) {
 		const float dt = config->dt;
 
-		Graph::edges_iterator it = g.edges_begin();
+		Graph::edges_iterator it = scene.edges_begin();
 		for (unsigned from = 1; from < count; ++from) {
-			const gl::Vector<float> p(g.n(from));
+			const gl::Vector<float> p(scene.Graph::n(from));
 			const unsigned deg = nodes[from].deg;
 			for (unsigned to = 0; to < from; ++to, ++it) {
-				gl::Vector<float> f = p - g.n(to);
+				gl::Vector<float> f = p - scene.Graph::n(to);
 				calculateForce(f, (float)deg * nodes[to].deg, *it);
 				nodes[from].force += f;
 				nodes[to].force   -= f;
@@ -76,7 +73,7 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 		}
 
 		float energy = 0.0;
-		Graph::nodes_iterator n = g.nodes_begin();
+		Graph::nodes_iterator n = scene.Graph::nodes_begin();
 		for (Nodes::iterator it = nodes.begin(), end = nodes.end();
 			 it != end; ++it, ++n) {
 			addMiddleForce(it->force, *n);
@@ -135,6 +132,7 @@ void ForceSolver::addMiddleForce(gl::Vector<float> &f, const gl::Vector<float> &
 
 ForceSolver::NodeState::NodeState()
 	: velocity(0.0, 0.0, 0.0), force(0.0, 0.0, 0.0), deg(0) { }
+
 
 }
 

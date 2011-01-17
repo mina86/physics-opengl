@@ -376,12 +376,12 @@ bool MainWindow::chooseSolverByDialog() {
 
 	if (solverNameChosen == solverNameEvo) {
 		solver = new graph::solver::EvolutionarySolver(
-				this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
+			dynamic_cast<graph::Scene &>(*pane->gl->getScene())
 		);
 		return true;
 	} else if (solverNameChosen == solverNameForce) {
 		solver = new graph::solver::ForceSolver(
-				this, dynamic_cast<graph::Scene *>(pane->gl->getScene())
+			dynamic_cast<graph::Scene &>(*pane->gl->getScene())
 		);
 		return true;
 	}
