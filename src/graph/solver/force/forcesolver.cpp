@@ -68,8 +68,8 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 			const gl::Vector<float> p(g.n(from));
 			const unsigned deg = nodes[from].deg;
 			for (unsigned to = 0; to < from; ++to, ++it) {
-				gl::Vector<float> f =
-					calculateForce(p - g.n(to), (float)deg * nodes[to].deg, *it);
+				gl::Vector<float> f = p - g.n(to);
+				calculateForce(f, (float)deg * nodes[to].deg, *it);
 				nodes[from].force += f;
 				nodes[to].force   -= f;
 			}
@@ -87,7 +87,7 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 			energy += it->velocity.length2();
 			*n += ((it->force * (dt * 0.5f) + it->velocity) * dt).limit(config->moveLimit);
 
-			it->force.set(0.0, 0.0, 0.0);
+			it->force.zero();
 		}
 
 		if (energy < 0.0001) {
@@ -99,8 +99,7 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 	emit graphChanged();
 }
 
-gl::Vector<float> ForceSolver::calculateForce(gl::Vector<float> r, float q,
-                                              bool connected) {
+void ForceSolver::calculateForce(gl::Vector<float> &r, float q, bool connected) {
 	float d = r.length();
 
 	if (d < 0.01) {
@@ -118,8 +117,6 @@ gl::Vector<float> ForceSolver::calculateForce(gl::Vector<float> r, float q,
 
 		r *= f / d;
 	}
-
-	return r;
 }
 
 void ForceSolver::addMiddleForce(gl::Vector<float> &f, const gl::Vector<float> &x) {
@@ -135,6 +132,9 @@ void ForceSolver::addMiddleForce(gl::Vector<float> &f, const gl::Vector<float> &
 		f += x * (config->middleForce * d * d / l);
 	}
 }
+
+ForceSolver::NodeState::NodeState()
+	: velocity(0.0, 0.0, 0.0), force(0.0, 0.0, 0.0), deg(0) { }
 
 }
 
