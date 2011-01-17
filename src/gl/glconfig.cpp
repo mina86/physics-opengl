@@ -48,9 +48,13 @@ Data::Data()
 
 ui::cfg::Data::iterator Data::items() const {
 	static const unsigned array[] = {
+		CFG_DATA_OFFSET(mouseMovementFactor),
+		CFG_DATA_OFFSET(mouseRotationFactor),
+		CFG_DATA_OFFSET(runFactor),
+		CFG_DATA_OFFSET(creepFactor),
 		CFG_DATA_OFFSET(cutOffDistance2),
-		CFG_DATA_OFFSET(showText),
-		CFG_DATA_OFFSET(showTextures),
+		/* CFG_DATA_OFFSET(showText), */
+		/* CFG_DATA_OFFSET(showTextures), */
 		CFG_DATA_OFFSET(lowQuality),
 		CFG_DATA_OFFSET(showStars),
 		CFG_DATA_OFFSET(drawStyle),
