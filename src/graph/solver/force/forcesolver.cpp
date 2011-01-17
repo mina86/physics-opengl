@@ -75,7 +75,7 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 		float energy = 0.0;
 		Graph::nodes_iterator n = scene.Graph::nodes_begin();
 		for (Nodes::iterator it = nodes.begin(), end = nodes.end();
-			 it != end; ++it, ++n) {
+		     it != end; ++it, ++n) {
 			addMiddleForce(it->force, *n);
 			it->velocity += it->force * dt;
 			it->velocity *= config->damping;
@@ -85,6 +85,10 @@ void ForceSolver::playNextFrame(unsigned iterations) {
 			*n += ((it->force * (dt * 0.5f) + it->velocity) * dt).limit(config->moveLimit);
 
 			it->force.zero();
+		}
+
+		if (config->massCenterFix) {
+			scene.moveBy(-scene.massCenter());
 		}
 
 		if (energy < 0.0001) {

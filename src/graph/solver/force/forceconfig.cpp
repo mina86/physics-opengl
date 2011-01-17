@@ -36,7 +36,8 @@ Data::Data()
 	  moveLimit("Move limit", 1.0, MAX_DISTANCE, 10.0),
 	  velocityLimit("Velocity limit", 1.0, MAX_DISTANCE, 500.0),
 	  dt("dt per iteration", 0.0001, 0.5, 0.05),
-	  attractionMultiply("Attraction proportional to degree", true) {
+	  attractionMultiply("Attraction proportional to degree", true),
+	  massCenterFix("Use center of the mass fix", true) {
 	init();
 }
 
@@ -52,6 +53,7 @@ ui::cfg::Data::iterator Data::items() const {
 		CFG_DATA_OFFSET(moveLimit),
 		CFG_DATA_OFFSET(velocityLimit),
 		CFG_DATA_OFFSET(dt),
+		CFG_DATA_OFFSET(massCenterFix),
 
 		~0u,
 	};
