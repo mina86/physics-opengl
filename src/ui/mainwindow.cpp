@@ -28,6 +28,7 @@
 #include "../graph/solver/force/forcesolver.hpp"
 #include "../graph/generator/euclideannetworkgenerator.hpp"
 #include "../graph/generator/ergenerator.hpp"
+#include "../graph/generator/treegenerator.hpp"
 #include "../gl/abstract-scene.hpp"
 
 #include <fstream>
@@ -257,9 +258,11 @@ void MainWindow::openSolverSettingsDialog() {
 void MainWindow::generateGraph() {
 	QString genNameEcnet = tr("Euclidean network");
 	QString genNameER = tr("Erdos-Renyi");
+	QString genNameTree = tr("Tree");
 	QStringList generators;
 	generators << genNameEcnet;
 	generators << genNameER;
+	generators << genNameTree;
 
 	bool ok = false;
 	QString genNameChosen;
@@ -270,25 +273,24 @@ void MainWindow::generateGraph() {
 	if (!ok)
 		return;
 
+	graph::generator::AbstractGenerator *gen = NULL;
 	if (genNameChosen == genNameEcnet) {
-		graph::generator::EuclideanNetworkGenerator ecngen;
-		doGenerateGraph(ecngen);
+		gen = new graph::generator::EuclideanNetworkGenerator();
 	} else if (genNameChosen == genNameER) {
-		graph::generator::ERGenerator ergen;
-		doGenerateGraph(ergen);
+		gen = new graph::generator::ERGenerator();
+	} else if (genNameChosen == genNameTree) {
+		gen = new graph::generator::TreeGenerator();
 	}
-}
-
-void MainWindow::doGenerateGraph(graph::generator::AbstractGenerator &gen) {
-	;
 
 	AutoSettingsDialog *genParamsDialog =
-		new AutoSettingsDialog(gen.getConfigData(), this);
+		new AutoSettingsDialog(gen->getConfigData(), this);
 	genParamsDialog->setModal(true);
 	genParamsDialog->exec();
 	delete genParamsDialog;
 
-	graph::generator::AbstractGenerator::graph_ptr graph = gen.generate();
+	graph::generator::AbstractGenerator::graph_ptr graph = gen->generate();
+	delete gen;
+
 	gl::AbstractScene::ptr ptr(new graph::Scene(*graph));
 
 	loadScene(ptr);
