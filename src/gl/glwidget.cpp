@@ -180,7 +180,7 @@ bool Widget::isInFront(const Vector &vec) const {
 
 Widget::Widget(Config &theConfig, QWidget *parent)
 	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent), config(theConfig),
-	  starsBuilt(false) {
+	  cam(0.0, 0.0, 0.0), starsBuilt(false){
 	reset();
 	connect(&config, SIGNAL(changed()), this, SLOT(configChanged()));
 }
