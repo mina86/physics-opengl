@@ -62,8 +62,6 @@ protected:
 	void changeEvent(QEvent *e);
 	void prepare();
 
-	bool isFileLoaded;
-
 	bool chooseSolverByDialog();
 
 protected slots:

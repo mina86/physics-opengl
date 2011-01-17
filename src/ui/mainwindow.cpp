@@ -43,7 +43,7 @@ namespace ui {
 
 MainWindow::MainWindow(gl::Config theConfig, QWidget *parent)
 	: QMainWindow(parent), config(theConfig),
-	  pane(NULL), solver(NULL), solverPlayerWidget(NULL), isFileLoaded(false) {
+	  pane(NULL), solver(NULL), solverPlayerWidget(NULL) {
 
 	ui.setupUi(this);
 
@@ -183,6 +183,7 @@ void MainWindow::initActions()
 	solveAction = new QAction(this);
 	solveAction->setText(tr("Load solver", "action to start solving a scene"));
 	solveAction->setToolTip(tr("Choose a solver and start solving"));
+	solveAction->setEnabled(false);
 	connect(solveAction, SIGNAL(triggered()), this, SLOT(loadSolver()));
 
 	solverSettingsAction = new QAction(tr("Solver settings", "menu"), this);
@@ -223,12 +224,15 @@ void MainWindow::initActions()
 
 void MainWindow::onWidgetSceneChanged()
 {
-	saveAction->setEnabled(pane->gl->getScene());
+	bool scene = pane->gl->getScene();
+	saveAction->setEnabled(scene);
+	randomiseAction->setEnabled(scene);
+	solveAction->setEnabled(scene);
 }
 
 void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 {
-	if (isFileLoaded) {
+	if (pane) {
 		MainWindow *anotherWindow = new MainWindow(config);
 		anotherWindow->loadScene(scene);
 		anotherWindow->show();
@@ -249,8 +253,6 @@ void MainWindow::loadScene(gl::AbstractScene::ptr scene)
 
 	setCentralWidget(pane);
 	pane->gl->setScene(scene);
-	randomiseAction->setEnabled(true);
-	isFileLoaded = true;
 
 	onWidgetSceneChanged();
 }
