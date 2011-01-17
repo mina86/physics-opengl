@@ -44,7 +44,6 @@ private:
 }
 
 struct TreeGenerator : public AbstractGenerator {
-	TreeGenerator(QObject *parent = 0) : AbstractGenerator(parent) { }
 	graph_ptr generate();
 	ui::cfg::Data *getConfigData();
 

@@ -29,11 +29,9 @@ namespace graph {
 
 namespace generator {
 
-struct AbstractGenerator : public QObject
-{
+struct AbstractGenerator : public QObject {
 	typedef std::auto_ptr<Graph> graph_ptr;
 
-	AbstractGenerator(QObject *parent = 0) : QObject(parent) { }
 	virtual graph_ptr generate() = 0;
 	virtual ui::cfg::Data* getConfigData() = 0;
 

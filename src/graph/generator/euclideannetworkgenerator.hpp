@@ -45,10 +45,7 @@ private:
 
 }
 
-struct EuclideanNetworkGenerator : public AbstractGenerator
-{
-	EuclideanNetworkGenerator(QObject *parent = 0)
-			: AbstractGenerator(parent) { }
+struct EuclideanNetworkGenerator : public AbstractGenerator {
 	graph_ptr generate();
 	ui::cfg::Data *getConfigData();
 

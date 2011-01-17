@@ -45,8 +45,6 @@ private:
 }
 
 struct ERGenerator : public AbstractGenerator {
-	ERGenerator(QObject *parent = 0)
-		: AbstractGenerator(parent) { }
 	graph_ptr generate();
 	ui::cfg::Data *getConfigData();
 
