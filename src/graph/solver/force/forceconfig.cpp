@@ -18,6 +18,8 @@
  */
 #include "forceconfig.hpp"
 
+#include "../../../gl/glconfig.hpp"
+
 namespace graph {
 
 namespace solver {
@@ -31,6 +33,8 @@ Data::Data()
 	  middleForce("Force towards the center", 0.0, 10000.0, 100),
 	  desiredDistance("Desired edge length", 2.0, 100.0, 5.0),
 	  damping("Damping", 0.01, 0.99, 0.9),
+	  moveLimit("Move limit", 1.0, MAX_DISTANCE, 10.0),
+	  velocityLimit("Velocity limit", 1.0, MAX_DISTANCE, 500.0),
 	  dt("dt per iteration", 0.0001, 0.1, 0.05),
 	  attractionMultiply("Attraction proportional to degree", true) {
 	init();
@@ -45,6 +49,8 @@ ui::cfg::Data::iterator Data::items() const {
 		CFG_DATA_OFFSET(middleForce),
 		CFG_DATA_OFFSET(desiredDistance),
 		CFG_DATA_OFFSET(damping),
+		CFG_DATA_OFFSET(moveLimit),
+		CFG_DATA_OFFSET(velocityLimit),
 		CFG_DATA_OFFSET(dt),
 
 		~0u,
