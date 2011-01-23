@@ -211,7 +211,9 @@ AbstractScene::ptr AbstractScene::load(std::istream &in)
 		graph::Scene::nodes_iterator out = scene->nodes_begin();
 
 		for (; in != end; ++in, ++out) {
-			if (isnan(in->loadedPosition.x())) {
+			//isnan fix:
+			float loadedPositionX = in->loadedPosition.x();
+			if (loadedPositionX != loadedPositionX) {
 				(*out).first.zero();
 			} else {
 				(*out).first = in->loadedPosition;

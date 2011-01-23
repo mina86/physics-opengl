@@ -20,7 +20,7 @@
 
 #include <cstring>
 
-#include <Qt/QtGui>
+#include <QtGui>
 
 #include "../lib/mconst.h"
 #include "../lib/sintable.hpp"
@@ -206,7 +206,9 @@ void Widget::doLookAt() const {
 void Widget::initializeGL() {
 	glClearColor(0.1, 0.1, 0.1, 1.0);
 	glShadeModel(GL_SMOOTH);
+#ifdef GL_MULTISAMPLE
 	glEnable(GL_MULTISAMPLE);
+#endif
 
 	if (config->showStars) {
 		stars.makeStars();

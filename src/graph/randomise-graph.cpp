@@ -57,7 +57,9 @@ void GraphRandomiser::randomise(Scene &scene) {
 
 	Scene::nodes_iterator it = scene.nodes_begin(), end = scene.nodes_end();
 	for (; it != end; ++it) {
-		if (!isnan((*it).second.loadedPosition.x()) && !config->overwrite) {
+		//isnan() fix:
+		float secondLoadedPositionX = (*it).second.loadedPosition.x();
+		if (secondLoadedPositionX == secondLoadedPositionX && !config->overwrite) {
 			if (config->reset) {
 				(*it).first = (*it).second.loadedPosition;
 			}
