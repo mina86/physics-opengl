@@ -1,0 +1,26 @@
+CXX    ?= g++
+
+ifeq ($(shell uname),Darwin)
+LIBS    = -framework OpenGL -framework GLUT
+else
+LIBS    = -lglut
+endif
+
+all: dist/data dist/graph
+
+dist/graph:
+	@exec mkdir -p -- objs
+	exec qmake -makefile -o objs/graph.make -spec win32-g++ src/graph.pro QMAKE_INCDIR=/c/GnuWin32/include/ QMAKE_LIBDIR=/c/GnuWin32/lib/ QMAKE_LIBS="-lfreeglut -lgsl"
+	exec make -C objs -f graph.make
+
+dist/data:
+	exec mkdir -p dist/data
+	exec $(MAKE) -C data DATA_DIR=../dist/data all
+
+clean::
+	exec rm -rf -- objs
+
+distclean:: clean
+	exec rm -rf -- dist doc
+
+.PHONY: dist/data dist/graph clean distclean
