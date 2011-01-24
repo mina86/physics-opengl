@@ -307,6 +307,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::genetic(population_ptr re
 
 EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr population, population_ptr offsprings)
 {
+	Population::size_type newPopulationSize = config->populationSize;
 	switch (config->successionType) {
 	case evo::Straight:
 		std::sort(offsprings->begin(), offsprings->end(), Compare(*config));
@@ -320,7 +321,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 		Population::const_iterator i = population->begin(), j = offsprings->begin();
 
 		Compare evaluator(*config);
-		while (i != population->end() && j != offsprings->end() && newpopulation->size() < population->size())
+		while (i != population->end() && j != offsprings->end() && newpopulation->size() < newPopulationSize)
 		{
 			if (evaluator(*i) <= evaluator(*j))
 			{
@@ -334,9 +335,9 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 			}
 		}
 
-		while (i != population->end() && newpopulation->size() < population->size())
+		while (i != population->end() && newpopulation->size() < newPopulationSize)
 			newpopulation->push_back(*(i++));
-		while (j != offsprings->end() && newpopulation->size() < population->size())
+		while (j != offsprings->end() && newpopulation->size() < newPopulationSize)
 			newpopulation->push_back(*(j++));
 
 		return newpopulation;
@@ -352,7 +353,7 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 		i[1] = offsprings->begin();
 		unsigned j = 0;
 
-		while (i[0] != population->end() && i[1] != offsprings->end() && newpopulation->size() < population->size())
+		while (i[0] != population->end() && i[1] != offsprings->end() && newpopulation->size() < newPopulationSize)
 		{
 			newpopulation->push_back(*(i[j]));
 			++(i[j]);
