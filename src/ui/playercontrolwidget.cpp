@@ -125,7 +125,7 @@ void PlayerControlWidget::playNextFrame()
 void PlayerControlWidget::step()
 {
 	if (!isPlaying) {
-		emit newFrameNeeded(1);
+		emit newFrameNeeded(speed);
 	}
 }
 

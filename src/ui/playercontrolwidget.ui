@@ -48,7 +48,7 @@
         <bool>true</bool>
        </property>
        <property name="text">
-        <string>Single st&amp;ep</string>
+        <string>Single s&amp;hot</string>
        </property>
       </widget>
      </item>
