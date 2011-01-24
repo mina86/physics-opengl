@@ -44,6 +44,7 @@ struct EvolutionarySolver : public AbstractSolver {
 
 protected:
 	int iterationCount;
+	bool statsShown;
 	void updateScene();
 	population_ptr population;
 	population_ptr reproduce(const Population *population);

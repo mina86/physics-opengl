@@ -84,7 +84,7 @@ private:
 
 
 EvolutionarySolver::EvolutionarySolver(Scene &scene)
-	: AbstractSolver(scene), iterationCount(0) {
+	: AbstractSolver(scene), iterationCount(), statsShown() {
 	Individual seed(scene, *config);
 	population.reset(new Population(config->populationSize, Individual(scene, *config)));
 }
@@ -346,10 +346,22 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 
 void EvolutionarySolver::playNextFrame(unsigned iterations)
 {
-	for (; iterations; --iterations) {
+	for (;;) {
+		if (!statsShown) {
+			fprintf(stderr, "%u\t%.20g\n", iterationCount,
+			        population->front().score(*config));
+			statsShown = true;
+		}
+
+		if (!iterations) {
+			break;
+		}
+
+		--iterations;
 		++iterationCount;
-		population_ptr offsprings = genetic(reproduce(population.get()));
-		population = succession(population, offsprings);
+		statsShown = false;
+
+		population = succession(population, genetic(reproduce(population.get())));
 	}
 	updateScene();
 }
