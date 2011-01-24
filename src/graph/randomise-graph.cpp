@@ -51,7 +51,7 @@ Data::iterator Data::items() const {
 
 }
 
-void GraphRandomiser::randomise(Scene &scene) {
+void GraphRandomiser::randomise(Scene &scene) const {
 	gl::Vector<float> v;
 
 	Scene::nodes_iterator it = scene.nodes_begin(), end = scene.nodes_end();
@@ -79,6 +79,32 @@ void GraphRandomiser::randomise(Scene &scene) {
 			}
 		}
 		(*it).first.limit(MAX_DISTANCE);
+	}
+}
+
+void GraphRandomiser::randomise(Graph &graph) const {
+	gl::Vector<float> v;
+
+	Graph::nodes_iterator it = graph.nodes_begin(), end = graph.nodes_end();
+	for (; it != end; ++it) {
+		if (config->r < 0.00001) {
+			if (!config->relative) {
+				it->zero();
+			}
+		} else if (config->relative) {
+			if (config->normal) {
+				addRandNormal(*it, config->r);
+			} else {
+				*it += randSpheric(v, config->r);
+			}
+		} else {
+			if (config->normal) {
+				randNormal(*it, config->r);
+			} else {
+				randSpheric(*it, config->r);
+			}
+		}
+		it->limit(MAX_DISTANCE);
 	}
 }
 

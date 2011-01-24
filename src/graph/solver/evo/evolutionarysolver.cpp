@@ -17,9 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "evolutionarysolver.hpp"
-#include "../../../lib/rand.hpp"
-#include "../../../lib/auto-array.hpp"
+
+#include "../../randomise-graph.hpp"
 #include "../../vector-rand.hpp"
+#include "../../../lib/auto-array.hpp"
+#include "../../../lib/rand.hpp"
 #include "../../../ui/playercontrolwidget.hpp"
 
 #include <algorithm>
@@ -33,11 +35,8 @@ static double evaluate(const Graph &g, const evo::Data &data);
 
 
 struct Individual {
-	Individual(const Graph &theGraph, double theScore)
-		: graph_(theGraph), score_(theScore) { }
-
-	Individual(const Graph &theGraph, const evo::Data &data)
-		: graph_(theGraph), score_(evaluate(theGraph, data)) { }
+	Individual(const Graph &theGraph)
+		: graph_(theGraph), score_(std::numeric_limits<double>::quiet_NaN()) { }
 
 	Graph       &graph() {
 		score_ = std::numeric_limits<double>::quiet_NaN();
@@ -85,8 +84,23 @@ private:
 
 EvolutionarySolver::EvolutionarySolver(Scene &scene)
 	: AbstractSolver(scene), iterationCount(), statsShown() {
-	Individual seed(scene, *config);
-	population.reset(new Population(config->populationSize, Individual(scene, *config)));
+	population.reset(new Population(config->populationSize, Individual(scene)));
+
+	GraphRandomiser rnd;
+
+	rnd::Data &data = rnd.getConfigData();
+	data.relative = false;
+	data.normal = false;
+	data.overwrite = true;
+	data.r = 100.0;
+
+	for (Population::iterator it = population->begin(), end = population->end();
+	     ++it != end; ) {
+		rnd.randomise(it->graph());
+	}
+
+	std::sort(population->begin(), population->end(), Compare(*config));
+	updateScene();
 }
 
 QWidget* EvolutionarySolver::createPlayerWidget(QWidget *theParent)

@@ -41,11 +41,18 @@ private:
 
 }
 
+struct Graph;
 struct Scene;
 
 struct GraphRandomiser {
-	void randomise(Scene &scene);
-	ui::cfg::Data &getConfigData() {
+	void randomise(Scene &scene) const;
+	void randomise(Graph &graph) const;
+
+	rnd::Data &getConfigData() {
+		return *config;
+	}
+
+	const rnd::Data &getConfigData() const {
 		return *config;
 	}
 
