@@ -144,17 +144,27 @@ EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(const Populatio
 		Population::size_type s = population->size();
 		lib::auto_array<double> a_distribution(new double[s+1]);
 		double *distribution = a_distribution.get(); //cumulative distribution
-		double sum = 0;
 		Population::const_iterator i = population->begin();
 		Population::size_type j = 1;
 		Compare evaluator(*config);
+		double worst = 0;
+		//At first, distribution[j] is score
 		while (i != population->end()) {
 			double eval = evaluator(*i);
 			distribution[j] = eval;
-			sum += eval;
+			worst = std::max(worst, eval);
 			++i;
 			++j;
 		}
+		worst += 1;
+		double sum = 0;
+		//Now distribution[j] is distance from the 1.0-worse-than-worst score
+		//sum is sum of such distances
+		for (j=1; j <= s; ++j) {
+			distribution[j] = worst - distribution[j];
+			sum += distribution[j];
+		}
+		//It's easy to calculate distribution, once distance is subject to maximization
 		distribution[0] = 0;
 		for (j=1; j <= s; ++j) {
 			distribution[j] /= sum;
