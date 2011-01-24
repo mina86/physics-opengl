@@ -51,7 +51,6 @@ namespace solver {
 		static const Graph& constgraph(const individual_t &i) { return i.first; }
 
 		int iterationCount;
-		void runOneIteration();
 		void updateScene();
 		population_ptr population;
 		population_ptr reproduce(const population_t * const population);
@@ -59,7 +58,6 @@ namespace solver {
 		population_ptr succession(population_ptr population, population_ptr offsprings);
 
 	protected slots:
-		void makeOneIteration();
 		void playNextFrame(unsigned iterations);
 
 	private:

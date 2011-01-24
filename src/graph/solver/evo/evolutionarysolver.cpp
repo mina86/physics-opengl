@@ -42,11 +42,6 @@ QWidget* EvolutionarySolver::createPlayerWidget(QWidget *theParent)
 	return player;
 }
 
-void EvolutionarySolver::makeOneIteration()
-{
-	runOneIteration();
-}
-
 
 EvolutionarySolver::population_ptr EvolutionarySolver::reproduce(const population_t * const population)
 {
@@ -297,16 +292,11 @@ EvolutionarySolver::population_ptr EvolutionarySolver::succession(population_ptr
 void EvolutionarySolver::playNextFrame(unsigned iterations)
 {
 	for (; iterations; --iterations) {
-		runOneIteration();
+		++iterationCount;
+		population_ptr offsprings = genetic(reproduce(population.get()));
+		population = succession(population, offsprings);
 	}
 	updateScene();
-}
-
-void EvolutionarySolver::runOneIteration()
-{
-	++iterationCount;
-	population_ptr offsprings = genetic(reproduce(population.get()));
-	population = succession(population, offsprings);
 }
 
 void EvolutionarySolver::updateScene()
