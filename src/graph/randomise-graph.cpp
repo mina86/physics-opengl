@@ -21,9 +21,8 @@
 #include "scene.hpp"
 #include "vector-rand.hpp"
 #include "../lib/rand.hpp"
+#include "../lib/isnan.hpp"
 #include "../gl/glconfig.hpp"
-
-#include <math.h>
 
 namespace graph {
 
@@ -57,9 +56,8 @@ void GraphRandomiser::randomise(Scene &scene) {
 
 	Scene::nodes_iterator it = scene.nodes_begin(), end = scene.nodes_end();
 	for (; it != end; ++it) {
-		//isnan() fix:
-		float secondLoadedPositionX = (*it).second.loadedPosition.x();
-		if (secondLoadedPositionX == secondLoadedPositionX && !config->overwrite) {
+		if (!isnan((*it).second.loadedPosition.x()) &&
+		    !config->overwrite) {
 			if (config->reset) {
 				(*it).first = (*it).second.loadedPosition;
 			}

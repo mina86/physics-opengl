@@ -18,7 +18,6 @@
  */
 #include "../gl/abstract-scene.hpp"
 
-#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -30,6 +29,7 @@
 #include <limits>
 
 #include "../lib/lexer.hpp"
+#include "../lib/isnan.hpp"
 
 #include "scene.hpp"
 
@@ -211,9 +211,7 @@ AbstractScene::ptr AbstractScene::load(std::istream &in)
 		graph::Scene::nodes_iterator out = scene->nodes_begin();
 
 		for (; in != end; ++in, ++out) {
-			//isnan fix:
-			float loadedPositionX = in->loadedPosition.x();
-			if (loadedPositionX != loadedPositionX) {
+			if (isnan(in->loadedPosition.x())) {
 				(*out).first.zero();
 			} else {
 				(*out).first = in->loadedPosition;
