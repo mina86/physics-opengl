@@ -6,29 +6,42 @@ else
 LIBS    = -lglut
 endif
 
-all: dist/data dist/physics dist/graph
+all: dist/data dist/graph dist/doc.pdf
 
-doc::
-	exec doxygen Doxyfile
 
+# This currently does not compile
 dist/physics:
 	@exec mkdir -p -- objs
 	exec qmake -makefile -o objs/physics.make -unix src/physics.pro
 	exec make -C objs -f physics.make
 
+
+# Graph
 dist/graph:
 	@exec mkdir -p -- objs
 	exec qmake -makefile -o objs/graph.make -unix src/graph.pro
 	exec make -C objs -f graph.make
 
+
+# Data
 dist/data:
 	exec mkdir -p dist/data
 	exec $(MAKE) -C data DATA_DIR=../dist/data all
 
+
+# Documentation
+dist/doc.pdf: doc/doc.pdf
+	exec mv -- $< $@
+
+doc/doc.pdf::
+	exec $(MAKE) -C doc doc.pdf
+
+# Misc
 clean::
-	exec rm -rf -- objs
+	exec $(MAKE) -C doc clean
 
-distclean:: clean
-	exec rm -rf -- dist doc
+distclean::
+	exec rm -rf -- objs dist
+	exec $(MAKE) -C doc distclean
 
-.PHONY: dist/data dist/physics dist/graph clean distclean
+.PHONY: dist/data dist/graph clean distclean
