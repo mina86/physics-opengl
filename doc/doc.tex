@@ -465,8 +465,11 @@ operacyjnym Linux. Do uruchomienia programu niezbędna jest obecność
 biblioteki Qt4 i~implementacji OpenGL oraz biblioteki Gnu Scientific
 Library (GSL).
 
-Jest możliwe, że po odpowiedniej adaptacji procesu kompilacji program
-będzie działał również w~systemach Windows i~Mac OS (X).
+Program można również zbudować w~systemie Windows przy pomocy
+zmodyfikowanego pliku Makefile (załączony do projektu).
+
+Pliki z~danymi (grafy) mają postać uniwersalną, przenośną pomiędzy
+systemami operacyjnymi.
 
 \subsection{Budowanie}
 
@@ -478,16 +481,25 @@ kompilator języka C++ oraz implementacja biblioteki standardowej C++.
 
 \subsection{Obsługa programu}
 
-Po uruchomieniu programu zostanie otwarte okno programu, zawierające menu
-i~pasek narzędzi. Początkowo nie jest załadowany żaden graf, więc aby
-rozpocząć pracę należy wczytać graf z~pliku lub wygenerować graf przy
-pomocy jednego z~trzech dostępnych generatorów. Przetwarzany graf będzie
-można w~każdej chwili zapisać do pliku.
+Po uruchomieniu programu zostanie otwarte okno programu (ysunek
+\ref{fig:scr:empty}, zawierające menu i~pasek narzędzi. Początkowo nie jest
+załadowany żaden graf, więc aby rozpocząć pracę należy wczytać graf z~pliku
+lub wygenerować graf przy pomocy jednego z~trzech dostępnych generatorów.
+Przetwarzany graf będzie można w~każdej chwili zapisać do pliku.
 
 W~przypadku wczytywania lub generowania grafu w~oknie, w~którym już jest
 załadowany graf, proces wczytywania lub generowania zostanie ukończony
 w~nowym oknie. W~danej chwili jedno okno programu może posiadać otwarty
 tylko jeden graf.
+
+\begin{figure}[tpb]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{screenshots/empty.png}
+	\end{center}
+	\caption{Okno programu -- widok po uruchomieniu, żaden graf nie jest
+	załadowany}
+	\label{fig:scr:empty}
+\end{figure}
 
 \subsubsection{Generowanie grafu}
 
@@ -502,7 +514,15 @@ grafu -- będzie je trzeba podać ponownie.
 
 Gdy graf jest załadowany, w~centralnej części okna znajduje się panel
 OpenGL, w~którym wyświetlany jest obraz trójwymiarowej przestrzeni,
-nazywanej sceną, w~której znajduje się graf.
+nazywanej sceną, w~której znajduje się graf (rysunek \ref{fig:scr:loaded}).
+
+\begin{figure}[tpb]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{screenshots/loaded.png}
+	\end{center}
+	\caption{Okno programu z~załadowanym grafem}
+	\label{fig:scr:loaded}
+\end{figure}
 
 Do przemieszczania się w~tej przestrzeni służy urządzenie wskazujące.
 Kliknięcie na panelu lewym przyciskiem i~przesuwanie wskaźnika w~pionie
@@ -526,12 +546,20 @@ które wpływają na proces wyświetlania i~przemieszczania kamery w~ramach
 sceny. Modyfikować można je po otwarciu okna ustawień programu (opcja
 w~menu górnym).
 
-Okno ustawień programu to jedno z~wielu wykonanych w~analogiczny sposób
-okien konfiguracyjnych. Zmiana ustawień następuje w~momencie interakcji
-z~kontrolką (widgetem) umożliwiającą edycję wartości, bez potrzeby
-potwierdzania. W~ten sposób, można mieć otwarte okno ustawień dowolnego
-elementu (np. całego programu) i~zmieniać parametry w~trakcie trwającej
-symulacji, obserwując na bieżąco efekty tych zmian.
+Okno ustawień (rysunek \ref{fig:scr:settings}) programu to jedno z~wielu
+wykonanych w~analogiczny sposób okien konfiguracyjnych. Zmiana ustawień
+następuje w~momencie interakcji z~kontrolką (widgetem) umożliwiającą edycję
+wartości, bez potrzeby potwierdzania. W~ten sposób, można mieć otwarte okno
+ustawień dowolnego elementu (np. całego programu) i~zmieniać parametry
+w~trakcie trwającej symulacji, obserwując na bieżąco efekty tych zmian.
+
+\begin{figure}[tpb]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{screenshots/settings.png}
+	\end{center}
+	\caption{Okno ustawień programu}
+	\label{fig:scr:settings}
+\end{figure}
 
 Ustawienia programu są współdzielone pomiędzy wszystkimi oknami programu.
 
@@ -580,7 +608,179 @@ Algorytm ewolucyjny nie przerwie symulacji, ze względu na losowy i~ciągły
 charakter obliczeń, wobec tego należy ręcznie przerwać symulację
 w~sytuacji, kiedy prezentowany wynik będzie satysfakcjonujący.
 
+\begin{figure}[tpb]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{screenshots/solved.png}
+	\end{center}
+	\caption{Okno programu po zakończeniu zadania wizualizacji grafu}
+	\label{fig:scr:solved}
+\end{figure}
+
 \subsection{Parametry konfiguracyjne}
+
+Listę parametrów konfiguracyjnych zamieszczamy na końcu sprawozdania.
+
+\section{Badanie optymalnych parametrów algorytmu ewolucyjnego}
+
+W~poszukiwaniu optymalnych naszym zdaniem parametrów algorytmu ewolucyjnego
+posłużyliśmy się doświadczeniem, intuicją, a~następnie metodą inżynierską
+próbowaliśmy poprawić te wartości. Uzyskane wartości parametrów ustawiliśmy
+w~programie jako wartości domyślne. Następnie przeprowadziliśmy badania
+pojedynczych parametrów w~celu znalezienia zależności i~możliwych kierunków
+poprawy.
+
+Na potrzeby badań wygenerowaliśmy jeden graf, który był następnie
+wizualizowany przy różnych parametrach algorytmu ewolucyjnego.
+Każda symulacja była uruchomiona od tego samego stanu początkowego i~trwała
+milion iteracji. Funkcja celu dla wszystkich badań była również taka sama.
+
+Przeprowadziliśmy następujące symulacje:
+
+\begin{itemize}
+	\item parametry domyślne: liczebność populacji 20, selekcja trywialna,
+		krzyżowanie arytmetyczne uśredniające ($p=0,1$), mutacja ($p=0,7$,
+		$\delta=0.1$), sukcesja elitarna
+	\item prawdopodobieństwa krzyżowana: $p=0,7$
+	\item algorytm krzyżowania: arytmetyczne losowe
+	\item algorytm krzyżowania: wymianę genów
+	\item parametry mutacji: $p=0.7$, $\delta=1$
+	\item parametry mutacji: $p=0.3$, $\delta=1$
+	\item liczebność populacji: 100
+	\item liczebność populacji: 500
+	\item selekcja: proporcjonalna
+	\item selekcja: proporcjonalna i~liczebność populacji: 100
+	\item selekcja: proporcjonalna i~liczebność populacji: 500
+	\item selekcja: losowa o~rozkładzie jednostajnym
+	\item selekcja: turniejowa $k=2$
+	\item sukcesja: prosta
+	\item sukcesja: unia elit $r=0.5$
+\end{itemize}
+
+Wyniki tych symulacji zostały przedstawione na wykresach, na końcu
+sprawozdania.
+
+\section{Podsumowanie i~wnioski}
+
+W~naszym projekcie zawarliśmy dwa podejścia do zagadnienia wizualizacji 3D
+grafu -- model fizyczny i~ewolucyjny. Zanim jednak przejdziemy do
+porównania, chcemy przybliżyć rozważane zagadnienie.
+
+Wizualizacja 3D grafu to zagadnienie dość skomplikowane, głównie ze względu
+na określenie mierzalnych kryteriów jakości wizualizacji, konkretnej
+funkcji oceny. W~modelu ewolucyjnym funkcja ta jest określana wprost i~na
+jej podstawie następuje poszukiwanie rozwiązań, natomiast w~modelu
+fizycznym funkcja ta nie jest dana wprost, lecz można ją intuicyjnie
+utożsamić z~energią potencjalną oddziaływań całego układu.
+
+Eksperymenty z~różnymi postaciami funkcji oceny w~modelu ewolucyjnym
+doprowadziły nas do oczywistego wniosku -- funkcja oceny musi mieć co
+najmniej jedno ,,wyraźne'' minimum, wokół którego funkcja wyraźnie rośnie,
+w~przeciwnym wypadku znalezienie minimum w~jego sąsiedztwie jest bardzo
+trudne. Jest to zgodne z~intuicją, albowiem siłą algorytmu ewolucyjnego
+jest eksploracja i~wychodzenie poza zbiory przyciągania optimów lokalnych,
+a~nie ,,dociąganie'' rozwiązania do samego optimum.
+
+Bazując na tym wniosku, ograniczyliśmy znacznie liczbę możliwych postaci
+funkcji celu do takich funkcji, które są złożeniem funkcji odpychania
+Kulombowskiego oraz przyciągania grawitacyjnego bądź sprężystego.
+
+Gdy w~świecie rzeczywistym rozważymy dwa jednoimiennie naładowane ciała
+o~określonych masach znajdujące się w~położeniu równowagi pomiędzy siłami
+przyciągania i~odpychania, jest oczywiste, że znajdują się w~pewnej
+określonej odległości od siebie. Odległość ta wynika z~wartości ładunków,
+mas, a~także stałych fizycznych. W~świecie symulacji ładunki są identyczne,
+masy identyczne a~zamiast stałych fizycznych charakterystycznych dla
+pojedynczych oddziaływań pojawia się pojęcie ,,pożądanej odległości''
+pomiędzy parą wierzchołków w~równowadze. Owa ,,pożądana odległość'' to nie
+jest jakieś uproszczenie na potrzeby symulacji, tylko konsekwencja
+przyjętego modelu, w~którym wartość ta może być ustalona wprost (albowiem
+kontrolujemy wszystkie stałe fizyczne symulacji).
+
+Analogiczna wielkość w~modelu ewolucyjnym ukryta jest w~funkcji oceny.
+Przyjmując funkcję oceny:
+\begin{displaymath}
+	f(x) = |a - x|^b + \frac{c}{x - d}
+\end{displaymath}
+
+Gdzie $x$ to odległość między rozpatrywaną parą wierzchołków, parametr $a$
+ma kluczowy wpływ na faktyczną wartość ukrytej ,,pożądanej odległości''.
+
+\subsection{Porównanie wyników}
+
+Zdecydowanie lepsze rezultaty i~w~znacznie krótszym czasie osiągane są przy
+zastosowaniu modelu fizycznego. Wynika to stąd, że niejawna funkcja celu
+(minimum energii potencjalnej) jest funkcją wypukłą, zaś sama metoda
+fizyczna jest analogiem metody gradientowej. W~każdej iteracji, na podstawie
+działających sił wyliczany jest wektor zmian w~kierunku gradientu funkcji
+celu. Od zwykłej metody gradientowej model fizyczny różni się tym, że
+wprowadzone są pewne bezwładności, które występują w~świecie fizycznym, na
+podstawie którego model jest wzorowany. W~związku z~tym podobieństwem do
+metod gradientowych, odnalezienie minimum jest bardzo szybkie, a~ponieważ
+niejawna funkcja celu ma bardzo niskie prawdopodobieństwo posiadania
+minimów lokalnych, rozwiązanie generowane przy pomocy tego modelu zwykle
+jest optymalne.
+
+Model ewolucyjny dla prostych, zaprojektowanych jako przewidywalne
+przykładów zachowuje się dobrze, pod warunkiem przyjęcie odpowiedniej
+funkcji celu. Model znajduje rozwiązanie bliskie optymalnemu w~stosunkowo
+krótkim czasie. Niestety model ten nie radzi sobie ze skomplikowanymi
+grafami generowanymi losowo.
+
+\subsubsection{Uwagi do strategii ewolucyjnej}
+
+Przyjęta przez nas funkcja celu jest często funkcją unimodalną (dla drzew
+i~nieskomplikowanych grafów), w~związku z~czym eksploracja przy pomocy
+krzyżowania nie daje korzyści większych, niż lokalne, na dobrą sprawę
+losowe, przeszukiwanie przestrzeni przy zastosowaniu mutacji o~małym
+zasięgu. Z~rysunku \ref{fig:plot:cross} widać wyraźnie, że korzystne jest
+stosowanie jedynie krzyżowania arytmetycznego o~stosunkowo małym
+prawdopodobieństwie. Widać również, że krzyżowanie arytmetyczne
+uśredniające okazało się bardziej korzystne niż krzyżowanie arytmetyczne
+losowe.
+
+Warto zauważyć (na rysunku \ref{fig:plot:proportional}), że selekcja
+proporcjonalna dała pewną poprawę przy stosunkowo małej liczebności
+populacji. Jest to spowodowane tym, że funkcja celu słabo różnicuje podobne
+osobniki, co powoduje, że mechanizm selekcji proporcjonalnej bardzo
+nieznacznie promuje osobniki lepiej dostosowane. Efekty takiej selekcji
+będą bardzo zbliżone do efektów selekcji z~rozkładem równomiernym.
+
+Na rysunku \ref{fig:plot:selection-2} widać wyraźnie, że dla małej
+liczebności populacji selekcja proporcjonalna daje efekty znacznie lepsze
+od selekcji trywialnej.
+
+\subsection{Generowanie grafów}
+
+Warto wspomnieć jeszcze słowem o~generowaniu grafów. Jak się okazuje,
+generowanie grafów nie jest zadaniem trywialnym. Istnieje wiele metod
+generowania grafów, jednakże uzyskiwanie grafów o~konkretnych pożądanych
+właściwościach jest już trudne. Przejrzeliśmy literaturę, głównie artykuły
+naukowe, na temat różnych podejść do generowania grafów i~wybraliśmy te,
+które naszym zdaniem są jednocześnie dość proste i~dają pożądane rezultaty.
+Jak się okazuje, spójność grafu jest dość trudnym warunkiem do spełnienia
+przez generator, dlatego posłużyliśmy się pomocniczą strukturą zbiorów
+rozłącznych do losowego uspójnienia grafu (połączenia reprezentantów
+składowych w~ścieżkę).
+
+\section{Literatura}
+
+Poniżej zamieszczamy niewyczerpującą i~nieostateczną listę pozycji
+literaturowych, które zostały przez nas zastosowane.
+
+\begin{itemize}
+	\item Grafy i~Sieci (GIS) -- notatki z~wykładów
+	\item \url{http://en.wikipedia.org/wiki/Geometric\_graph\_theory}
+	\item \url{http://en.wikipedia.org/wiki/Erd\%C5\%91s\%E2\%80\%93R\%C3\%A9nyi\_model}
+	\item Filip Piękniewski, Wydział Matematyki i~Informatyki, UMK,
+		Prezentacja na Seminarium Doktoranckie dostępna na
+		\url{http://www.mat.uni.torun.pl/~philip/sem-2008-2.pdf}
+	\item
+		\url{http://en.wikipedia.org/wiki/Force-based\_algorithms\_\%28graph\_drawing\%29}
+
+\end{itemize}
+
+
+\section*{Parametry konfiguracyjne programu i~algorytmów}
 
 Poniżej zamieszczamy spis wszystkich parametrów konfiguracyjnych programu
 i~jego składników.
@@ -604,7 +804,6 @@ Object draw style & Sposób rysowania obiektów \\
 	\caption{Parametry programu}
 	\label{tab:params-program}
 \end{table}
-
 
 \begin{table}[h!]
 	\centering
@@ -694,103 +893,76 @@ Attraction proportional to degree & Przyciąganie proporcjonalne do stopnia wier
 \clearpage
 
 
-\section{Podsumowanie i~wnioski}
+\section*{Wykresy do badań parametrów algorytmu ewolucyjnego}
 
-W~naszym projekcie zawarliśmy dwa podejścia do zagadnienia wizualizacji 3D
-grafu -- model fizyczny i~ewolucyjny. Zanim jednak przejdziemy do
-porównania, chcemy przybliżyć rozważane zagadnienie.
+Poniżej zamieszczamy wykresy do badań parametrów algorytmu ewolucyjnego.
 
-Wizualizacja 3D grafu to zagadnienie dość skomplikowane, głównie ze względu
-na określenie mierzalnych kryteriów jakości wizualizacji, konkretnej
-funkcji oceny. W~modelu ewolucyjnym funkcja ta jest określana wprost i~na
-jej podstawie następuje poszukiwanie rozwiązań, natomiast w~modelu
-fizycznym funkcja ta nie jest dana wprost, lecz można ją intuicyjnie
-utożsamić z~energią potencjalną oddziaływań całego układu.
+\begin{figure}[hp]
+	\begin{center}
+		\includegraphics{out/cross}
+	\end{center}
+	\caption{Różne wyniki krzyżowania}
+	\label{fig:plot:cross}
+\end{figure}
 
-Eksperymenty z~różnymi postaciami funkcji oceny w~modelu ewolucyjnym
-doprowadziły nas do oczywistego wniosku -- funkcja oceny musi mieć co
-najmniej jedno ,,wyraźne'' minimum, wokół którego funkcja wyraźnie rośnie,
-w~przeciwnym wypadku znalezienie minimum w~jego sąsiedztwie jest bardzo
-trudne. Jest to zgodne z~intuicją, albowiem siłą algorytmu ewolucyjnego
-jest eksploracja i~wychodzenie poza zbiory przyciągania optimów lokalnych,
-a~nie ,,dociąganie'' rozwiązania do samego optimum.
+\begin{figure}[hp]
+	\begin{center}
+		\includegraphics{out/proportional}
+	\end{center}
+	\caption{Selekcja proporcjonalna dla różnych liczebności populacji}
+	\label{fig:plot:proportional}
+\end{figure}
 
-Bazując na tym wniosku, ograniczyliśmy znacznie liczbę możliwych postaci
-funkcji celu do takich funkcji, które są złożeniem funkcji odpychania
-Kulombowskiego oraz przyciągania grawitacyjnego bądź sprężystego.
+\begin{figure}[hp]
+	\begin{center}
+		\includegraphics{out/population}
+	\end{center}
+	\caption{Różne liczebności populacji}
+	\label{fig:plot:population}
+\end{figure}
 
-Gdy w~świecie rzeczywistym rozważymy dwa jednoimiennie naładowane ciała
-o~określonych masach znajdujące się w~położeniu równowagi pomiędzy siłami
-przyciągania i~odpychania, jest oczywiste, że znajdują się w~pewnej
-określonej odległości od siebie. Odległość ta wynika z~wartości ładunków,
-mas, a~także stałych fizycznych. W~świecie symulacji ładunki są identyczne,
-masy identyczne a~zamiast stałych fizycznych charakterystycznych dla
-pojedynczych oddziaływań pojawia się pojęcie ,,pożądanej odległości''
-pomiędzy parą wierzchołków w~równowadze. Owa ,,pożądana odległość'' to nie
-jest jakieś uproszczenie na potrzeby symulacji, tylko konsekwencja
-przyjętego modelu, w~którym wartość ta może być ustalona wprost (albowiem
-kontrolujemy wszystkie stałe fizyczne symulacji).
+\begin{figure}[hp]
+	\begin{center}
+		\includegraphics{out/selection}
+	\end{center}
+	\caption{Różne algorytmy selekcji}
+	\label{fig:plot:selection}
+\end{figure}
 
-Analogiczna wielkość w~modelu ewolucyjnym ukryta jest w~funkcji oceny.
-Przyjmując funkcję oceny:
-\begin{displaymath}
-	f(x) = |a - x|^b + \frac{c}{x - d}
-\end{displaymath}
+\begin{figure}[hp]
+	\begin{center}
+		\includegraphics{out/selection-2}
+	\end{center}
+	\caption{Dokładniejsze porównani selekcji trywialnej i~proporcjonalnej
+	(liczebność populacji $20$ osobników).}
+	\label{fig:plot:selection-2}
+\end{figure}
 
-Gdzie $x$ to odległość między rozpatrywaną parą wierzchołków, parametr $a$
-ma kluczowy wpływ na faktyczną wartość ukrytej ,,pożądanej odległości''.
+\begin{figure}[hp]
+	\begin{center}
+		\includegraphics{out/succession}
+	\end{center}
+	\caption{Porównanie sukcesji elitarnej z~sukcesją typu ,,unia elit''
+	(po połowie najlepiej dostoswanych osobników z~populacji bazowej
+	i~pokolenia potomnego)}
+	\label{fig:plot:succession}
+\end{figure}
 
-\subsection{Porównanie wyników}
+\begin{figure}[hp]
+	\begin{center}
+		\includegraphics{out/straight}
+	\end{center}
+	\caption{Sukcesja prosta -- wyraźnie nieefektywna}
+	\label{fig:plot:straight}
+\end{figure}
 
-Zdecydowanie lepsze rezultaty i~w~znacznie krótszym czasie osiągane są przy
-zastosowaniu modelu fizycznego. Wynika to stąd, że niejawna funkcja celu
-(minimum energii potencjalnej) jest funkcją wypukłą, zaś sama metoda
-fizyczna jest analogiem metody gradientowej. W~każdej iteracji, na podstawie
-działających sił wyliczany jest wektor zmian w~kierunku gradientu funkcji
-celu. Od zwykłej metody gradientowej model fizyczny różni się tym, że
-wprowadzone są pewne bezwładności, które występują w~świecie fizycznym, na
-podstawie którego model jest wzorowany. W~związku z~tym podobieństwem do
-metod gradientowych, odnalezienie minimum jest bardzo szybkie, a~ponieważ
-niejawna funkcja celu ma bardzo niskie prawdopodobieństwo posiadania
-minimów lokalnych, rozwiązanie generowane przy pomocy tego modelu zwykle
-jest optymalne.
-
-Model ewolucyjny dla prostych, zaprojektowanych jako przewidywalne
-przykładów zachowuje się dobrze, pod warunkiem przyjęcie odpowiedniej
-funkcji celu. Model znajduje rozwiązanie bliskie optymalnemu w~stosunkowo
-krótkim czasie. Niestety model ten nie radzi sobie ze skomplikowanymi
-grafami generowanymi losowo.
-
-\subsection{Generowanie grafów}
-
-Warto wspomnieć jeszcze słowem o~generowaniu grafów. Jak się okazuje,
-generowanie grafów nie jest zadaniem trywialnym. Istnieje wiele metod
-generowania grafów, jednakże uzyskiwanie grafów o~konkretnych pożądanych
-właściwościach jest już trudne. Przejrzeliśmy literaturę, głównie artykuły
-naukowe, na temat różnych podejść do generowania grafów i~wybraliśmy te,
-które naszym zdaniem są jednocześnie dość proste i~dają pożądane rezultaty.
-Jak się okazuje, spójność grafu jest dość trudnym warunkiem do spełnienia
-przez generator, dlatego posłużyliśmy się pomocniczą strukturą zbiorów
-rozłącznych do losowego uspójnienia grafu (połączenia reprezentantów
-składowych w~ścieżkę).
-
-\section{Literatura}
-
-Poniżej zamieszczamy niewyczerpującą i~nieostateczną listę pozycji
-literaturowych, które zostały przez nas zastosowane.
-
-\begin{itemize}
-	\item Grafy i~Sieci (GIS) -- notatki z~wykładów
-	\item \url{http://en.wikipedia.org/wiki/Geometric\_graph\_theory}
-	\item \url{http://en.wikipedia.org/wiki/Erd\%C5\%91s\%E2\%80\%93R\%C3\%A9nyi\_model}
-	\item Filip Piękniewski, Wydział Matematyki i~Informatyki, UMK,
-		Prezentacja na Seminarium Doktoranckie dostępna na
-		\url{http://www.mat.uni.torun.pl/~philip/sem-2008-2.pdf}
-	\item
-		\url{http://en.wikipedia.org/wiki/Force-based\_algorithms\_\%28graph\_drawing\%29}
-
-\end{itemize}
-
+\begin{figure}[hp]
+	\begin{center}
+		\includegraphics{out/mutation}
+	\end{center}
+	\caption{Różne parametry mutacji}
+	\label{fig:plot:mutation}
+\end{figure}
 
 \end{document}
 

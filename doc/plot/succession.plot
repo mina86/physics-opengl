@@ -7,5 +7,7 @@ set yrange [650:1000]
 
 set title "Sukcesja"
 
+set style data steps
+
 plot 'out/defaults.dat'            using 1:2 title 'elitarna', \
      'out/succ-union-of-elite.dat' using 1:2 title 'unia elit'

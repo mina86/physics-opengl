@@ -7,4 +7,6 @@ set yrange [650:*]
 
 set title "Prosta sukcesja"
 
+set style data steps
+
 plot 'out/succ-straight.dat' using 1:2 notitle
