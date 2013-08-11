@@ -3,7 +3,7 @@ CXX    ?= g++
 ifeq ($(shell uname),Darwin)
 LIBS    = -framework OpenGL -framework GLUT
 else
-LIBS    = -lglut
+LIBS    = -lglut -lGL -lGLU
 endif
 
 
@@ -80,4 +80,3 @@ clean::
 
 distclean:: clean
 	exec rm -rf -- dist doc
-
