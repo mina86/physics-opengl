@@ -84,6 +84,8 @@ void Object::draw() {
 		glEnable(GL_TEXTURE_2D);
 		gluQuadricTexture(gl::Quadric::quadric()->get(), 1);
 		glBindTexture(GL_TEXTURE_2D, *texture);
+		glPushMatrix();
+		glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
 	}
 
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE,
@@ -105,6 +107,7 @@ void Object::draw() {
 	if (gotTexture) {
 		gluQuadricTexture(gl::Quadric::quadric()->get(), 0);
 		glDisable(GL_TEXTURE_2D);
+		glPopMatrix();
 	}
 
 	if (!drawNames || distanceFactor2 >= 1.1f) {
