@@ -3,7 +3,7 @@ CXX    ?= g++
 ifeq ($(shell uname),Darwin)
 LIBS    = -framework OpenGL -framework GLUT
 else
-LIBS    = -lglut
+LIBS    = -lglut -lGL -lGLU
 endif
 
 all: dist/data dist/graph dist/doc.pdf
