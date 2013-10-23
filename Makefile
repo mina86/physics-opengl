@@ -12,14 +12,14 @@ all: dist/data dist/graph dist/doc.pdf
 # This currently does not compile
 dist/physics:
 	@exec mkdir -p -- objs
-	exec qmake -makefile -o objs/physics.make -unix src/physics.pro
+	exec qmake -makefile -o objs/physics.make src/physics.pro
 	exec make -C objs -f physics.make
 
 
 # Graph
 dist/graph:
 	@exec mkdir -p -- objs
-	exec qmake -makefile -o objs/graph.make -unix src/graph.pro
+	exec qmake -makefile -o objs/graph.make src/graph.pro
 	exec make -C objs -f graph.make
 
 
