@@ -115,7 +115,6 @@ struct RGBImageReader {
 	} header;
 	FILE *file;
 	uint8_t *tmp;
-	unsigned long rleEnd;
 	uint32_t *rowStart, *rowSize;
 
 
@@ -178,7 +177,6 @@ RGBImageReader::RGBImageReader(const char *filename)
 		tmp      = new uint8_t[header.xsize * 256];
 		rowStart = new uint32_t[x * 2];
 		rowSize  = rowStart + x;
-		rleEnd   = 512 + (2 * x * 4);
 		fseek(file, 512, SEEK_SET);
 		fread(rowStart, 4, x * 2, file);
 		if (swapFlag) {
