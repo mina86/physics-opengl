@@ -117,7 +117,6 @@ struct RGBImageReader {
 	} header;
 	FILE *file;
 	uint8_t *tmp;
-	unsigned long rleEnd;
 	uint32_t *rowStart, *rowSize;
 
 	RGBImageReader(const char *filename);
@@ -127,7 +126,7 @@ struct RGBImageReader {
 		if (file) fclose(file);
 	}
 
-	void getRow(uint8_t *buf, int y, int z);
+	void getRow(uint8_t *buf, unsigned y, unsigned z);
 
 	static void convertShort(uint16_t *array, unsigned length) {
 		while (length--) {
@@ -173,7 +172,6 @@ RGBImageReader::RGBImageReader(const char *filename)
 		tmp      = new uint8_t[header.xsize * 256];
 		rowStart = new uint32_t[x * 2];
 		rowSize  = rowStart + x;
-		rleEnd   = 512 + (2 * x * 4);
 		fseek(file, 512, SEEK_SET);
 		fread(rowStart, 4, x * 2, file);
 		if (swapFlag) {
@@ -182,12 +180,13 @@ RGBImageReader::RGBImageReader(const char *filename)
 	}
 }
 
-void RGBImageReader::getRow(uint8_t *buf, int y, int z) {
+void RGBImageReader::getRow(uint8_t *buf, unsigned y, unsigned z) {
 	uint8_t *iPtr, *oPtr, pixel;
 	int count;
 
 	if ((header.type & 0xFF00) != 0x0100) {
-		fseek(file, 512 + header.xsize * (y + z * header.ysize), SEEK_SET);
+		fseek(file, 512u + header.xsize * (y + z * header.ysize),
+		      SEEK_SET);
 		fread(buf, 1, header.xsize, file);
 		return;
 	}
