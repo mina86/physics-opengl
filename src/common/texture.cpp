@@ -125,7 +125,7 @@ struct RGBImageReader {
 		if (file) fclose(file);
 	}
 
-	void getRow(uint8_t *buf, int y, int z);
+	void getRow(uint8_t *buf, unsigned y, unsigned z);
 
 	static void convertShort(uint16_t *array, unsigned length) {
 		unsigned short b1, b2;
@@ -186,12 +186,13 @@ RGBImageReader::RGBImageReader(const char *filename)
 }
 
 
-void RGBImageReader::getRow(uint8_t *buf, int y, int z) {
+void RGBImageReader::getRow(uint8_t *buf, unsigned y, unsigned z) {
 	uint8_t *iPtr, *oPtr, pixel;
 	int count;
 
 	if ((header.type & 0xFF00) != 0x0100) {
-		fseek(file, 512 + header.xsize * (y + z * header.ysize), SEEK_SET);
+		fseek(file, 512u + header.xsize * (y + z * header.ysize),
+		      SEEK_SET);
 		fread(buf, 1, header.xsize, file);
 		return;
 	}
