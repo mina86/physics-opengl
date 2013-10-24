@@ -342,9 +342,6 @@ bool Widget::sphere(value_type size, const Vector &point,
 	if (config->lowQuality) {
 		slices >>= 2;
 	}
-	if (slices < 6) {
-		slices = 6;
-	}
 
 	if (color) {
 		setColor(color);
