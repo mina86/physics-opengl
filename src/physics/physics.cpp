@@ -27,6 +27,7 @@
 
 #include <vector>
 #include <limits>
+#include <random>
 
 #ifdef __APPLE__
 #  include <OpenGL/OpenGL.h>
@@ -354,6 +355,7 @@ int main(int argc, char** argv) {
 	case -1:
 		mn::gl::Texture::useNearest = true;
 		quality = 0;
+		/* FALL THROUGH */
 	case  0: mn::gl::Texture::filename_suffix = ".lq.sgi"; break;
 	case  1: mn::gl::Texture::filename_suffix = ".mq.sgi"; break;
 	case  2: mn::gl::Texture::filename_suffix = ".hq.sgi"; break;
@@ -406,17 +408,18 @@ int main(int argc, char** argv) {
 
 	{
 		const unsigned size = 1 << (8 + quality), size2 = size * size;
-		const unsigned mask = size2 - 1;
-
 		unsigned char *stars = new unsigned char[size2];
 		memset(stars, 0, size2);
 		srand(time(0));
 
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<unsigned> position(0, size2 - 1);
+		std::uniform_int_distribution<unsigned> brightness(0, 255);
+
 		unsigned count = 2 * size;
 		do {
-			const unsigned pos =
-				((RAND_MAX<mask ? rand() * (RAND_MAX+1) : 0) + rand()) & mask;
-			stars[pos] = rand() * (256.0f / (RAND_MAX + 1.0f));
+			stars[position(gen)] = brightness(gen);
 		} while (--count);
 
 		mn::physics::starsTexture.assign(size, size, stars);
@@ -460,4 +463,3 @@ int main(int argc, char** argv) {
 	glutMainLoop();
 	return 0;
 }
-

@@ -18,10 +18,6 @@
 #ifndef H_CAMERA_HPP
 #define H_CAMERA_HPP
 
-#ifndef _BSD_SOURCE
-#  define _BSD_SOURCE 1
-#endif
-
 #include <cmath>
 
 #ifdef __APPLE__

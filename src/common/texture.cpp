@@ -233,7 +233,7 @@ void Texture::load(const char *filename_) {
 
 	if (image.header.zsize < 3) {
 		isRGB = false;
-		data = new unsigned char[xsize * ysize];
+		d = new unsigned char[xsize * ysize];
 		unsigned char *optr = d;
 		for (unsigned y = ysize; y--; ) {
 			image.getRow(optr, y, 0);

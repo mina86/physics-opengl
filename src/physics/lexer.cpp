@@ -63,16 +63,16 @@ struct Keyword {
 };
 static const Keyword keywords[] = {
 	/* !!! KEEP THAT SORTED !!! */
-	{ "auto",     Lexer::T_AUTO     },
-	{ "color",    Lexer::T_COLOR    },
-	{ "frozen",   Lexer::T_FROZEN   },
-	{ "light",    Lexer::T_LIGHT    },
-	{ "mass",     Lexer::T_MASS     },
-	{ "size",     Lexer::T_SIZE     },
-	{ "texture",  Lexer::T_TEXTURE  },
-	{ "vel",      Lexer::T_VELOCITY },
-	{ "velocity", Lexer::T_VELOCITY },
-	{ "z",        Lexer::T_ERROR    } /* !!! KEEP IT HERE !!! */
+	{ "auto",     static_cast<unsigned short>(Lexer::T_AUTO)     },
+	{ "color",    static_cast<unsigned short>(Lexer::T_COLOR)    },
+	{ "frozen",   static_cast<unsigned short>(Lexer::T_FROZEN)   },
+	{ "light",    static_cast<unsigned short>(Lexer::T_LIGHT)    },
+	{ "mass",     static_cast<unsigned short>(Lexer::T_MASS)     },
+	{ "size",     static_cast<unsigned short>(Lexer::T_SIZE)     },
+	{ "texture",  static_cast<unsigned short>(Lexer::T_TEXTURE)  },
+	{ "vel",      static_cast<unsigned short>(Lexer::T_VELOCITY) },
+	{ "velocity", static_cast<unsigned short>(Lexer::T_VELOCITY) },
+	{ "z",        static_cast<unsigned short>(Lexer::T_ERROR)    } /* !!! KEEP IT HERE !!! */
 };
 static inline bool operator<(const Keyword &a, const Keyword &b) {
 	return strcmp(a.name, b.name) < 0;

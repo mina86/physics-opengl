@@ -19,6 +19,7 @@
 #define H_VECTOR_HPP
 
 #include <cmath>
+#include <type_traits>
 
 
 namespace mn {
@@ -82,13 +83,19 @@ template<class T>
 inline Vector<T> operator+(Vector<T> a, const Vector<T> &b) { return a += b; }
 template<class T>
 inline Vector<T> operator-(Vector<T> a, const Vector<T> &b) { return a -= b; }
-template<class T>
-inline Vector<T> operator*(Vector<T> a, T r) { return a *= r; }
-template<class T>
-inline Vector<T> operator*(T r, Vector<T> a) { return a *= r; }
-template<class T>
-inline Vector<T> operator/(Vector<T> a, T r) { return a /= r; }
 
+template<class T, class R>
+inline
+typename std::enable_if<std::is_arithmetic<R>::value, Vector<T>>::type
+operator*(Vector<T> a, R r) { return a *= r; }
+template<class T, class R>
+inline
+typename std::enable_if<std::is_arithmetic<R>::value, Vector<T>>::type
+operator*(R r, Vector<T> a) { return a *= r; }
+template<class T, class R>
+inline
+typename std::enable_if<std::is_arithmetic<R>::value, Vector<T>>::type
+operator/(Vector<T> a, R r) { return a /= r; }
 
 }
 

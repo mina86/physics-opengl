@@ -110,6 +110,7 @@ Object *loadData(const char *filename) {
 
 			s_cont_string:
 				state = S_CONT;
+				/* FALL THROUGH */
 			case Lexer::T_STRING:
 				object = new Object(value.string, object);
 				delete[] value.string;

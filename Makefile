@@ -1,4 +1,5 @@
-CXX    ?= g++
+CXX      ?= g++
+CXXFLAGS += -Wall -Wextra
 
 ifeq ($(shell uname),Darwin)
 LIBS    = -framework OpenGL -framework GLUT
@@ -21,7 +22,7 @@ dist/solar: objs/common/camera.o objs/common/quadric.o \
   objs/solar/data-loader.o objs/solar/lexer.o objs/solar/solar.o \
   objs/solar/sphere.o objs/common/text3d.o
 	@exec mkdir -p dist
-	exec $(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
+	exec $(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 dist/physics: objs/common/camera.o objs/common/quadric.o \
   objs/common/sintable.o objs/common/texture.o objs/common/text3d.o \
